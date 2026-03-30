@@ -44,7 +44,7 @@ class MessageSystem {
             if (i < segments.length - 1) tokens.push({ type: 'br' });
         });
         let idx = 0;
-        const CHAR_INTERVAL = 45;
+        const CHAR_INTERVAL = 30;
         let lastTime = null;
         let rafId = null;
 
