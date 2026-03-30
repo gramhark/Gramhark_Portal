@@ -2,7 +2,7 @@
    バトル画面レイアウト (縦画面)
    ============================================================ */
 #app.portrait-mode .battle-view {
-    height: 560px;
+    height: 620px;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -36,7 +36,7 @@
 }
 
 #app.portrait-mode .panel {
-    height: 1040px;
+    height: 980px;
     width: 100%;
     background:
         radial-gradient(ellipse 120% 28% at 50% 0%, rgba(40, 75, 165, 0.24) 0%, transparent 55%),
@@ -118,7 +118,7 @@
 
 /* ── テンキーウィンドウ ── */
 #app.portrait-mode .panel-section--numpad {
-    height: 602px;
+    height: 542px;
     padding: 0;
     flex-shrink: 0;
     display: flex;
@@ -150,7 +150,7 @@
 
 #app.portrait-mode #monster-img {
     max-width: 100%;
-    max-height: 462px;
+    max-height: 508px;
     object-fit: contain;
 }
 
@@ -428,7 +428,7 @@
     display: block;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: fill;
     opacity: 0.9;
 }
 

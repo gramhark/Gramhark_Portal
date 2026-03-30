@@ -68,8 +68,8 @@ class EventBinder {
             flare.addEventListener('animationend', () => flare.remove());
         };
         document.querySelectorAll('.num-btn').forEach(btn => {
-            btn.addEventListener('touchstart', (e) => { e.preventDefault(); game.sound.playSe('numpad'); game._handleInput(btn.dataset.key); _spawnNumpadFlare(btn); });
-            btn.addEventListener('click', (e) => { game.sound.playSe('numpad'); game._handleInput(btn.dataset.key); _spawnNumpadFlare(btn); });
+            btn.addEventListener('touchstart', (e) => { e.preventDefault(); const k = btn.dataset.key; if (k !== 'DEL' && k !== 'ENTER') game.sound.playSe('numpad'); game._handleInput(k); _spawnNumpadFlare(btn); });
+            btn.addEventListener('click', (e) => { const k = btn.dataset.key; if (k !== 'DEL' && k !== 'ENTER') game.sound.playSe('numpad'); game._handleInput(k); _spawnNumpadFlare(btn); });
         });
 
         // Keyboard

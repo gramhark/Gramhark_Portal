@@ -154,7 +154,7 @@ class SoundManager {
         this.seNote.src           = 'assets/audio/SE/event/note_reg.mp3';
 
         // SE sources — ui
-        this.seNumpad.src      = 'assets/audio/SE/ui/numpad.mp3';
+        this.seNumpad.src      = 'assets/audio/SE/ui/numpadX.mp3';
         this.seSlideOpen.src   = 'assets/audio/SE/ui/screen_slide_open.mp3';
         this.seSlideClose.src  = 'assets/audio/SE/ui/screen_slide_close.mp3';
         this.seTitleTap.src    = 'assets/audio/SE/ui/title_tap.mp3';

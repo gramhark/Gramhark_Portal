@@ -478,7 +478,7 @@ class MonsterSpawner {
 
     _getBattleBgSrc(m) {
         const base = 'assets/image/UI/Battle/BattleBG/';
-        if (m.battleNumber === Constants.BOSS_BATTLE_NUMBER) return `${base}BattleBG_Boss.webp`;
+        if (m.battleNumber === Constants.BOSS_BATTLE_NUMBER) return `${base}BattleBG_BossX.webp`;
         if (m.isSuperRare) return `${base}BattleBG_SRare.webp`;
         if (m.isDungeonRare) return `${base}BattleBG_Rare.webp`;
         if (m.isHeal) return `${base}BattleBG_Heal.webp`;
