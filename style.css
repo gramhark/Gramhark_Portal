@@ -1039,6 +1039,44 @@ ul[role="list"] { list-style: none; }
   .dev-card__footer {
     gap: var(--space-2);
   }
+
+  /* タイムライン：縦並びに切り替え */
+  .timeline-item {
+    grid-template-columns: 1fr;
+    gap: var(--space-1);
+    padding-bottom: var(--space-6);
+  }
+
+  .timeline-item::before {
+    display: none;
+  }
+
+  .timeline-item__date {
+    text-align: left;
+    padding-top: 0;
+    font-size: var(--text-xs);
+  }
+
+  .timeline-item__body {
+    padding-left: var(--space-4);
+    border-left: 2px solid var(--color-border);
+  }
+
+  .timeline-item__body::before {
+    left: -6px;
+    top: 6px;
+    width: 8px;
+    height: 8px;
+  }
+
+  /* サイドバーウィジェット調整 */
+  .sidebar-widget {
+    padding: var(--space-4);
+  }
+
+  .updates-hero__title {
+    font-size: var(--text-2xl);
+  }
 }
 
 /* ---------- お問い合わせフォーム ---------- */
@@ -1057,7 +1095,7 @@ ul[role="list"] { list-style: none; }
   display: block;
   font-size: 0.8rem;
   font-weight: 600;
-  color: var(--color-text);
+  color: var(--color-text-primary);
   margin-bottom: var(--space-1);
 }
 
@@ -1076,7 +1114,7 @@ ul[role="list"] { list-style: none; }
   border-radius: 6px;
   font-size: 0.85rem;
   font-family: inherit;
-  color: var(--color-text);
+  color: var(--color-text-primary);
   background: var(--color-surface);
   transition: border-color 0.15s, box-shadow 0.15s;
   resize: vertical;

@@ -151,4 +151,37 @@
     width: 100%;
     font-size: 34px;
     padding: 20px;
+    border-radius: 12px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
 }
+
+/* ほぞんボタン (Primary) */
+#app.portrait-mode .setting-backup-btn.primary-btn {
+    background: linear-gradient(180deg, #4facfe 0%, #3399f5 50%, #1580e8 100%);
+    border-color: rgba(79, 172, 254, 0.5);
+}
+
+/* よみこみボタン (Orange) */
+#app.portrait-mode .setting-backup-btn.orange-btn {
+    background: linear-gradient(180deg, #ff9a44 0%, #ff7433 50%, #e65100 100%);
+    border-color: rgba(255, 154, 68, 0.5);
+}
+
+#app.portrait-mode .setting-backup-btn:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+}
+
+#app.portrait-mode .setting-backup-btn:active {
+    transform: translateY(2px);
+    filter: brightness(0.9);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
