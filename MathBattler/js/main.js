@@ -1,9 +1,3 @@
-// Service Worker 登録
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js')
-        .catch(err => console.warn('SW registration failed:', err));
-}
-
 // Init
 window.addEventListener('DOMContentLoaded', () => {
     // Load saved name into dungeon select screen
