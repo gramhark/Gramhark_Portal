@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>グラムおじさんの ゲーム工房</title>
+  <meta name="description" content="勉強が好きになるきっかけを作りたい。おじさんが夜な夜な作る、学べるゲームの工房。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ヘッダー -->
+  <header class="site-header">
+    <div class="container">
+      <div class="header-inner">
+        <a href="/" class="site-logo" aria-label="Gramhark ゲーム工房 トップページ">
+          <span class="logo-icon" aria-hidden="true">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="32" height="32" rx="10" fill="#f97316"/>
+              <path d="M9 17 C11 14, 13 12, 16 15 C19 18, 21 13, 23 11" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              <circle cx="16" cy="22" r="2" fill="white" opacity="0.8"/>
+            </svg>
+          </span>
+          <div class="logo-text-group">
+            <span class="logo-text">グラムおじさん</span>
+            <span class="logo-sub">ゲーム工房</span>
+          </div>
+        </a>
+        <nav class="site-nav" aria-label="サイトナビゲーション">
+          <a href="#games" class="nav-link">ゲーム一覧</a>
+          <a href="#about" class="nav-link">開発者より</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ヒーローセクション -->
+    <section class="hero">
+      <div class="container">
+        <img
+          src="./Title.webp"
+          alt="グラムおじさんのゲーム工房"
+          class="hero-title-image"
+          width="900"
+          height="400"
+        >
+        <p class="hero-description">
+          自分の頭で考えることがますます減ってきたこの頃、<br>
+          ゲームで遊ぶだけで、自然と頭を使う体験を作っています。
+        </p>
+        <a href="#games" class="btn btn-primary">ゲームを見てみる →</a>
+      </div>
+    </section>
+
+    <!-- ゲーム一覧 -->
+    <section class="games-section" id="games" aria-labelledby="games-heading">
+      <div class="container">
+        <div class="section-header">
+          <h2 id="games-heading" class="section-title">ゲーム一覧</h2>
+          <p class="section-subtitle">現在 <strong>1本</strong> 公開中</p>
+        </div>
+
+        <ul class="game-grid" role="list">
+
+          <!-- MathBattler カード -->
+          <li class="game-card">
+            <a href="./MathBattler/" class="game-card__link" aria-label="マスバトール をプレイする">
+              <div class="game-card__thumbnail">
+                <img
+                  src="./MathBattler/assets/image/UI/title.webp"
+                  alt="マスバトール ゲーム画面"
+                  loading="lazy"
+                  width="400"
+                  height="225"
+                >
+                <span class="game-card__badge">無料プレイ</span>
+              </div>
+              <div class="game-card__body">
+                <div class="game-card__tags" aria-label="ジャンル">
+                  <span class="tag tag--math">算数・数学</span>
+                  <span class="tag tag--rpg">RPG</span>
+                </div>
+                <h3 class="game-card__title">マスバトール</h3>
+                <p class="game-card__description">
+                  計算問題を解いてモンスターを倒す、算数RPG。ダンジョンを探索しながら、四則演算の力を鍛えよう。
+                </p>
+                <div class="game-card__meta">
+                  <span class="meta-item">
+                    <svg class="meta-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 1.5a5.5 5.5 0 1 1 0 11 5.5 5.5 0 0 1 0-11zm.75 2.5h-1.5v4.25l3.5 2.1.75-1.24-2.75-1.65V5z"/></svg>
+                    ブラウザ対応
+                  </span>
+                  <span class="meta-item">
+                    <svg class="meta-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M11 1H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zm-3 12a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/></svg>
+                    スマホ対応
+                  </span>
+                </div>
+                <span class="game-card__cta" aria-hidden="true">プレイする →</span>
+              </div>
+            </a>
+          </li>
+
+          <!-- 今後追加予定カード -->
+          <li class="game-card game-card--coming-soon" aria-label="近日公開予定">
+            <div class="game-card__body">
+              <div class="game-card__coming-icon" aria-hidden="true">
+                <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+                  <circle cx="22" cy="22" r="20" stroke="#fed7aa" stroke-width="2.5" stroke-dasharray="5 3"/>
+                  <path d="M22 13v9l6 4" stroke="#fb923c" stroke-width="2.5" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <h3 class="game-card__title">次回作、制作中…</h3>
+              <p class="game-card__description">アイデアはあります！時間が足りない・・。</p>
+            </div>
+          </li>
+
+        </ul>
+      </div>
+    </section>
+
+    <!-- 開発者より -->
+    <section class="about-section" id="about" aria-labelledby="about-heading">
+      <div class="container">
+        <div class="section-header">
+          <h2 id="about-heading" class="section-title">開発者より</h2>
+        </div>
+
+        <div class="about-layout">
+
+          <!-- 開発者メッセージカード -->
+          <div class="dev-card">
+            <div class="dev-card__header">
+              <div class="dev-avatar" aria-hidden="true">Gram</div>
+              <div class="dev-card__profile">
+                <p class="dev-name">グラムおじさん</p>
+                <p class="dev-role">個人開発者（本業：会社員）</p>
+              </div>
+            </div>
+            <div class="dev-card__body">
+              <p>はじめまして。日中は会社員として働く傍ら、夜や週末にこっそりゲームを作っています。</p>
+              <p>小さいころ、ゲーム制作に携わるのが夢でした。AIの力を借りて個人でもゲームが作れるようになり、夢を思い出したのがこのプロジェクトの出発点です。</p>
+              <p>子供たちが<strong>ゲームを通して学べる</strong>きっかけを、一つでも作れたら嬉しいです。保護者の方にも、安心してお子さんに渡せるサイトを目指しています。</p>
+            </div>
+            <div class="dev-card__footer">
+              <span class="dev-card__tag">🕹️ ゲームが好き</span>
+              <span class="dev-card__tag">📐 算数苦手</span>
+              <span class="dev-card__tag">☕ いい年のおっさん</span>
+            </div>
+          </div>
+
+          <!-- 付箋 ＋ 特長リスト -->
+          <div class="about-right">
+            <div class="sticky-note" aria-label="開発者の想い">
+              <p class="sticky-note__text">「アイディアを形に。世界を広げよう。」</p>
+              <p class="sticky-note__sign">— グラムおじさん</p>
+            </div>
+
+            <ul class="feature-list" role="list" aria-label="サイトの特長">
+              <li class="feature-item">
+                <span class="feature-icon feature-icon--orange" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </span>
+                <div>
+                  <strong>インストール不要・完全無料</strong>
+                  <p>ブラウザを開くだけ。課金も広告もありません。</p>
+                </div>
+              </li>
+              <li class="feature-item">
+                <span class="feature-icon feature-icon--green" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                </span>
+                <div>
+                  <strong>PC・スマホ・タブレット対応</strong>
+                  <p>どのデバイスでも快適に遊べ・・るはずです。</p>
+                </div>
+              </li>
+              <li class="feature-item">
+                <span class="feature-icon feature-icon--blue" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </span>
+                <div>
+                  <strong>保護者の方も安心</strong>
+                  <p>個人情報の取得なし。子供に安心して渡せます。</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- フッター -->
+  <footer class="site-footer">
+    <div class="container">
+      <p class="footer-copy">&copy; 2025 グラムおじさんの ゲーム工房</p>
+    </div>
+  </footer>
+
+</body>
+</html>
