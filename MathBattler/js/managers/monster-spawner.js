@@ -76,7 +76,7 @@ class MonsterSpawner {
         mImg.src = m.imageSrc;
         document.getElementById('battle-bg-img').src = this._getBattleBgSrc(m);
         [mImg, document.getElementById('monster-name'), document.getElementById('monster-hp-container')].forEach(el => {
-            el.classList.remove('fade-slow');
+            el.classList.remove('fade-slow', 'boss-defeat-anim', 'boss-defeat-anim-name');
             el.style.opacity = '1';
         });
         iImg.src = m.imageSrc;
@@ -235,7 +235,8 @@ class MonsterSpawner {
         const floorStr = String(this.game.currentFloor).padStart(3, '0');
         const rareList = (window.MONSTER_ASSETS && window.MONSTER_ASSETS.Rare) || [];
         const hasRareImage = rareList.some(f => f.toLowerCase().startsWith(`d${floorStr}_`));
-        if (!isLowHp && !this.game.dungeonRareAppeared && hasRareImage && Math.random() < 0.03) {
+        const dungeonRareRate = 0.03 + (this.game._monsterItemUsage.rainbowOrbUsed ? 0.05 : 0);
+        if (!isLowHp && !this.game.dungeonRareAppeared && hasRareImage && Math.random() < dungeonRareRate) {
             this.game.dungeonRareAppeared = true;
             this.game.monsters[idx] = new Monster(m.battleNumber, this.game.currentFloor, false, false, false, true);
             return;

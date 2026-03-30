@@ -264,8 +264,8 @@ class InputHandler {
         // メッセージログをクリア（新しいバトル開始時）
         this.ui.clearMessageLog();
 
-        // モンスター1体ごとのアイテム使用回数リセット
-        this.game._monsterItemUsage = { spikeOrb: 0, poisonOrb: false, paralyzeOrb: false, stoneOrb: false, attackOrb: 0, defenseOrb: 0 };
+        // モンスター1体ごとのアイテム使用回数リセット（rainbowOrbUsedはダンジョン全体で有効なので引き継ぐ）
+        this.game._monsterItemUsage = { spikeOrb: 0, poisonOrb: false, paralyzeOrb: false, stoneOrb: false, attackOrb: 0, defenseOrb: 0, rainbowOrbUsed: this.game._monsterItemUsage.rainbowOrbUsed };
         this.game.swordBonus = 0; // こうげきだま効果リセット
         this.game.defenseBonus = 0; // ぼうぎょだま効果リセット
 

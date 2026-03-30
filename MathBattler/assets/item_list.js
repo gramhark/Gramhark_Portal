@@ -40,6 +40,14 @@
         effectId: null,
     },
     {
+        id: "rainbowOrb",
+        name: "にじだま",
+        sellPrice: 1500,
+        desc: "レアモンスターが でやすくなる",
+        img: "rainbowOrb.webp",
+        effectId: null,
+    },
+    {
         id: "spikeOrb",
         name: "とげだま",
         sellPrice: 100,

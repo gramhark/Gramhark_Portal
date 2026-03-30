@@ -127,6 +127,7 @@ class BattleManager {
             case 'poisonOrb':   return !monsterItemUsage.poisonOrb;
             case 'paralyzeOrb': return !monsterItemUsage.paralyzeOrb;
             case 'stoneOrb':    return !monsterItemUsage.stoneOrb;
+            case 'rainbowOrb':  return !monsterItemUsage.rainbowOrbUsed;
             default: return false;
         }
     }

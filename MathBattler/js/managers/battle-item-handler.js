@@ -80,6 +80,7 @@ class BattleItemHandler {
         if (itemName === 'poisonOrb') this.game._monsterItemUsage.poisonOrb = true;
         if (itemName === 'paralyzeOrb') this.game._monsterItemUsage.paralyzeOrb = true;
         if (itemName === 'stoneOrb') this.game._monsterItemUsage.stoneOrb = true;
+        if (itemName === 'rainbowOrb') this.game._monsterItemUsage.rainbowOrbUsed = true;
 
         // 確認パネルと選択状態をリセット
         document.getElementById('battle-item-confirm').style.display = 'none';
@@ -151,6 +152,10 @@ class BattleItemHandler {
                 m.isStoned = true;
                 this.sound.playSe('stone');
                 message = `せきかだまを\nなげた！`;
+                break;
+            case 'rainbowOrb':
+                this.sound.playSe('atk_up');
+                message = 'レアモンスターが\nでやすくなった！';
                 break;
         }
 

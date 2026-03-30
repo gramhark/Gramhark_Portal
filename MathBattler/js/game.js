@@ -60,7 +60,7 @@ class Game {
         this._selectedSellItem = null;  // ショップ売却選択中アイテム
         this._selectedShopEquip = null; // ショップ装備購入選択中アイテム
         // バトル中アイテム使用回数（モンスター1体ごと）
-        this._monsterItemUsage = { spikeOrb: 0, poisonOrb: false, paralyzeOrb: false, stoneOrb: false, attackOrb: 0, defenseOrb: 0 };
+        this._monsterItemUsage = { spikeOrb: 0, poisonOrb: false, paralyzeOrb: false, stoneOrb: false, attackOrb: 0, defenseOrb: 0, rainbowOrbUsed: false };
         this._battleSelectedItem = null;
         this._isTransitioning = false;
 
@@ -145,7 +145,7 @@ class Game {
         this.dodgeStreak = 0;
         this.specialMoveReady = false;
         this.specialStandby = false;
-        this._monsterItemUsage = { spikeOrb: 0, poisonOrb: false, paralyzeOrb: false, stoneOrb: false, attackOrb: 0, defenseOrb: 0 };
+        this._monsterItemUsage = { spikeOrb: 0, poisonOrb: false, paralyzeOrb: false, stoneOrb: false, attackOrb: 0, defenseOrb: 0, rainbowOrbUsed: false };
         // 装備UI更新（新装備システム優先）
         const _equippedSword = Array.isArray(this.backpack.equipment)
             ? this.backpack.equipment.find(e => e.type === 'sword' && e.equipped) : null;
