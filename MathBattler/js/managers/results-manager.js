@@ -14,6 +14,7 @@ class ResultsManager {
         this.sound.stopBgm();
 
         if (this.sound.bgmGameover) {
+            this.sound.bgmGameover.currentTime = 0;
             this.sound.currentBgm = this.sound.bgmGameover;
             this.sound.fadeInBgm(this.sound.bgmGameover, 0.5, 500);
         }
@@ -33,6 +34,7 @@ class ResultsManager {
         this.sound.playSe('clear');
 
         if (this.sound.bgmClear) {
+            this.sound.bgmClear.currentTime = 0;
             this.sound.currentBgm = this.sound.bgmClear;
             this.sound.fadeInBgm(this.sound.bgmClear, 0.5, 500);
         }

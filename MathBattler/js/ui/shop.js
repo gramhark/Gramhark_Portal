@@ -66,7 +66,7 @@ class ShopManager {
 
         // saveBackpackはonSuccess内でgame.jsが行う
         this._storage.saveMalle(newMalle);
-        this._storage.saveItemCollected(item.id);
+        this._storage.saveItemCollected(item.name);
         this._sound.playSe('buy');
         this.updateShopMalleDisplay(newMalle);
         this.renderShopItems(newBackpack, newMalle);

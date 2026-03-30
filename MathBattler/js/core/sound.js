@@ -353,11 +353,6 @@ class SoundManager {
     }
 
     stopBgm() {
-        if (this.currentBgm) {
-            if (this.currentBgm._fadeInterval) clearInterval(this.currentBgm._fadeInterval);
-            this.currentBgm.pause();
-            this.currentBgm = null;
-        }
         const allBgms = [
             this.bgmTitle, this.bgmMenu, this.bgmDungeon,
             ...this.bgmBattle,
@@ -367,9 +362,12 @@ class SoundManager {
         allBgms.forEach(bgm => {
             if (!bgm) return;
             if (bgm._fadeInterval) clearInterval(bgm._fadeInterval);
-            bgm.pause();
-            bgm.currentTime = 0;
+            if (!bgm.paused) {
+                bgm.pause();
+                bgm.currentTime = 0;
+            }
         });
+        this.currentBgm = null;
         this.isPausedByVisibility = false;
     }
 
