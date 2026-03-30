@@ -9,6 +9,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <style>
+    .disclaimer { margin-bottom: 1rem; padding: 0.75rem 1rem; border: 1px solid #e5e7eb; border-radius: 6px; }
+    .disclaimer__title { font-size: 0.75rem !important; font-weight: 700; color: #a8a29e !important; text-align: center !important; margin-bottom: 0.5rem; }
+    .disclaimer__body { font-size: 0.75rem !important; color: #a8a29e !important; line-height: 1.9; text-align: center !important; }
+  </style>
 </head>
 <body>
 
@@ -55,148 +60,150 @@
       </div>
     </section>
 
-    <!-- ゲーム一覧 -->
-    <section class="games-section" id="games" aria-labelledby="games-heading">
-      <div class="container">
-        <div class="section-header">
-          <h2 id="games-heading" class="section-title">ゲーム一覧</h2>
-          <p class="section-subtitle">現在 <strong>1本</strong> 公開中</p>
+    <!-- メインレイアウト（ゲーム一覧 ＋ サイドバー） -->
+    <div class="container">
+      <div class="page-layout">
+
+        <!-- メインコンテンツ：ゲーム一覧 -->
+        <div class="page-main">
+          <section class="games-section" id="games" aria-labelledby="games-heading">
+            <div class="section-header">
+              <h2 id="games-heading" class="section-title">ゲーム一覧</h2>
+              <p class="section-subtitle">現在 <strong>1本</strong> 公開中</p>
+            </div>
+
+            <ul class="game-grid" role="list">
+
+              <!-- MathBattler カード -->
+              <li class="game-card">
+                <a href="./MathBattler/" class="game-card__link" aria-label="マスバトール をプレイする">
+                  <div class="game-card__thumbnail">
+                    <img
+                      src="./MathBattler/assets/image/UI/title.webp"
+                      alt="マスバトール ゲーム画面"
+                      loading="lazy"
+                      width="400"
+                      height="225"
+                    >
+                    <span class="game-card__badge">無料プレイ</span>
+                  </div>
+                  <div class="game-card__body">
+                    <div class="game-card__tags" aria-label="ジャンル">
+                      <span class="tag tag--math">算数・数学</span>
+                      <span class="tag tag--rpg">RPG</span>
+                    </div>
+                    <h3 class="game-card__title">マスバトール</h3>
+                    <p class="game-card__description">
+                      計算問題を解いてモンスターを倒す、算数RPG。ダンジョンを探索しながら、四則演算の力を鍛えよう。
+                    </p>
+                    <div class="game-card__meta">
+                      <span class="meta-item">
+                        <svg class="meta-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 1.5a5.5 5.5 0 1 1 0 11 5.5 5.5 0 0 1 0-11zm.75 2.5h-1.5v4.25l3.5 2.1.75-1.24-2.75-1.65V5z"/></svg>
+                        ブラウザ対応
+                      </span>
+                      <span class="meta-item">
+                        <svg class="meta-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M11 1H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zm-3 12a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/></svg>
+                        スマホ対応
+                      </span>
+                    </div>
+                    <span class="game-card__cta" aria-hidden="true">プレイする →</span>
+                  </div>
+                </a>
+                <div class="game-card__footer">
+                  <a href="./MathBattler/manual.html" class="game-card__manual-link" aria-label="マスバトール 遊び方ガイドを見る">
+                    <svg class="meta-icon" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h7A2.5 2.5 0 0 1 14 2.5v11a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 2 13.5V2.5zm2.5-1A1.5 1.5 0 0 0 3 3v10a1.5 1.5 0 0 0 1.5 1.5h7A1.5 1.5 0 0 0 13 13V3a1.5 1.5 0 0 0-1.5-1.5h-7zM5 5h6v1H5V5zm0 2.5h6v1H5v-1zM5 10h4v1H5v-1z"/></svg>
+                    遊び方ガイドを見る
+                  </a>
+                </div>
+              </li>
+
+              <!-- 今後追加予定カード -->
+              <li class="game-card game-card--coming-soon" aria-label="近日公開予定">
+                <div class="game-card__body">
+                  <div class="game-card__coming-icon" aria-hidden="true">
+                    <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+                      <circle cx="22" cy="22" r="20" stroke="#fed7aa" stroke-width="2.5" stroke-dasharray="5 3"/>
+                      <path d="M22 13v9l6 4" stroke="#fb923c" stroke-width="2.5" stroke-linecap="round"/>
+                    </svg>
+                  </div>
+                  <h3 class="game-card__title">次回作、制作中…</h3>
+                  <p class="game-card__description">アイデアはあります！時間が足りない・・。</p>
+                </div>
+              </li>
+
+            </ul>
+          </section>
         </div>
 
-        <ul class="game-grid" role="list">
+        <!-- サイドバー -->
+        <aside class="page-sidebar" id="about" aria-label="サイト情報">
 
-          <!-- MathBattler カード -->
-          <li class="game-card">
-            <a href="./MathBattler/" class="game-card__link" aria-label="マスバトール をプレイする">
-              <div class="game-card__thumbnail">
-                <img
-                  src="./MathBattler/assets/image/UI/title.webp"
-                  alt="マスバトール ゲーム画面"
-                  loading="lazy"
-                  width="400"
-                  height="225"
-                >
-                <span class="game-card__badge">無料プレイ</span>
-              </div>
-              <div class="game-card__body">
-                <div class="game-card__tags" aria-label="ジャンル">
-                  <span class="tag tag--math">算数・数学</span>
-                  <span class="tag tag--rpg">RPG</span>
-                </div>
-                <h3 class="game-card__title">マスバトール</h3>
-                <p class="game-card__description">
-                  計算問題を解いてモンスターを倒す、算数RPG。ダンジョンを探索しながら、四則演算の力を鍛えよう。
-                </p>
-                <div class="game-card__meta">
-                  <span class="meta-item">
-                    <svg class="meta-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 1.5a5.5 5.5 0 1 1 0 11 5.5 5.5 0 0 1 0-11zm.75 2.5h-1.5v4.25l3.5 2.1.75-1.24-2.75-1.65V5z"/></svg>
-                    ブラウザ対応
-                  </span>
-                  <span class="meta-item">
-                    <svg class="meta-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M11 1H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zm-3 12a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/></svg>
-                    スマホ対応
-                  </span>
-                </div>
-                <span class="game-card__cta" aria-hidden="true">プレイする →</span>
-              </div>
-            </a>
-            <div class="game-card__footer">
-              <a href="./MathBattler/manual.html" class="game-card__manual-link" aria-label="マスバトール 遊び方ガイドを見る">
-                <svg class="meta-icon" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h7A2.5 2.5 0 0 1 14 2.5v11a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 2 13.5V2.5zm2.5-1A1.5 1.5 0 0 0 3 3v10a1.5 1.5 0 0 0 1.5 1.5h7A1.5 1.5 0 0 0 13 13V3a1.5 1.5 0 0 0-1.5-1.5h-7zM5 5h6v1H5V5zm0 2.5h6v1H5v-1zM5 10h4v1H5v-1z"/></svg>
-                遊び方ガイドを見る
-              </a>
-            </div>
-          </li>
-
-          <!-- 今後追加予定カード -->
-          <li class="game-card game-card--coming-soon" aria-label="近日公開予定">
-            <div class="game-card__body">
-              <div class="game-card__coming-icon" aria-hidden="true">
-                <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
-                  <circle cx="22" cy="22" r="20" stroke="#fed7aa" stroke-width="2.5" stroke-dasharray="5 3"/>
-                  <path d="M22 13v9l6 4" stroke="#fb923c" stroke-width="2.5" stroke-linecap="round"/>
-                </svg>
-              </div>
-              <h3 class="game-card__title">次回作、制作中…</h3>
-              <p class="game-card__description">アイデアはあります！時間が足りない・・。</p>
-            </div>
-          </li>
-
-        </ul>
-      </div>
-    </section>
-
-    <!-- 開発者より -->
-    <section class="about-section" id="about" aria-labelledby="about-heading">
-      <div class="container">
-        <div class="section-header">
-          <h2 id="about-heading" class="section-title">開発者より</h2>
-        </div>
-
-        <div class="about-layout">
-
-          <!-- 開発者メッセージカード -->
-          <div class="dev-card">
-            <div class="dev-card__header">
-              <img src="./icon.webp" alt="グラムおじさん" class="dev-avatar">
-              <div class="dev-card__profile">
-                <p class="dev-name">グラムおじさん</p>
-                <p class="dev-role">個人開発者</p>
+          <!-- 開発者ウィジェット -->
+          <div class="sidebar-widget">
+            <p class="sidebar-widget__title">開発者より</p>
+            <div class="sidebar-dev__header">
+              <img src="./icon.webp" alt="グラムおじさん" class="sidebar-dev__avatar">
+              <div>
+                <p class="sidebar-dev__name">グラムおじさん</p>
+                <p class="sidebar-dev__role">個人開発者</p>
               </div>
             </div>
-            <div class="dev-card__body">
-              <p>はじめまして。日中は別の仕事をしていて、夜や週末にこっそりゲームを作っています。</p>
-              <p>小さいころ、ゲーム制作に携わるのが夢でした。AIの力を借りて個人でもゲームが作れるようになり、夢を思い出したのがこのプロジェクトの出発点です。</p>
-              <p>子供たちが<strong>ゲームを通して学べる</strong>きっかけを、一つでも作れたら嬉しいです。保護者の方にも、安心してお子さんに渡せるサイトを目指しています。</p>
-            </div>
-            <div class="dev-card__footer">
-              <span class="dev-card__tag">🕹️ ゲームが好き</span>
-              <span class="dev-card__tag">📐 算数苦手</span>
-              <span class="dev-card__tag">☕ いい年のおっさん</span>
-            </div>
+            <p class="sidebar-dev__bio">日中は別の仕事をしながら、夜や週末にゲームを作っています。ゲームで遊んで、頭を使うきっかけを一つでも作れたら嬉しいです。</p>
           </div>
 
-          <!-- 付箋 ＋ 特長リスト -->
-          <div class="about-right">
-            <div class="sticky-note" aria-label="開発者の想い">
-              <p class="sticky-note__text">「アイディアを形に。世界を広げよう。」</p>
-              <p class="sticky-note__sign">— グラムおじさん</p>
-            </div>
+          <!-- 最近の更新 -->
+          <div class="sidebar-widget">
+            <p class="sidebar-widget__title">最近の更新</p>
+            <ul class="update-list">
+              <li class="update-item">
+                <span class="update-item__date">2026-03-30</span>
+                <span class="update-item__badge update-item__badge--update">UPDATE</span><span class="update-item__text">バックアップ機能を追加</span>
+              </li>
+              <li class="update-item">
+                <span class="update-item__date">2026-03-30</span>
+                <span class="update-item__badge update-item__badge--new">NEW</span><span class="update-item__text">遊び方ガイドページを追加</span>
+              </li>
+              <li class="update-item">
+                <span class="update-item__date">2026-03-30</span>
+                <span class="update-item__badge update-item__badge--info">INFO</span><span class="update-item__text">タイトル画像を更新</span>
+              </li>
+              <li class="update-item">
+                <span class="update-item__date">2026-03-28</span>
+                <span class="update-item__badge update-item__badge--new">NEW</span><span class="update-item__text">ポータルサイト公開</span>
+              </li>
+            </ul>
+            <a href="./updates.html" class="sidebar-link">更新情報をすべて見る →</a>
+          </div>
 
-            <ul class="feature-list" role="list" aria-label="サイトの特長">
-              <li class="feature-item">
-                <span class="feature-icon feature-icon--orange" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <!-- このサイトについて -->
+          <div class="sidebar-widget">
+            <p class="sidebar-widget__title">このサイトについて</p>
+            <ul class="sidebar-features">
+              <li class="sidebar-feature-item">
+                <span class="sidebar-feature-icon sidebar-feature-icon--orange" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                 </span>
-                <div>
-                  <strong>インストール不要・完全無料</strong>
-                  <p>ブラウザを開くだけ。課金も広告もありません。</p>
-                </div>
+                <span><strong>完全無料・課金なし</strong>ブラウザを開くだけ。広告もありません。</span>
               </li>
-              <li class="feature-item">
-                <span class="feature-icon feature-icon--green" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+              <li class="sidebar-feature-item">
+                <span class="sidebar-feature-icon sidebar-feature-icon--green" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
                 </span>
-                <div>
-                  <strong>PC・スマホ・タブレット対応</strong>
-                  <p>どのデバイスでも快適に遊べ・・るはずです。</p>
-                </div>
+                <span><strong>マルチデバイス対応</strong>PC・スマホ・タブレットで遊べます。</span>
               </li>
-              <li class="feature-item">
-                <span class="feature-icon feature-icon--blue" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <li class="sidebar-feature-item">
+                <span class="sidebar-feature-icon sidebar-feature-icon--blue" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                 </span>
-                <div>
-                  <strong>保護者の方も安心</strong>
-                  <p>個人情報の取得なし。子供に安心して渡せます。</p>
-                </div>
+                <span><strong>個人情報の取得なし</strong>お子さんに安心して渡せます。</span>
               </li>
             </ul>
           </div>
 
-        </div>
+        </aside>
+
       </div>
-    </section>
+    </div>
   </main>
 
   <!-- フッター -->
