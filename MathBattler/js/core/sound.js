@@ -149,14 +149,14 @@ class SoundManager {
         this.seBossResurrection.src = 'assets/audio/SE/event/boss_resurrection.mp3';
         this.seMonsterRecover.src = 'assets/audio/SE/event/monster_recover.mp3';
         this.seLevelUp.src        = 'assets/audio/SE/event/level_up.mp3';
-        this.seClear.src          = 'assets/audio/SE/event/dungeon_clear.mp3';
+        this.seClear.src          = 'assets/audio/SE/event/dungeon_clearX.mp3';
         this.seGameover.src       = 'assets/audio/SE/event/gameover.mp3';
         this.seNote.src           = 'assets/audio/SE/event/note_reg.mp3';
 
         // SE sources — ui
         this.seNumpad.src      = 'assets/audio/SE/ui/numpadX.mp3';
         this.seSlideOpen.src   = 'assets/audio/SE/ui/screen_slide_open.mp3';
-        this.seSlideClose.src  = 'assets/audio/SE/ui/screen_slide_close.mp3';
+        this.seSlideClose.src  = 'assets/audio/SE/ui/screen_slide_closeX.mp3';
         this.seTitleTap.src    = 'assets/audio/SE/ui/title_tap.mp3';
         this.seBuy.src         = 'assets/audio/SE/ui/buy.mp3';
         this.seSell.src        = 'assets/audio/SE/ui/sell.mp3';
@@ -347,8 +347,24 @@ class SoundManager {
                 this.fadeInBgm(target, this._getBgmVol(), 1000);
             } else {
                 this.currentBgm.volume = this._getBgmVol();
-                this.currentBgm.play().catch(e => console.log('Audio play failed', e));
+                this.currentBgm.play().catch(e => {
+                    console.error('Audio play failed:', e.name, e.message);
+                    // オートプレイポリシーエラーの場合は、ユーザーインタラクション後に再試行する
+                    if (e.name === 'NotAllowedError' || e.name === 'NotSupportedError') {
+                        console.warn('Autoplay policy prevented playback. Audio will retry after user interaction.');
+                        this._pendingRetry = () => this._switchTo(target, fadeIn);
+                        document.addEventListener('click', this._handleRetryOnce, { once: true });
+                    }
+                });
             }
+        }
+    }
+
+    _handleRetryOnce = () => {
+        if (this._pendingRetry) {
+            console.log('Retrying audio playback after user interaction');
+            this._pendingRetry();
+            this._pendingRetry = null;
         }
     }
 
@@ -474,5 +490,29 @@ class SoundManager {
         } catch (e) {
             console.warn('unlockAll: AudioContext not available', e);
         }
+
+        // iOS では <audio> 要素もユーザー操作中に一度 play() しておかないと
+        // 後から play() を呼んでも拒否される。ミュートで即停止することでアンロックする。
+        const allBgms = [
+            this.bgmTitle, this.bgmMenu, this.bgmDungeon,
+            ...this.bgmBattle,
+            this.bgmBoss, this.bgmBossAngry,
+            this.bgmSrare, this.bgmRare, this.bgmHeal, this.bgmSpecial,
+            this.bgmShop, this.bgmClear, this.bgmGameover,
+        ];
+        allBgms.forEach(bgm => {
+            if (!bgm) return;
+            bgm.muted = true;
+            bgm.play().then(() => {
+                // currentBgm として再生中のBGMはpauseしない（shop/dungeonBGMが即停止されるバグ対策）
+                if (bgm !== this.currentBgm) {
+                    bgm.pause();
+                    bgm.currentTime = 0;
+                }
+                bgm.muted = false;
+            }).catch(() => {
+                bgm.muted = false;
+            });
+        });
     }
 }

@@ -42,6 +42,7 @@ class Game {
         this.specialStandby = false;   // 必殺技待機フラグ（剣タップで能動的に発動）
         this.timers = [];
         this.specialMonstersAppeared = []; // スペシャルモンスター出現済みリスト
+        this.specialAppeared = false; // 1ダンジョン1体制限用フラグ
         this.healAppeared = false;         // Healモンスター出現済みフラグ
         this.superRareAppeared = false;    // げきレア出現済みフラグ
         this.dungeonRareAppeared = false;  // ダンジョンレア出現済みフラグ
@@ -115,6 +116,7 @@ class Game {
         this.monsters = [];
         this.defeatTimes = [];
         this.specialMonstersAppeared = [];
+        this.specialAppeared = false;
         this.healAppeared = false;
         this.superRareAppeared = false;
         this.dungeonRareAppeared = false;
@@ -294,7 +296,7 @@ class Game {
     _onHealMonsterLeave(m) {
         this.state = GameState.TRANSITION;
         if (this.timerIntervalId) {
-            clearInterval(this.timerIntervalId);
+            cancelAnimationFrame(this.timerIntervalId);
             this.timerIntervalId = null;
         }
         this.inputBuffer = "";
@@ -357,7 +359,7 @@ class Game {
     _onSpecialMonsterLeave(m) {
         this.state = GameState.TRANSITION;
         if (this.timerIntervalId) {
-            clearInterval(this.timerIntervalId);
+            cancelAnimationFrame(this.timerIntervalId);
             this.timerIntervalId = null;
         }
         this.inputBuffer = "";
@@ -394,6 +396,10 @@ class Game {
             choiceText = 'こうげきを\nあげてもらう？';
         } else if (m.name === 'ミスターてっぱん') {
             choiceText = 'ぼうぎょを\nあげてもらう？';
+        } else if (m.name === 'ミスターきんか') {
+            choiceText = 'マールを\nあげてもらう？';
+        } else if (m.name === 'ミスターねんりん') {
+            choiceText = 'けいけんちを\nあげてもらう？';
         } else {
             choiceText = m.quote;
         }
@@ -443,7 +449,7 @@ class Game {
     }
 
     _onMonsterDefeated(m) {
-        clearInterval(this.timerIntervalId);
+        cancelAnimationFrame(this.timerIntervalId);
         this.state = GameState.TRANSITION; // Block input
 
         // Clear problem and input
@@ -908,6 +914,7 @@ class Game {
     _submitAnswer() { return this.input._submitAnswer(); }
     _clearProblemDisplay() { return this.input._clearProblemDisplay(); }
     _timerLoop() { return this.input._timerLoop(); }
+    _startTimerLoop() { return this.input._startTimerLoop(); }
     _onQuitBattleBtnClick() { return this.input._onQuitBattleBtnClick(); }
     _resumeFromQuitConfirm() { return this.input._resumeFromQuitConfirm(); }
 

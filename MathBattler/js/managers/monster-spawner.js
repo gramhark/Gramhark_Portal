@@ -93,7 +93,15 @@ class MonsterSpawner {
         if (m.battleNumber === Constants.BOSS_BATTLE_NUMBER) {
             this._showBossCutIn(m);
         } else {
+            const blackout = document.getElementById('interval-blackout');
+            const content = document.querySelector('#interval-overlay .overlay-content');
+            blackout.classList.remove('fade-out');
+            // コンテンツのFIアニメーションを毎回リセット
+            content.style.animation = 'none';
+            content.offsetHeight; // reflow
+            content.style.animation = '';
             document.getElementById('interval-overlay').classList.add('active');
+            setTimeout(() => blackout.classList.add('fade-out'), 300);
         }
     }
 
@@ -250,11 +258,12 @@ class MonsterSpawner {
         }
 
         // 第3優先：Special判定（一度出たらもう出ない）
-        if (!isLowHp) {
+        if (!isLowHp && !this.game.specialAppeared) {
             const availableSpecials = ['ミスターといし', 'ミスターてっぱん', 'ミスターきんか', 'ミスターねんりん'].filter(name => !this.game.specialMonstersAppeared.includes(name));
             if (availableSpecials.length > 0 && Math.random() < 0.04) {
                 const chosenSpecial = availableSpecials[Math.floor(Math.random() * availableSpecials.length)];
                 this.game.specialMonstersAppeared.push(chosenSpecial);
+                this.game.specialAppeared = true;
                 this.game.monsters[idx] = new Monster(m.battleNumber, this.game.currentFloor, false, chosenSpecial, false, false);
                 return;
             }

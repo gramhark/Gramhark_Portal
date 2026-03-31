@@ -105,8 +105,10 @@
         <!-- ダンジョン選択画面 -->
         <div id="dungeon-select-screen" class="screen">
             <div class="top-bg-container">
-                <img class="top-bg-img dungeon-bg" data-difficulty="1" src="assets/image/UI/BG_dungeon01.webp" alt="背景" style="display:none">
-                <img class="top-bg-img dungeon-bg" data-difficulty="2" src="assets/image/UI/BG_dungeon02.webp" alt="背景" style="display:none">
+                <img class="top-bg-img dungeon-bg" data-difficulty="1" src="assets/image/UI/BG_dungeon01.webp" alt="背景"
+                    style="display:none">
+                <img class="top-bg-img dungeon-bg" data-difficulty="2" src="assets/image/UI/BG_dungeon02.webp" alt="背景"
+                    style="display:none">
                 <img class="top-bg-img dungeon-bg" data-difficulty="3" src="assets/image/UI/BG_dungeon03.webp" alt="背景">
             </div>
             <button id="back-to-top-btn" class="quit-battle-btn" aria-label="トップにもどる">
@@ -213,7 +215,8 @@
                 <div class="setting-item">
                     <div class="setting-item-header">なまえ</div>
                     <div class="setting-name-area">
-                        <input type="text" id="player-name" placeholder="ゆうしゃ" maxlength="10" class="dungeon-name-input setting-name-input">
+                        <input type="text" id="player-name" placeholder="ゆうしゃ" maxlength="10"
+                            class="dungeon-name-input setting-name-input">
                     </div>
                 </div>
                 <div class="setting-item">
@@ -228,7 +231,8 @@
                         </div>
                         <div class="setting-row setting-row-indent">
                             <span class="setting-row-label">おんりょう</span>
-                            <input type="range" id="setting-bgm-volume" min="0" max="100" value="100" class="setting-volume-slider">
+                            <input type="range" id="setting-bgm-volume" min="0" max="100" value="100"
+                                class="setting-volume-slider">
                             <span id="setting-bgm-volume-value" class="setting-volume-value">100</span>
                         </div>
                         <div class="setting-row">
@@ -240,7 +244,8 @@
                         </div>
                         <div class="setting-row setting-row-indent">
                             <span class="setting-row-label">おんりょう</span>
-                            <input type="range" id="setting-se-volume" min="0" max="100" value="100" class="setting-volume-slider">
+                            <input type="range" id="setting-se-volume" min="0" max="100" value="100"
+                                class="setting-volume-slider">
                             <span id="setting-se-volume-value" class="setting-volume-value">100</span>
                         </div>
                     </div>
@@ -376,8 +381,8 @@
                     <div class="status-equip">
                         <div id="sword-aura-wrapper" class="sword-aura-wrapper">
                             <img id="aura-img" class="aura-img" src="" alt="" style="display:none;">
-                            <img id="sword-label" class="sword-label"
-                                src="assets/image/equipment/sword/sword01.webp" alt="はがねのけん" style="visibility:hidden;">
+                            <img id="sword-label" class="sword-label" src="assets/image/equipment/sword/sword01.webp"
+                                alt="はがねのけん" style="visibility:hidden;">
                         </div>
                         <img id="shield-label" class="sword-label" src="assets/image/equipment/shield/shield01.webp"
                             alt="はがねのたて" style="display:none;">
@@ -517,13 +522,13 @@
         <!-- Equipment Drop Popup (武具ドロップ選択) -->
         <div id="equip-drop-overlay" class="overlay equip-drop-overlay">
             <div class="overlay-content equip-drop-content">
-                <p class="equip-drop-label">ぶきを てにいれた！</p>
+                <p class="equip-drop-label">そうびを てにいれた！</p>
                 <img id="equip-drop-img" class="equip-drop-img" src="" alt="">
                 <p id="equip-drop-name" class="equip-drop-name"></p>
                 <p id="equip-drop-desc" class="equip-drop-desc"></p>
                 <div class="equip-drop-buttons">
                     <button id="equip-drop-equip-btn" class="primary-btn">そうびする</button>
-                    <button id="equip-drop-carry-btn" class="orange-btn">もちかえる</button>
+                    <button id="equip-drop-carry-btn" class="orange-btn">リュックにいれる</button>
                     <button id="equip-drop-discard-btn" class="secondary-btn">すてる</button>
                 </div>
             </div>
@@ -587,6 +592,7 @@
 
         <!-- モンスター出現画面 -->
         <div id="interval-overlay" class="overlay">
+            <div id="interval-blackout"></div>
             <div class="overlay-content">
                 <div id="special-quote" class="special-quote"></div>
                 <img id="interval-monster-img" class="interval-img" src="" alt="Monster">
@@ -632,8 +638,10 @@
                     <!-- Javascript will populate this -->
                 </ul>
             </div>
-            <button id="share-btn">がめんをほぞん</button>
-            <button id="restart-btn">もどる</button>
+            <div class="result-actions">
+                <button id="share-btn">がめんをほぞん</button>
+                <button id="restart-btn">もどる</button>
+            </div>
         </div>
 
         <!-- モンスターノート画面 -->
@@ -775,7 +783,7 @@
             <audio id="se-equip-tub" preload="auto"></audio>
             <audio id="se-note-grid" preload="auto"></audio>
             <div id="whiteout-overlay"></div>
-        <div id="fadeout-overlay"></div>
+            <div id="fadeout-overlay"></div>
         </div>
         <script src="assets/monster_list.js"></script>
         <script src="assets/equipment_list.js"></script>

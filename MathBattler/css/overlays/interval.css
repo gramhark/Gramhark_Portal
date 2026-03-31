@@ -5,8 +5,10 @@
     max-width: 600px;
     max-height: 600px;
     margin-bottom: 0px;
-    filter: drop-shadow(0 0 2px rgba(255, 255, 255, 1))drop-shadow(0 0 4px rgba(255, 255, 255, 0.8))drop-shadow(0 0 6px rgba(255, 255, 255, 0.6));
+    filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.9))
+            drop-shadow(0 0 6px rgba(255, 255, 255, 0.5));
     animation: bounce 2s infinite ease-in-out;
+    will-change: transform;
 }
 
 @keyframes bounce {

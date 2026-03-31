@@ -5,6 +5,7 @@ class ScreenManager {
         this.storage = game.storage;
         this.sound = game.sound;
         this.ui = game.ui;
+        this._dungeonGridCache = null; // { difficulty, clearedKey }
     }
 
     showTop() {
@@ -150,9 +151,18 @@ class ScreenManager {
     _renderDungeonGrid() {
         const grid = document.getElementById('dungeon-grid');
         if (!grid) return;
-        grid.innerHTML = '';
         const cleared = this.storage.loadClearedFloors(this.game.difficulty);
+        const clearedKey = JSON.stringify(cleared);
+
+        // 難易度・クリア状態が変わっていなければ再生成不要
+        if (this._dungeonGridCache
+            && this._dungeonGridCache.difficulty === this.game.difficulty
+            && this._dungeonGridCache.clearedKey === clearedKey) {
+            return;
+        }
+
         const bgSrc = `assets/image/UI/BTN_dungeon_0${this.game.difficulty}.webp`;
+        const frag = document.createDocumentFragment();
         for (let i = 1; i <= Constants.TOTAL_FLOORS; i++) {
             const btn = document.createElement('button');
             btn.className = 'dungeon-cell';
@@ -196,7 +206,11 @@ class ScreenManager {
                     document.getElementById('dungeon-start-confirm-overlay').classList.add('active');
                 });
             }
-            grid.appendChild(btn);
+            frag.appendChild(btn);
         }
+
+        grid.innerHTML = '';
+        grid.appendChild(frag);
+        this._dungeonGridCache = { difficulty: this.game.difficulty, clearedKey };
     }
 }

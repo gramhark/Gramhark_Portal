@@ -11,7 +11,7 @@ class BattleItemHandler {
     _openBattleBag() {
         if (this.game.state !== GameState.BATTLE || !this.game.isPlayerTurn) return;
         // タイマーを一時停止
-        clearInterval(this.game.timerIntervalId);
+        cancelAnimationFrame(this.game.timerIntervalId);
         this.game.timerIntervalId = null;
         this.game._pausedElapsed = Date.now() - this.game.timerStart;
         this.game.state = GameState.TRANSITION;
@@ -27,8 +27,7 @@ class BattleItemHandler {
         // タイマー再開
         this.game.timerStart = Date.now() - this.game._pausedElapsed;
         this.game.state = GameState.BATTLE;
-        this.game.timerIntervalId = setInterval(() => this.game._timerLoop(), 100);
-        this.game._timerLoop();
+        this.game._startTimerLoop();
     }
 
     /** 戦闘中リュックのアイテムグリッドを描画する */
@@ -195,7 +194,7 @@ class BattleItemHandler {
                 this.sound.playSe('stone_proc');
                 this.ui.showMessage(`${m.name}は\nいしになった！`, false, 2000, 'text-neutral');
                 setTimeout(() => {
-                    if (this.game.timerIntervalId) clearInterval(this.game.timerIntervalId);
+                    if (this.game.timerIntervalId) cancelAnimationFrame(this.game.timerIntervalId);
                     this.game._onMonsterDefeated(m);
                 }, 2000);
                 return;
@@ -213,7 +212,7 @@ class BattleItemHandler {
             this.sound.playSe('poison_tick');
             if (m.hp <= 0) {
                 setTimeout(() => {
-                    if (this.game.timerIntervalId) clearInterval(this.game.timerIntervalId);
+                    if (this.game.timerIntervalId) cancelAnimationFrame(this.game.timerIntervalId);
                     this.game._onMonsterDefeated(m);
                 }, 1500);
                 return;

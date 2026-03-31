@@ -495,8 +495,11 @@ const diaryInput = document.createElement('textarea');
         el.src = 'assets/image/equipment/sword/' + item.img;
         el.style.visibility = 'visible';
         el.classList.remove('equip-flash');
-        void el.offsetWidth;
-        el.classList.add('equip-flash');
+        el.style.animation = 'none';
+        requestAnimationFrame(() => {
+            el.style.animation = '';
+            el.classList.add('equip-flash');
+        });
         const w2 = document.getElementById('sword-aura-wrapper');
         if (w2) w2.classList.add('has-sword');
     }
@@ -509,7 +512,10 @@ const diaryInput = document.createElement('textarea');
         el.src = 'assets/image/equipment/shield/' + item.img;
         el.style.display = '';
         el.classList.remove('equip-flash');
-        void el.offsetWidth;
-        el.classList.add('equip-flash');
+        el.style.animation = 'none';
+        requestAnimationFrame(() => {
+            el.style.animation = '';
+            el.classList.add('equip-flash');
+        });
     }
 }

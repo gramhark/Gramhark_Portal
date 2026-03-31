@@ -46,7 +46,6 @@
 
 #app.portrait-mode .result-stats {
     background: linear-gradient(180deg, rgba(22, 30, 58, 0.92) 0%, rgba(12, 16, 38, 0.96) 100%);
-    backdrop-filter: blur(8px);
     border: 2px solid rgba(55, 80, 160, 0.45);
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.05);
     padding: 30px;
@@ -116,18 +115,24 @@
     font-family: var(--font-pixel);
 }
 
+#app.portrait-mode .result-actions {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 50px 0;
+}
+
 #app.portrait-mode #share-btn,
 #app.portrait-mode #restart-btn {
-    display: block;
-    width: 340px;
-    margin: 24px auto;
+    flex: 1;
+    max-width: 280px;
     padding: 22px 0;
     background: linear-gradient(145deg, #1d2748, #111830);
     border: 2px solid rgba(79, 172, 254, 0.5);
     border-radius: 14px;
     color: #e2e8f0;
     font-family: var(--font-pixel);
-    font-size: 32px;
+    font-size: 28px;
     cursor: pointer;
     transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
@@ -144,12 +149,4 @@
 #app.portrait-mode #share-btn:active,
 #app.portrait-mode #restart-btn:active {
     transform: scale(0.97);
-}
-
-#app.portrait-mode #share-btn {
-    margin-top: 50px;
-}
-
-#app.portrait-mode #restart-btn {
-    margin-bottom: 50px;
 }

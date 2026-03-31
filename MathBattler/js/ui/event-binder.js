@@ -46,6 +46,7 @@ class EventBinder {
             game.sound.playSe('btn');
             document.getElementById('quit-confirm-overlay').classList.remove('active');
             document.getElementById('interval-overlay').classList.remove('active');
+            document.getElementById('interval-blackout').classList.remove('fade-out');
             document.getElementById('boss-cutin-overlay').classList.remove('active');
             game.showMain();
         });

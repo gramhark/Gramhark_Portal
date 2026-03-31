@@ -165,10 +165,9 @@
     justify-content: center;
     z-index: 10;
     padding: 7px 22px;
-    background: rgba(4, 6, 18, 0.75);
+    background: rgba(4, 6, 18, 0.88);
     border-radius: 24px;
     border: 1px solid rgba(79, 172, 254, 0.22);
-    backdrop-filter: blur(6px);
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.55);
 }
 

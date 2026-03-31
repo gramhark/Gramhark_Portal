@@ -6,31 +6,26 @@
     0% {
         opacity: 0;
         transform: scale(0.3) rotate(-15deg);
-        filter: brightness(2.5);
     }
 
     12% {
         opacity: 1;
         transform: scale(1.75) rotate(6deg);
-        filter: brightness(1.6);
     }
 
     35% {
         opacity: 1;
         transform: scale(1.38) rotate(-2deg);
-        filter: brightness(1.1);
     }
 
     65% {
         opacity: 0.9;
         transform: scale(1.2) rotate(1deg);
-        filter: brightness(1);
     }
 
     100% {
         opacity: 0;
         transform: scale(1.0) rotate(0deg);
-        filter: brightness(1);
     }
 }
 
@@ -38,37 +33,31 @@
     0% {
         opacity: 0;
         transform: scale(0.4) rotate(-20deg);
-        filter: brightness(4);
     }
 
     10% {
         opacity: 1;
         transform: scale(2.7) rotate(8deg);
-        filter: brightness(2.5);
     }
 
     25% {
         opacity: 1;
         transform: scale(1.9) rotate(-5deg);
-        filter: brightness(1.8);
     }
 
     45% {
         opacity: 1;
         transform: scale(2.3) rotate(3deg);
-        filter: brightness(1.4);
     }
 
     70% {
         opacity: 0.85;
         transform: scale(1.85) rotate(0deg);
-        filter: brightness(1.1);
     }
 
     100% {
         opacity: 0;
         transform: scale(1.7) rotate(0deg);
-        filter: brightness(1);
     }
 }
 
@@ -76,31 +65,26 @@
     0% {
         opacity: 0;
         transform: scale(0.3) rotate(-65deg) scaleX(0.5);
-        filter: brightness(3);
     }
 
     10% {
         opacity: 1;
         transform: scale(1.95) rotate(-14deg) scaleX(1.2);
-        filter: brightness(1.8);
     }
 
     30% {
         opacity: 1;
         transform: scale(1.6) rotate(-3deg) scaleX(1.05);
-        filter: brightness(1.2);
     }
 
     62% {
         opacity: 0.9;
         transform: scale(1.3) rotate(5deg) scaleX(0.97);
-        filter: brightness(1);
     }
 
     100% {
         opacity: 0;
         transform: scale(0.9) rotate(13deg) scaleX(0.9);
-        filter: brightness(1);
     }
 }
 
@@ -108,70 +92,59 @@
     0% {
         opacity: 0;
         transform: translate(30px, -30px) scale(1.3);
-        filter: brightness(3);
     }
 
     15% {
         opacity: 1;
         transform: translate(15px, -15px) scale(1.9);
-        filter: brightness(1.8);
     }
 
     65% {
         opacity: 1;
         transform: translate(-15px, 15px) scale(1.3);
-        filter: brightness(1.1);
     }
 
     100% {
         opacity: 0;
         transform: translate(-30px, 30px) scale(0.95);
-        filter: brightness(1);
     }
 }
 
-/* 必殺技専用：大爆発・色変化 */
+/* 必殺技専用：大爆発 */
 @keyframes effectSpAttack {
     0% {
         opacity: 0;
         transform: scale(0.2) rotate(0deg);
-        filter: brightness(6) hue-rotate(0deg);
     }
 
     8% {
         opacity: 1;
         transform: scale(3.2) rotate(-10deg);
-        filter: brightness(3.5) hue-rotate(40deg);
     }
 
     20% {
         opacity: 1;
         transform: scale(2.1) rotate(5deg);
-        filter: brightness(2.5) hue-rotate(20deg);
     }
 
     36% {
         opacity: 1;
         transform: scale(2.7) rotate(-7deg);
-        filter: brightness(2) hue-rotate(0deg);
     }
 
     55% {
         opacity: 1;
         transform: scale(2.15) rotate(3deg);
-        filter: brightness(1.5);
     }
 
     75% {
         opacity: 0.8;
         transform: scale(2.0) rotate(0deg);
-        filter: brightness(1.2);
     }
 
     100% {
         opacity: 0;
         transform: scale(1.85) rotate(0deg);
-        filter: brightness(1);
     }
 }
 
@@ -573,17 +546,6 @@
     animation: monster-damage 0.5s;
 }
 
-@keyframes angry-img-pulse {
-
-    0%,
-    100% {
-        filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.9)) drop-shadow(0 0 6px rgba(255, 80, 0, 0.7)) drop-shadow(0 0 20px rgba(255, 0, 0, 0.4));
-    }
-
-    50% {
-        filter: drop-shadow(0 0 4px rgba(255, 255, 255, 1)) drop-shadow(0 0 12px rgba(255, 60, 0, 1)) drop-shadow(0 0 40px rgba(255, 0, 0, 0.8));
-    }
-}
 
 @keyframes auraFloat {
 
@@ -839,6 +801,7 @@
 
 .shake-img-wrapper {
     animation: shake-img-wrapper 0.3s ease-out;
+    will-change: transform;
 }
 
 @keyframes shake-img-wrapper-crit {
@@ -883,6 +846,7 @@
 
 .shake-img-wrapper-crit {
     animation: shake-img-wrapper-crit 0.45s ease-out;
+    will-change: transform;
 }
 
 @keyframes specialQuoteFadeIn {

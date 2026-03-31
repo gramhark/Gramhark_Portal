@@ -8,7 +8,7 @@ class ResultsManager {
     }
 
     _onGameOver() {
-        clearInterval(this.game.timerIntervalId);
+        cancelAnimationFrame(this.game.timerIntervalId);
         this.game.state = GameState.GAME_OVER;
         this.game.prevBossDefeated = false; // ゲームオーバーでフラグをリセット
         this.sound.stopBgm();

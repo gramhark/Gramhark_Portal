@@ -147,7 +147,6 @@
     width: 90px;
     height: 90px;
     object-fit: contain;
-    filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.8));
 }
 
 #app.portrait-mode .equip-card-info {
@@ -203,7 +202,6 @@
 
 #app.portrait-mode .equip-card.equipped {
     border-color: #ffd700;
-    box-shadow: 0 0 18px rgba(255, 215, 0, 0.4);
 }
 
 #app.portrait-mode .equip-card-badge {

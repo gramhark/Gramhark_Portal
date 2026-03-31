@@ -165,7 +165,7 @@ class InputHandler {
         const hasEvent = await this.game._checkBossEvents(m);
         if (!hasEvent && m.hp <= 0) {
             // イベントなし＋HP0 → 撃破
-            if (this.game.timerIntervalId) clearInterval(this.game.timerIntervalId);
+            if (this.game.timerIntervalId) cancelAnimationFrame(this.game.timerIntervalId);
             setTimeout(() => this.game._onMonsterDefeated(m), 1500);
         } else if (!hasEvent) {
             // いかりチェック（HP残あり・未いかり・Rare/Heal以外・HP30%未満）
@@ -259,6 +259,7 @@ class InputHandler {
 
     startBattle() {
         document.getElementById('interval-overlay').classList.remove('active', 'boss-entrance');
+        document.getElementById('interval-blackout').classList.remove('fade-out');
         this.game.state = GameState.TRANSITION; // Block during announcement
 
         // メッセージログをクリア（新しいバトル開始時）
@@ -341,21 +342,9 @@ class InputHandler {
         this.ui.updateProblemDisplay(this.game.problem.displayText, this.game.inputBuffer, this.game.isPlayerTurn, this.game.problem.fillInBlank);
         this.ui.updateProblemHint(this.game.problem.hintText || '');
 
-        if (this.game.isPlayerTurn) {
-            // Timer Reset
-            document.getElementById('timer-bar').style.visibility = 'visible';
-            this.game.timerStart = Date.now();
-            if (this.game.timerIntervalId) clearInterval(this.game.timerIntervalId);
-            this.game.timerIntervalId = setInterval(() => this._timerLoop(), 100);
-            this._timerLoop(); // immediate update
-        } else {
-            // Monster turn: タイマーを20秒で起動する
-            document.getElementById('timer-bar').style.visibility = 'visible';
-            this.game.timerStart = Date.now();
-            if (this.game.timerIntervalId) clearInterval(this.game.timerIntervalId);
-            this.game.timerIntervalId = setInterval(() => this._timerLoop(), 100);
-            this._timerLoop(); // immediate update
-        }
+        document.getElementById('timer-bar').style.visibility = 'visible';
+        this.game.timerStart = Date.now();
+        this._startTimerLoop();
     }
 
     _timerLoop() {
@@ -382,10 +371,26 @@ class InputHandler {
         if (!this.game.isPlayerTurn && remaining <= 0) {
             // タイマーを止めてから処理（二重発火防止）
             if (this.game.timerIntervalId) {
-                clearInterval(this.game.timerIntervalId);
+                cancelAnimationFrame(this.game.timerIntervalId);
                 this.game.timerIntervalId = null;
             }
             this._onTimerExpiredMonsterTurn();
+        }
+    }
+
+    // ⑧ rAFベースのタイマーループ開始
+    _startTimerLoop() {
+        if (this.game.timerIntervalId) cancelAnimationFrame(this.game.timerIntervalId);
+        this._timerLoop();
+        const tick = () => {
+            if (this.game.state !== GameState.BATTLE || this.game.timerIntervalId === null) return;
+            this._timerLoop();
+            if (this.game.state === GameState.BATTLE && this.game.timerIntervalId !== null) {
+                this.game.timerIntervalId = requestAnimationFrame(tick);
+            }
+        };
+        if (this.game.state === GameState.BATTLE) {
+            this.game.timerIntervalId = requestAnimationFrame(tick);
         }
     }
 
@@ -450,7 +455,7 @@ class InputHandler {
 
         // タイマーを停止
         if (this.game.timerIntervalId) {
-            clearInterval(this.game.timerIntervalId);
+            cancelAnimationFrame(this.game.timerIntervalId);
             this.game.timerIntervalId = null;
         }
         // 一時停止前の状態と経過時間を保存
@@ -468,8 +473,7 @@ class InputHandler {
         this.game.state = this.game._pausedState || GameState.BATTLE;
         if (this.game.state === GameState.BATTLE) {
             this.game.timerStart = Date.now() - (this.game._pausedElapsed || 0);
-            this.game.timerIntervalId = setInterval(() => this._timerLoop(), 100);
-            this._timerLoop();
+            this._startTimerLoop();
         }
 
         this.game._pausedState = null;

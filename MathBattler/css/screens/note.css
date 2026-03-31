@@ -97,19 +97,16 @@
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
-    filter: drop-shadow(0 0 2px rgba(255, 255, 255, 1)) drop-shadow(0 0 4px rgba(255, 255, 255, 0.8));
 }
 
 /* シルエット処理 */
 .silhouette {
-    filter: brightness(0) drop-shadow(0 0 2px rgba(255, 255, 255, 0.3));
+    filter: brightness(0);
     opacity: 0.7;
 }
 
-/* アイテムノート：登録済み（黄色グロウ） */
-.item-note-glow {
-    filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.7)) drop-shadow(0 0 6px rgba(255, 215, 0, 0.4));
-}
+/* アイテムノート：登録済み */
+.item-note-glow {}
 
 .note-floor-label {
     font-size: 11px;
