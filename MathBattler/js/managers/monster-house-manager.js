@@ -10,11 +10,29 @@ class MonsterHouseManager {
         this._medalSortKey = 'name'; // 'name' | 'effect'
         this._selectedMonsterName = null; // 詳細パネルで選択中のモンスター名
         this._farewell = false; // おわかれタブかどうか
+        this._farewellSortKey = 'capturedAt'; // 'capturedAt' | 'name'
+    }
+
+    /** コンテンツエリア要素取得 */
+    _getContentArea() {
+        return document.querySelector('#monster-house-screen .mh-content-area');
+    }
+
+    /** コンテンツエリア表示 */
+    _showContentArea() {
+        const el = this._getContentArea();
+        if (el) el.classList.remove('mh-hidden');
+    }
+
+    /** コンテンツエリア非表示 */
+    _hideContentArea() {
+        const el = this._getContentArea();
+        if (el) el.classList.add('mh-hidden');
     }
 
     /** モンスターハウス入室時 */
     onEnter() {
-        this._currentTab = 'monster';
+        this._currentTab = null;
         this._selectedMonsterName = null;
         this._farewell = false;
         this._renderClerkQuote('enter');
@@ -34,7 +52,7 @@ class MonsterHouseManager {
             this._showOverflowFlow();
             return;
         }
-        this._renderTab('monster');
+        this._hideContentArea();
         this._updateTabButtons();
     }
 
@@ -48,9 +66,9 @@ class MonsterHouseManager {
         const notifications = [];
 
         const tiers = [
-            { tier: 30,  threshold: 0,  name: 'ゆうじょうのみ★30★' },
-            { tier: 60,  threshold: 10, name: 'ゆうじょうのみ★60★' },
-            { tier: 90,  threshold: 20, name: 'ゆうじょうのみ★90★' },
+            { tier: 30, threshold: 0, name: 'ゆうじょうのみ★30★' },
+            { tier: 60, threshold: 10, name: 'ゆうじょうのみ★60★' },
+            { tier: 90, threshold: 20, name: 'ゆうじょうのみ★90★' },
             { tier: 100, threshold: 30, name: 'ゆうじょうのみ★100★' },
         ];
         for (const { tier, threshold, name } of tiers) {
@@ -84,6 +102,16 @@ class MonsterHouseManager {
         show(0);
     }
 
+    /** リアクションメッセージ表示（shop-msg-overlay と同じ仕組み） */
+    showMhMsg(msg) {
+        const ov = document.getElementById('mh-msg-overlay');
+        if (!ov) return;
+        document.getElementById('mh-msg-text').textContent = msg;
+        ov.classList.add('active');
+        if (this._mhMsgTimeout) clearTimeout(this._mhMsgTimeout);
+        this._mhMsgTimeout = setTimeout(() => ov.classList.remove('active'), 1000);
+    }
+
     /** 退室可否チェック */
     canLeave() {
         const activeCompanionName = this.storage.loadActiveCompanion();
@@ -91,10 +119,7 @@ class MonsterHouseManager {
         const companionMedals = this.storage.loadCompanionMedals();
         if (companionMedals[activeCompanionName]) return true;
         // メダル未装備の場合
-        const quoteEl = document.getElementById('mh-clerk-quote');
-        if (quoteEl) {
-            quoteEl.innerHTML = 'モンスターに\nメダルがついていないよ！'.replace(/\n/g, '<br>');
-        }
+        this.showMhMsg('モンスターに\nメダルがついていないよ！');
         return false;
     }
 
@@ -135,6 +160,7 @@ class MonsterHouseManager {
         this._currentTab = 'farewell';
         this._farewell = true;
         this._updateTabButtons();
+        this._showContentArea();
         this._renderFarewellGrid(true); // immediate=true: 確認なし即削除
     }
 
@@ -156,6 +182,8 @@ class MonsterHouseManager {
     }
 
     _renderTab(tab) {
+        this._showContentArea();
+
         const monsterPanel = document.getElementById('mh-panel-monster');
         const medalPanel = document.getElementById('mh-panel-medal');
         const farewellPanel = document.getElementById('mh-panel-farewell');
@@ -211,7 +239,7 @@ class MonsterHouseManager {
         if (list.length === 0) {
             const msg = document.createElement('p');
             msg.className = 'mh-empty-msg';
-            msg.textContent = 'なかまがいないよ。\nゆうじょうのみ★30★をつかってつかまえてね！';
+            msg.textContent = 'なかまがいないよ\nゆうじょうのみを つかって つかまえてね！';
             grid.appendChild(msg);
             return;
         }
@@ -260,12 +288,16 @@ class MonsterHouseManager {
         const medalId = companionMedals[name];
         const medal = medalId && window.MEDAL_LIST ? window.MEDAL_LIST.find(m => m.id === medalId) : null;
 
+        const isActivePartner = name === activeCompanionName;
         detailPanel.innerHTML = `
-            <img src="${companion.imageSrc || ''}" class="mh-monster-detail-img" alt="${companion.name}" onerror="this.src='assets/image/ui/placeholder.webp'">
+            <div class="mh-detail-img-wrapper">
+                <img src="${companion.imageSrc || ''}" class="mh-monster-detail-img" alt="${companion.name}" onerror="this.src='assets/image/ui/placeholder.webp'">
+                ${isActivePartner ? '<div class="mh-detail-partner-badge">パートナー</div>' : ''}
+            </div>
             <div class="mh-monster-detail-name">${companion.name}</div>
             ${medal ? `<div class="mh-detail-medal-label"><img src="assets/image/item/medal/${medal.img}" class="mh-detail-medal-icon" alt="${medal.name}">${medal.name}</div>` : '<div class="mh-detail-medal-label mh-no-medal">メダルなし</div>'}
             <div class="mh-detail-buttons">
-                <button class="primary-btn mh-detail-btn" id="mh-detail-partner-btn">${name === activeCompanionName ? 'つれていかない' : 'つれていく'}</button>
+                <button class="primary-btn mh-detail-btn" id="mh-detail-partner-btn">${isActivePartner ? 'つれていかない' : 'つれていく'}</button>
                 <button class="green-btn mh-detail-btn" id="mh-detail-medal-btn">メダルをつける</button>
                 <button class="orange-btn mh-detail-btn" id="mh-detail-back-btn">やめる</button>
             </div>
@@ -340,7 +372,7 @@ class MonsterHouseManager {
             if (ownedMedals.length === 0) {
                 const msg = document.createElement('p');
                 msg.className = 'mh-empty-msg';
-                msg.textContent = 'メダルがないよ！\nボスをたおしてメダルをてにいれよう！';
+                msg.textContent = 'ボスをたおしてメダルをてにいれよう！';
                 cardGrid.appendChild(msg);
             }
 
@@ -407,7 +439,7 @@ class MonsterHouseManager {
         if (ownedMedals.length === 0) {
             const msg = document.createElement('p');
             msg.className = 'mh-empty-msg';
-            msg.textContent = 'メダルがないよ！\nダンジョンのボスをたおしてメダルをてにいれよう！';
+            msg.textContent = 'メダルがないよ\nダンジョンのボスを たおして\nメダルをてにいれよう！';
             container.appendChild(msg);
             return;
         }
@@ -468,13 +500,35 @@ class MonsterHouseManager {
 
         const companions = this.storage.loadCompanions();
         const activeCompanionName = this.storage.loadActiveCompanion();
+        const companionMedals = this.storage.loadCompanionMedals();
         const list = Object.values(companions);
-        list.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ja'));
+
+        // ソート
+        if (this._farewellSortKey === 'name') {
+            list.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ja'));
+        } else {
+            list.sort((a, b) => (b.capturedAt || 0) - (a.capturedAt || 0));
+        }
+
+        // ソートバー
+        const sortBar = document.createElement('div');
+        sortBar.className = 'mh-sort-bar';
+        [['capturedAt', 'とらえたじゅん'], ['name', 'なまえじゅん']].forEach(([key, label]) => {
+            const btn = document.createElement('button');
+            btn.className = 'mh-sort-btn' + (this._farewellSortKey === key ? ' active' : '');
+            btn.textContent = label + (this._farewellSortKey === key ? '▼' : '');
+            btn.addEventListener('click', () => {
+                this._farewellSortKey = key;
+                this._renderFarewellGrid(immediate);
+            });
+            sortBar.appendChild(btn);
+        });
+        grid.appendChild(sortBar);
 
         if (list.length === 0) {
             const msg = document.createElement('p');
             msg.className = 'mh-empty-msg';
-            msg.textContent = 'なかまがいないよ。';
+            msg.textContent = 'なかまがいないよ';
             grid.appendChild(msg);
             return;
         }
@@ -484,9 +538,16 @@ class MonsterHouseManager {
         list.forEach(companion => {
             const card = document.createElement('div');
             card.className = 'mh-monster-card mh-farewell-card';
+            const isActive = companion.name === activeCompanionName;
+            if (isActive) card.classList.add('active-partner');
+            const medalId = companionMedals[companion.name];
+            const medal = medalId && window.MEDAL_LIST ? window.MEDAL_LIST.find(m => m.id === medalId) : null;
+
             card.innerHTML = `
                 <img src="${companion.imageSrc || ''}" class="mh-monster-card-img" alt="${companion.name}" onerror="this.src='assets/image/ui/placeholder.webp'">
                 <div class="mh-monster-card-name">${companion.name}</div>
+                ${medal ? `<div class="mh-medal-badge">${medal.name.replace(/（.*?）/, '')}</div>` : ''}
+                ${isActive ? '<div class="mh-partner-badge">パートナー</div>' : ''}
             `;
             card.addEventListener('click', () => {
                 this.sound.playSe('btn');

@@ -351,21 +351,15 @@
         <img src="assets/image/ui/BG_monsterhouse.webp" alt="背景" class="top-bg-img">
             </div>
             <div class="shop-header">
-                <button id="mh-back-btn" class="close-screen-btn">
+                <button id="mh-back-btn" class="quit-battle-btn">
                     <img src="assets/image/ui/ButtonBack.webp" alt="もどる">
                 </button>
-                <img src="assets/image/ui/main_monsterhouse.webp" class="screen-title-img" alt="モンスターハウス">
             </div>
+            <img src="assets/image/ui/main_monsterhouse.webp" class="screen-title-img" alt="モンスターハウス">
             <!-- セリフバブル -->
-            <div id="mh-clerk-quote" class="shop-clerk-quote mh-clerk-quote" style="display:block;"></div>
-            <!-- タブ -->
-            <div class="mh-tab-bar">
-                <button id="mh-tab-monster" class="mh-tab-btn active">モンスター</button>
-                <button id="mh-tab-medal" class="mh-tab-btn">メダル</button>
-                <button id="mh-tab-farewell" class="mh-tab-btn">おわかれ</button>
-            </div>
+            <div id="mh-clerk-quote" class="special-quote shop-clerk-quote mh-clerk-quote" style="display:block;"></div>
             <!-- コンテンツパネル -->
-            <div class="mh-content-area">
+            <div class="mh-content-area mh-hidden">
                 <!-- モンスタータブ -->
                 <div id="mh-panel-monster" class="mh-panel">
                     <div id="mh-monster-grid" class="mh-scroll-area"></div>
@@ -379,6 +373,14 @@
                 <!-- おわかれタブ -->
                 <div id="mh-panel-farewell" class="mh-panel" style="display:none;">
                     <div id="mh-farewell-grid" class="mh-scroll-area"></div>
+                </div>
+            </div>
+            <!-- タブ (下部) -->
+            <div class="shop-bottom mh-bottom">
+                <div class="shop-tabs">
+                    <button id="mh-tab-monster" class="shop-tab">モンスター</button>
+                    <button id="mh-tab-medal" class="shop-tab">メダル</button>
+                    <button id="mh-tab-farewell" class="shop-tab">おわかれ</button>
                 </div>
             </div>
         </div>
@@ -513,6 +515,13 @@
         <div id="shop-msg-overlay" class="overlay shop-msg-overlay">
             <div class="overlay-content">
                 <p id="shop-msg-text" class="shop-msg-text"></p>
+            </div>
+        </div>
+
+        <!-- Monster House メッセージオーバーレイ -->
+        <div id="mh-msg-overlay" class="overlay shop-msg-overlay">
+            <div class="overlay-content">
+                <p id="mh-msg-text" class="shop-msg-text"></p>
             </div>
         </div>
 
@@ -851,10 +860,10 @@
                 <div class="companion-cutin-msg"></div>
             </div>
             <!-- モンスターハウス お別れ確認ダイアログ -->
-            <div class="overlay" id="mh-farewell-confirm-overlay">
-                <div class="overlay-content quit-confirm-content">
-                    <p class="quit-confirm-msg" id="mh-farewell-confirm-msg">〇〇と おわかれする？</p>
-                    <div class="quit-confirm-buttons">
+            <div class="overlay shop-msg-overlay" id="mh-farewell-confirm-overlay">
+                <div class="overlay-content">
+                    <p class="shop-msg-text" id="mh-farewell-confirm-msg">〇〇と おわかれする？</p>
+                    <div class="shop-buy-buttons mh-farewell-confirm-buttons">
                         <button id="mh-farewell-yes-btn" class="primary-btn">はい</button>
                         <button id="mh-farewell-no-btn" class="orange-btn">いいえ</button>
                     </div>
