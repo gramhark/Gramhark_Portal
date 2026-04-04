@@ -129,7 +129,10 @@ class BattleManager {
             case 'paralyzeOrb': return !monsterItemUsage.paralyzeOrb;
             case 'stoneOrb':    return !monsterItemUsage.stoneOrb;
             case 'rainbowOrb':  return !monsterItemUsage.rainbowOrbUsed;
-            case 'friendshipBerry': return (monsterItemUsage.friendshipBerry || 0) < 5;
+            case 'friendshipBerry30':  return (monsterItemUsage.friendshipBerry30 || 0) < 5;
+            case 'friendshipBerry60':  return (monsterItemUsage.friendshipBerry60 || 0) < 5;
+            case 'friendshipBerry90':  return (monsterItemUsage.friendshipBerry90 || 0) < 5;
+            case 'friendshipBerry100': return (monsterItemUsage.friendshipBerry100 || 0) < 5;
             default: return false;
         }
     }

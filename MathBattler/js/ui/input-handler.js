@@ -162,18 +162,19 @@ class InputHandler {
             this.sound.playSe(isCrit ? 'punch_crit' : 'punch');
         }
 
-        // コンパニオンメダル状態異常チェック（プレイヤーターン・通常攻撃・1ダンジョン1回）
-        if (!isSpecial && m.hp > 0 && !this.game.companionMedalActivated) {
+        // コンパニオンメダル状態異常チェック（プレイヤーターン・通常攻撃）
+        if (!isSpecial && m.hp > 0) {
             const activeCompanionName = this.game.storage ? this.game.storage.loadActiveCompanion() : null;
             if (activeCompanionName) {
                 const companionMedals = this.game.storage.loadCompanionMedals();
                 const medalId = companionMedals[activeCompanionName];
                 const medal = medalId && window.MEDAL_LIST ? window.MEDAL_LIST.find(md => md.id === medalId) : null;
                 if (medal && ['poison', 'paralyze', 'stone'].includes(medal.type)) {
-                    const companions = this.game.storage.loadCompanions();
-                    const companion = companions[activeCompanionName];
-                    if (Math.random() < medal.value) {
-                        this.game.companionMedalActivated = true;
+                    const isBoss = m.battleNumber === Constants.BOSS_BATTLE_NUMBER;
+                    // せきかはボスに無効
+                    if (medal.type === 'stone' && isBoss) {
+                        // スキップ
+                    } else if (Math.random() < medal.value) {
                         if (medal.type === 'poison' && !m.isPoisoned) {
                             m.isPoisoned = true;
                             this.ui.applyMonsterStatusMask('poison');
@@ -183,9 +184,6 @@ class InputHandler {
                         } else if (medal.type === 'stone' && !m.isStoned) {
                             m.isStoned = true;
                         }
-                        // カットイン表示
-                        const effectLabel = medal.effectLabel || medal.desc;
-                        this._showCompanionCutin(companion, `${activeCompanionName}が\n${effectLabel.replace(' 付与確率', '')}をあたえた！`);
                     }
                 }
             }
@@ -296,7 +294,7 @@ class InputHandler {
         this.ui.clearMessageLog();
 
         // モンスター1体ごとのアイテム使用回数リセット（rainbowOrbUsedはダンジョン全体で有効なので引き継ぐ）
-        this.game._monsterItemUsage = { spikeOrb: 0, poisonOrb: false, paralyzeOrb: false, stoneOrb: false, attackOrb: 0, defenseOrb: 0, rainbowOrbUsed: this.game._monsterItemUsage.rainbowOrbUsed, friendshipBerry: 0 };
+        this.game._monsterItemUsage = { spikeOrb: 0, poisonOrb: false, paralyzeOrb: false, stoneOrb: false, attackOrb: 0, defenseOrb: 0, rainbowOrbUsed: this.game._monsterItemUsage.rainbowOrbUsed, friendshipBerry30: 0, friendshipBerry60: 0, friendshipBerry90: 0, friendshipBerry100: 0 };
         this.game.swordBonus = 0; // こうげきだま効果リセット
         this.game.defenseBonus = 0; // ぼうぎょだま効果リセット
 
@@ -510,16 +508,5 @@ class InputHandler {
         this.game._pausedElapsed = 0;
     }
 
-    _showCompanionCutin(companion, message) {
-        const overlay = document.getElementById('companion-cutin-overlay');
-        if (!overlay) return;
-        const img = overlay.querySelector('.companion-cutin-img');
-        const msg = overlay.querySelector('.companion-cutin-msg');
-        if (img && companion) img.src = companion.imageSrc || '';
-        if (msg) msg.innerHTML = message.replace(/\n/g, '<br>');
-        overlay.classList.add('active');
-        this.sound.playSe('companion_cutin');
-        setTimeout(() => overlay.classList.remove('active'), 1500);
-    }
 
 }

@@ -167,8 +167,7 @@ class EquipmentManager {
         const shield = equip.find(e => e.type === 'shield' && e.equipped);
         const base = (sword ? (sword.attack || sword.bonus || 0) : 0)
                    + (shield ? (shield.attack || 0) : 0);
-        const multiplied = this.game.swordMultiplied ? Math.floor(base * 1.5) : base;
-        return multiplied + (this.game.companionSwordBonus || 0);
+        return this.game.swordMultiplied ? Math.floor(base * 1.5) : base;
     }
 
     _hasEquippedShield() {

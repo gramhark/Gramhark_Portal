@@ -418,13 +418,13 @@
     opacity: 1;
 }
 
-/* ---- 解放通知バブル ---- */
-.mh-unlock-bubble {
+/* ---- 汎用通知バブル ---- */
+.game-notification-bubble {
     display: none;
     position: fixed;
     bottom: 120px;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(-50%) translateY(0);
     background: rgba(0, 60, 120, 0.95);
     border: 3px solid rgba(79, 172, 254, 0.8);
     border-radius: 20px;
@@ -436,14 +436,14 @@
     z-index: 300;
     line-height: 1.5;
     pointer-events: none;
-    animation: mh-bubble-in 0.3s ease;
 }
 
-.mh-unlock-bubble.active {
+.game-notification-bubble.active {
     display: block;
+    animation: game-bubble-in 0.3s ease forwards;
 }
 
-@keyframes mh-bubble-in {
+@keyframes game-bubble-in {
     from { opacity: 0; transform: translateX(-50%) translateY(20px); }
     to   { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
@@ -451,7 +451,7 @@
 /* ---- コンパニオンカットインオーバーレイ ---- */
 .companion-cutin-overlay {
     position: fixed;
-    right: -110%;
+    right: 10px;
     bottom: 30%;
     width: 400px;
     background: rgba(0, 20, 60, 0.92);
@@ -464,19 +464,20 @@
     align-items: center;
     gap: 16px;
     will-change: transform;
+    transform: translateX(calc(100% + 30px));
     transition: none;
     pointer-events: none;
 }
 
 .companion-cutin-overlay.active {
-    animation: companion-slide-in-out 1.6s ease forwards;
+    animation: companion-slide-in-out 2s forwards;
 }
 
 @keyframes companion-slide-in-out {
-    0%   { right: -110%; }
-    20%  { right: 10px; }
-    75%  { right: 10px; }
-    100% { right: -110%; }
+    0%   { transform: translateX(calc(100% + 30px)); animation-timing-function: ease-out; }
+    15%  { transform: translateX(0);                animation-timing-function: linear; }
+    80%  { transform: translateX(-200px);           animation-timing-function: ease-in; }
+    100% { transform: translateX(-160%); }
 }
 
 .companion-cutin-overlay .companion-cutin-img {

@@ -131,11 +131,13 @@ $EquipLines | Set-Content -Path $EquipListPath -Encoding UTF8
 Write-Host "Generated: $EquipListPath"
 
 # --- item_list.js ---
+# id = ファイル名のステム（拡張子なし）
+# 既存エントリの並び順を保持し、新ファイルは末尾に追加する
 $ItemDir = Join-Path $ImageDir "item"
 $ItemListPath = Join-Path $DataDir "item_list.js"
 
-# 既存ファイルから手動設定値を読み込んで保持する
-$existingItems = @{}
+# 既存ファイルから順序付きID一覧とメタデータを読み込む
+$existingItems = [ordered]@{}
 if (Test-Path $ItemListPath) {
     $existingItemContent = Get-Content -Path $ItemListPath -Raw -Encoding UTF8
     $itemBlockMatches = [regex]::Matches($existingItemContent, '\{[^{}]+\}')
@@ -153,21 +155,35 @@ if (Test-Path $ItemListPath) {
         if ($dm.Success) { $saved['desc'] = $dm.Groups[1].Value }
         $rum = [regex]::Match($block, "requiresUnlock:\s*'([^']*)'")
         if ($rum.Success) { $saved['requiresUnlock'] = $rum.Groups[1].Value }
+        $imgM = [regex]::Match($block, 'img:\s*"([^"]*)"')
+        if ($imgM.Success) { $saved['img'] = $imgM.Groups[1].Value }
         $existingItems[$iid] = $saved
     }
+}
+
+# フォルダから現在のファイル一覧を取得（id = ファイル名ステム）
+$folderIds = @{}
+if (Test-Path $ItemDir) {
+    Get-ChildItem -Path $ItemDir -File | Where-Object { $_.Extension -match "\.(webp|png|jpg|jpeg)$" } | ForEach-Object {
+        $fid = [System.IO.Path]::GetFileNameWithoutExtension($_.Name)
+        $folderIds[$fid] = $_.Name
+    }
+}
+
+# 出力順: 既存の順 → フォルダにあるが未登録のものを末尾に追加
+$outputOrder = [System.Collections.Generic.List[string]]::new()
+foreach ($iid in $existingItems.Keys) {
+    if ($folderIds.ContainsKey($iid)) { $outputOrder.Add($iid) }
+}
+foreach ($fid in ($folderIds.Keys | Sort-Object)) {
+    if (-not $existingItems.ContainsKey($fid)) { $outputOrder.Add($fid) }
 }
 
 $ItemLines = @()
 $ItemLines += "window.ITEM_LIST = ["
 
-if (Test-Path $ItemDir) {
-    $itemFiles = Get-ChildItem -Path $ItemDir -File | Where-Object { $_.Extension -match "\.(webp|png|jpg|jpeg)$" } | Sort-Object Name
-} else {
-    $itemFiles = @()
-}
-foreach ($file in $itemFiles) {
-    $fname = $file.Name
-    $id = [System.IO.Path]::GetFileNameWithoutExtension($fname)
+foreach ($id in $outputOrder) {
+    $fname = if ($existingItems.ContainsKey($id) -and $existingItems[$id].ContainsKey('img')) { $existingItems[$id]['img'] } else { $folderIds[$id] }
     $prev = if ($existingItems.ContainsKey($id)) { $existingItems[$id] } else { @{} }
     $name      = if ($prev.ContainsKey('name'))      { $prev['name'] }      else { $id }
     $sellPrice = if ($prev.ContainsKey('sellPrice')) { $prev['sellPrice'] } else { '0' }

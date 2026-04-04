@@ -48,10 +48,12 @@ class BattleItemHandler {
     /** アイテムが使用可能かチェックする */
     _canUseItem(itemName) {
         const m = this.game.monsters[this.game.currentMonsterIdx];
-        // ゆうじょうのみはBoss/Heal/Specialには使用不可
-        if (itemName === 'friendshipBerry') {
-            if (!m || m.isBoss || m.isHeal || m.isSpecial ||
-                m.battleNumber === Constants.BOSS_BATTLE_NUMBER) return false;
+        // ゆうじょうのみ系は対応階数以下の通常モンスターにのみ使用可
+        const _berryFloorLimit = { friendshipBerry30: 30, friendshipBerry60: 60, friendshipBerry90: 90, friendshipBerry100: 100 };
+        if (itemName in _berryFloorLimit) {
+            if (!m || m.isBoss || m.isHeal || m.isSpecial || m.isSuperRare || m.isDungeonRare ||
+                m.battleNumber === Constants.BOSS_BATTLE_NUMBER ||
+                this.game.currentFloor > _berryFloorLimit[itemName]) return false;
         }
         return this.game.battle.canUseItem(
             itemName, this.game.backpack.items, this.game.playerHp, this.game.playerMaxHp,
@@ -85,13 +87,8 @@ class BattleItemHandler {
         if (itemName === 'paralyzeOrb') this.game._monsterItemUsage.paralyzeOrb = true;
         if (itemName === 'stoneOrb') this.game._monsterItemUsage.stoneOrb = true;
         if (itemName === 'rainbowOrb') this.game._monsterItemUsage.rainbowOrbUsed = true;
-        if (itemName === 'friendshipBerry') {
-            this.game._monsterItemUsage.friendshipBerry = (this.game._monsterItemUsage.friendshipBerry || 0) + 1;
-            const _bm = this.game.monsters[this.game.currentMonsterIdx];
-            const _ratio = _bm ? _bm.hp / (_bm.maxHp || _bm.hp || 1) : 1.0;
-            this.game._monsterItemUsage.friendshipBerryHpRatio = Math.min(
-                this.game._monsterItemUsage.friendshipBerryHpRatio ?? 1.0, _ratio
-            );
+        if (['friendshipBerry30', 'friendshipBerry60', 'friendshipBerry90', 'friendshipBerry100'].includes(itemName)) {
+            this.game._monsterItemUsage[itemName] = (this.game._monsterItemUsage[itemName] || 0) + 1;
         }
 
         // 確認パネルと選択状態をリセット
@@ -169,9 +166,21 @@ class BattleItemHandler {
                 this.sound.playSe('atk_up');
                 message = 'レアモンスターが\nでやすくなった！';
                 break;
-            case 'friendshipBerry':
+            case 'friendshipBerry30':
                 this.sound.playSe('friendship_berry');
-                message = `${m.name}に\nゆうじょうのみをあげた！`;
+                message = `${m.name}に\nゆうじょうのみ★30★をあげた！`;
+                break;
+            case 'friendshipBerry60':
+                this.sound.playSe('friendship_berry');
+                message = `${m.name}に\nゆうじょうのみ★60★をあげた！`;
+                break;
+            case 'friendshipBerry90':
+                this.sound.playSe('friendship_berry');
+                message = `${m.name}に\nゆうじょうのみ★90★をあげた！`;
+                break;
+            case 'friendshipBerry100':
+                this.sound.playSe('friendship_berry');
+                message = `${m.name}に\nゆうじょうのみ★100★をあげた！`;
                 break;
         }
 

@@ -19,16 +19,69 @@ class MonsterHouseManager {
         this._farewell = false;
         this._renderClerkQuote('enter');
 
-        // 51匹超過チェック
+        const pendingNotifications = this._collectPendingBerryNotifications();
+        if (pendingNotifications.length > 0) {
+            this._showNotificationQueue(pendingNotifications, () => this._onEnterAfterNotifications());
+            return;
+        }
+        this._onEnterAfterNotifications();
+    }
+
+    /** 通知完了後の入室処理 */
+    _onEnterAfterNotifications() {
         const companions = this.storage.loadCompanions();
-        const count = Object.keys(companions).length;
-        if (count > 50) {
+        if (Object.keys(companions).length > 50) {
             this._showOverflowFlow();
             return;
         }
-
         this._renderTab('monster');
         this._updateTabButtons();
+    }
+
+    /**
+     * 未通知のゆうじょうのみ解放情報を収集する（フラグはまだ立てない）。
+     * @returns {{ tier: number, message: string }[]}
+     */
+    _collectPendingBerryNotifications() {
+        const companions = this.storage.loadCompanions();
+        const count = Object.keys(companions).length;
+        const notifications = [];
+
+        const tiers = [
+            { tier: 30,  threshold: 0,  name: 'ゆうじょうのみ★30★' },
+            { tier: 60,  threshold: 10, name: 'ゆうじょうのみ★60★' },
+            { tier: 90,  threshold: 20, name: 'ゆうじょうのみ★90★' },
+            { tier: 100, threshold: 30, name: 'ゆうじょうのみ★100★' },
+        ];
+        for (const { tier, threshold, name } of tiers) {
+            if (count >= threshold && !this.storage.isBerryNotified(tier)) {
+                notifications.push({ tier, message: `ショップに<br>${name}が<br>ついかされた！` });
+            }
+        }
+        return notifications;
+    }
+
+    /**
+     * 通知バブルをキューで順番に表示し、表示完了後にフラグを立てる。
+     * バブル要素が存在しない場合はフラグを立てずに終了する。
+     * @param {{ tier: number, message: string }[]} notifications
+     * @param {Function} onComplete
+     */
+    _showNotificationQueue(notifications, onComplete) {
+        const bubble = document.getElementById('game-notification-bubble');
+        if (!bubble) { onComplete(); return; }
+        const show = (i) => {
+            if (i >= notifications.length) { onComplete(); return; }
+            const { tier, message } = notifications[i];
+            bubble.innerHTML = message;
+            bubble.classList.add('active');
+            setTimeout(() => {
+                bubble.classList.remove('active');
+                this.storage.setBerryNotified(tier);
+                setTimeout(() => show(i + 1), 400);
+            }, 3000);
+        };
+        show(0);
     }
 
     /** 退室可否チェック */
@@ -61,7 +114,7 @@ class MonsterHouseManager {
             const count = Object.keys(companions).length;
             setTimeout(() => {
                 if (count === 0) {
-                    el.innerHTML = 'ショップのおじさんから<br>ゆうじょうのみをかって<br>モンスターをつかまえてね！';
+                    el.innerHTML = 'ショップのおじさんから<br>ゆうじょうのみ★30★をかって<br>モンスターをつかまえてね！';
                 } else {
                     const msgs = [
                         'おきにいりの モンスターに<br>ダンジョンで てにいれた<br>メダルをつけてあげてね！',
@@ -158,7 +211,7 @@ class MonsterHouseManager {
         if (list.length === 0) {
             const msg = document.createElement('p');
             msg.className = 'mh-empty-msg';
-            msg.textContent = 'なかまがいないよ。\nゆうじょうのみをつかってつかまえてね！';
+            msg.textContent = 'なかまがいないよ。\nゆうじょうのみ★30★をつかってつかまえてね！';
             grid.appendChild(msg);
             return;
         }

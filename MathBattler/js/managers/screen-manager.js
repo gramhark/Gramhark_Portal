@@ -37,11 +37,12 @@ class ScreenManager {
             mhRow.style.display = this.storage.isMonsterHouseUnlocked() ? '' : 'none';
         }
 
-        // 初回解放通知バブル
+        // モンスターハウス初回解放通知バブル
         if (this.storage.isMonsterHouseUnlocked() && !this.storage.isMonsterHouseNotified()) {
             this.storage.setMonsterHouseNotified();
-            const bubble = document.getElementById('mh-unlock-bubble');
+            const bubble = document.getElementById('game-notification-bubble');
             if (bubble) {
+                bubble.innerHTML = 'モンスターハウスが<br>ひらいたよ！';
                 bubble.classList.add('active');
                 setTimeout(() => bubble.classList.remove('active'), 3000);
             }

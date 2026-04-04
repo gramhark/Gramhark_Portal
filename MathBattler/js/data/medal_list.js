@@ -1,10 +1,5 @@
 /* MEDAL_LIST: メダル定義 */
 window.MEDAL_LIST = [
-    // --- 攻撃メダル ---
-    { id: 'attack_bronze',   type: 'attack',       rarity: 'bronze',   name: '攻撃メダル（銅）',     img: 'medal_attack_bronze.webp',        value: 10,   sellPrice: 100, desc: 'こうげきりょく +10', effectLabel: 'こうげきりょく +10' },
-    { id: 'attack_silver',   type: 'attack',       rarity: 'silver',   name: '攻撃メダル（銀）',     img: 'medal_attack_silver.webp',        value: 20,   sellPrice: 200, desc: 'こうげきりょく +20', effectLabel: 'こうげきりょく +20' },
-    { id: 'attack_gold',     type: 'attack',       rarity: 'gold',     name: '攻撃メダル（金）',     img: 'medal_attack_gold.webp',          value: 40,   sellPrice: 300, desc: 'こうげきりょく +40', effectLabel: 'こうげきりょく +40' },
-    { id: 'attack_diamond',  type: 'attack',       rarity: 'diamond',  name: '攻撃メダル（ダイヤ）', img: 'medal_attack_diamond.webp',       value: 70,   sellPrice: 500, desc: 'こうげきりょく +70', effectLabel: 'こうげきりょく +70' },
     // --- 防御メダル ---
     { id: 'defense_bronze',  type: 'defense',      rarity: 'bronze',   name: '防御メダル（銅）',     img: 'medal_defense_bronze.webp',       value: 10,   sellPrice: 100, desc: 'ぼうぎょりょく +10', effectLabel: 'ぼうぎょりょく +10' },
     { id: 'defense_silver',  type: 'defense',      rarity: 'silver',   name: '防御メダル（銀）',     img: 'medal_defense_silver.webp',       value: 20,   sellPrice: 200, desc: 'ぼうぎょりょく +20', effectLabel: 'ぼうぎょりょく +20' },

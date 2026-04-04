@@ -22,6 +22,10 @@ class ShopManager {
         window.ITEM_LIST.forEach((item, idx) => {
             // requiresUnlock チェック
             if (item.requiresUnlock === 'monster_house' && !this._storage.isMonsterHouseUnlocked()) return;
+            if (item.requiresUnlock === 'berry30'  && !this._storage.isBerryNotified(30))  return;
+            if (item.requiresUnlock === 'berry60'  && !this._storage.isBerryNotified(60))  return;
+            if (item.requiresUnlock === 'berry90'  && !this._storage.isBerryNotified(90))  return;
+            if (item.requiresUnlock === 'berry100' && !this._storage.isBerryNotified(100)) return;
             const buyPrice = this._getItemBuyPrice(item);
             const btn = document.createElement('button');
             btn.className = 'shop-item-btn';
