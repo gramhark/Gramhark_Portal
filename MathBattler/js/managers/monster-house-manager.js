@@ -224,11 +224,12 @@ class MonsterHouseManager {
         // ソートバー
         const sortBar = document.createElement('div');
         sortBar.className = 'mh-sort-bar';
-        [['capturedAt', 'とらえたじゅん'], ['name', 'なまえじゅん']].forEach(([key, label]) => {
+        [['capturedAt', 'なかまじゅん'], ['name', 'なまえじゅん']].forEach(([key, label]) => {
             const btn = document.createElement('button');
             btn.className = 'mh-sort-btn' + (this._monsterSortKey === key ? ' active' : '');
             btn.textContent = label + (this._monsterSortKey === key ? '▼' : '');
             btn.addEventListener('click', () => {
+                this.sound.playSe('equip_sort');
                 this._monsterSortKey = key;
                 this._renderMonsterGrid();
             });
@@ -289,16 +290,18 @@ class MonsterHouseManager {
         const medal = medalId && window.MEDAL_LIST ? window.MEDAL_LIST.find(m => m.id === medalId) : null;
 
         const isActivePartner = name === activeCompanionName;
+        detailPanel.classList.toggle('mh-detail-panel--partner', isActivePartner);
         detailPanel.innerHTML = `
+            ${isActivePartner ? '<div class="mh-detail-partner-badge">パートナー</div>' : ''}
             <div class="mh-detail-img-wrapper">
                 <img src="${companion.imageSrc || ''}" class="mh-monster-detail-img" alt="${companion.name}" onerror="this.removeAttribute('src')">
-                ${isActivePartner ? '<div class="mh-detail-partner-badge">パートナー</div>' : ''}
             </div>
             <div class="mh-monster-detail-name">${companion.name}</div>
             ${medal ? `<div class="mh-detail-medal-label"><img src="assets/image/item/medal/${medal.img}" class="mh-detail-medal-icon" alt="${medal.name}">${medal.name}</div>` : '<div class="mh-detail-medal-label mh-no-medal">メダルなし</div>'}
             <div class="mh-detail-buttons">
                 <button class="primary-btn mh-detail-btn" id="mh-detail-partner-btn">${isActivePartner ? 'つれていかない' : 'つれていく'}</button>
                 <button class="green-btn mh-detail-btn" id="mh-detail-medal-btn">メダルをつける</button>
+                <button class="orange-btn mh-detail-btn" id="mh-detail-medal-remove-btn"${!medal ? ' disabled' : ''}>メダルをはずす</button>
                 <button class="orange-btn mh-detail-btn" id="mh-detail-back-btn">やめる</button>
             </div>
         `;
@@ -310,14 +313,23 @@ class MonsterHouseManager {
             } else {
                 this.storage.saveActiveCompanion(name);
             }
-            this._renderMonsterGrid();
+            this._showMonsterDetail(name);
         });
         document.getElementById('mh-detail-medal-btn').addEventListener('click', () => {
             this.sound.playSe('btn');
             this._showMedalSubPanel(name);
         });
+        document.getElementById('mh-detail-medal-remove-btn').addEventListener('click', () => {
+            if (!medal) return;
+            this.sound.playSe('equip_remove');
+            const updated = this.storage.loadCompanionMedals();
+            delete updated[name];
+            this.storage.saveCompanionMedals(updated);
+            this._showMonsterDetail(name);
+        });
         document.getElementById('mh-detail-back-btn').addEventListener('click', () => {
             this.sound.playSe('back');
+            detailPanel.classList.remove('mh-detail-panel--partner');
             detailPanel.style.display = 'none';
             grid.style.display = '';
             this._renderMonsterGrid();
@@ -351,7 +363,7 @@ class MonsterHouseManager {
                 const btn = document.createElement('button');
                 btn.className = 'mh-sort-btn' + (sortKey === key ? ' active' : '');
                 btn.textContent = label;
-                btn.addEventListener('click', () => { sortKey = key; this._medalSortKey = key; renderSub(); });
+                btn.addEventListener('click', () => { this.sound.playSe('equip_sort'); sortKey = key; this._medalSortKey = key; renderSub(); });
                 sortBar.appendChild(btn);
             });
             medalSubPanel.appendChild(sortBar);
@@ -389,6 +401,7 @@ class MonsterHouseManager {
                     ${isEquipped ? '<div class="mh-medal-equipped-badge">そうびちゅう</div>' : ''}
                 `;
                 card.addEventListener('click', () => {
+                    if (isEquipped) return;
                     this.sound.playSe('equip_set');
                     const updated = this.storage.loadCompanionMedals();
                     if (updated[monsterName] === medal.id) {
@@ -409,7 +422,7 @@ class MonsterHouseManager {
             medalSubPanel.appendChild(cardGrid);
 
             const backBtn = document.createElement('button');
-            backBtn.className = 'orange-btn mh-back-btn';
+            backBtn.className = 'orange-btn mh-detail-btn';
             backBtn.textContent = 'もどる';
             backBtn.addEventListener('click', () => {
                 this.sound.playSe('back');
@@ -419,7 +432,10 @@ class MonsterHouseManager {
                     this._showMonsterDetail(monsterName);
                 }
             });
-            medalSubPanel.appendChild(backBtn);
+            const backBtnWrapper = document.createElement('div');
+            backBtnWrapper.className = 'mh-detail-buttons';
+            backBtnWrapper.appendChild(backBtn);
+            medalSubPanel.appendChild(backBtnWrapper);
         };
 
         renderSub();
@@ -444,25 +460,56 @@ class MonsterHouseManager {
             return;
         }
 
-        const grid = document.createElement('div');
-        grid.className = 'mh-medal-card-grid';
-        ownedMedals.forEach(medal => {
-            const count = medals[medal.id] || 0;
-            const rarityClass = `rarity-${medal.rarity}`;
-            const card = document.createElement('div');
-            card.className = 'mh-medal-card';
-            card.innerHTML = `
-                <img src="assets/image/item/medal/${medal.img}" class="mh-medal-card-img ${rarityClass}" alt="${medal.name}" onerror="this.style.display='none'">
-                <div class="mh-medal-card-name">${medal.name}</div>
-                <div class="mh-medal-card-count">×${count}</div>
-            `;
-            card.addEventListener('click', () => {
-                this.sound.playSe('note_details');
-                this._showMedalDetail(medal);
+        let sortKey = this._medalTabSortKey || 'name';
+
+        const render = () => {
+            container.innerHTML = '';
+
+            const sortBar = document.createElement('div');
+            sortBar.className = 'mh-sort-bar';
+            [['name', 'なまえじゅん'], ['effect', 'こうかじゅん']].forEach(([key, label]) => {
+                const btn = document.createElement('button');
+                btn.className = 'mh-sort-btn' + (sortKey === key ? ' active' : '');
+                btn.textContent = label;
+                btn.addEventListener('click', () => {
+                    this.sound.playSe('equip_sort');
+                    sortKey = key;
+                    this._medalTabSortKey = key;
+                    render();
+                });
+                sortBar.appendChild(btn);
             });
-            grid.appendChild(card);
-        });
-        container.appendChild(grid);
+            container.appendChild(sortBar);
+
+            const sorted = [...ownedMedals];
+            if (sortKey === 'name') {
+                sorted.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ja'));
+            } else {
+                sorted.sort((a, b) => (b.value || 0) - (a.value || 0));
+            }
+
+            const grid = document.createElement('div');
+            grid.className = 'mh-medal-card-grid';
+            sorted.forEach(medal => {
+                const count = medals[medal.id] || 0;
+                const rarityClass = `rarity-${medal.rarity}`;
+                const card = document.createElement('div');
+                card.className = 'mh-medal-card';
+                card.innerHTML = `
+                    <img src="assets/image/item/medal/${medal.img}" class="mh-medal-card-img ${rarityClass}" alt="${medal.name}" onerror="this.style.display='none'">
+                    <div class="mh-medal-card-name">${medal.name}</div>
+                    <div class="mh-medal-card-count">×${count}</div>
+                `;
+                card.addEventListener('click', () => {
+                    this.sound.playSe('note_details');
+                    this._showMedalDetail(medal);
+                });
+                grid.appendChild(card);
+            });
+            container.appendChild(grid);
+        };
+
+        render();
     }
 
     _showMedalDetail(medal) {
@@ -480,8 +527,9 @@ class MonsterHouseManager {
                 <div class="mh-medal-detail-rarity" style="color:${rarityColor}">レアリティ: ${rarityLabel}</div>
                 <div class="mh-medal-detail-effect">${medal.desc}</div>
                 <div class="mh-medal-detail-count">もちすう: ${count}まい</div>
-                <div class="mh-medal-detail-sell">うりかね: ${medal.sellPrice}マール</div>
-                <button class="primary-btn mh-medal-detail-close-btn" id="mh-medal-detail-close">とじる</button>
+                <div class="mh-detail-buttons">
+                    <button class="orange-btn mh-detail-btn" id="mh-medal-detail-close">とじる</button>
+                </div>
             </div>
         `;
         overlay.classList.add('active');
@@ -513,11 +561,12 @@ class MonsterHouseManager {
         // ソートバー
         const sortBar = document.createElement('div');
         sortBar.className = 'mh-sort-bar';
-        [['capturedAt', 'とらえたじゅん'], ['name', 'なまえじゅん']].forEach(([key, label]) => {
+        [['capturedAt', 'なかまじゅん'], ['name', 'なまえじゅん']].forEach(([key, label]) => {
             const btn = document.createElement('button');
             btn.className = 'mh-sort-btn' + (this._farewellSortKey === key ? ' active' : '');
             btn.textContent = label + (this._farewellSortKey === key ? '▼' : '');
             btn.addEventListener('click', () => {
+                this.sound.playSe('equip_sort');
                 this._farewellSortKey = key;
                 this._renderFarewellGrid(immediate);
             });
@@ -569,7 +618,7 @@ class MonsterHouseManager {
             return;
         }
         const msgEl = document.getElementById('mh-farewell-confirm-msg');
-        if (msgEl) msgEl.textContent = `${name}と おわかれする？`;
+        if (msgEl) msgEl.textContent = `${name}と\nおわかれする？`;
         overlay.classList.add('active');
 
         const yesBtn = document.getElementById('mh-farewell-yes-btn');

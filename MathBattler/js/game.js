@@ -630,24 +630,49 @@ class Game {
                             if (!alreadyCaptured) {
                                 // 捕獲成功（100%）
                                 const captureBlackout = document.getElementById('capture-fade');
+                                const monsterImg = document.getElementById('monster-img');
+                                
                                 if (captureBlackout) {
                                     captureBlackout.classList.add('active');
+                                    // 捕獲演出時にモンスターを最前面に再表示
+                                    if (monsterImg) {
+                                        monsterImg.style.opacity = '1';
+                                        if (monsterImg.parentElement) {
+                                            monsterImg.parentElement.style.position = 'relative';
+                                            monsterImg.parentElement.style.zIndex = '201';
+                                        }
+                                    }
+                                    
                                     setTimeout(() => {
                                         captureBlackout.classList.remove('active');
+                                        // 黒背景解除時に最前面設定を戻す（画像は表示したままにする）
+                                        if (monsterImg && monsterImg.parentElement) {
+                                            monsterImg.parentElement.style.position = '';
+                                            monsterImg.parentElement.style.zIndex = '';
+                                        }
+                                        
                                         const newCompanions = this.storage.loadCompanions();
                                         newCompanions[m.name] = { name: m.name, imageSrc: m.imageSrc, capturedAt: Date.now() };
                                         this.storage.saveCompanions(newCompanions);
                                         this.sound.playSe('capture');
                                         this.ui.showMessage(`${m.name}を\nなかまにした！`, false, 2000, 'text-neutral');
-                                        setTimeout(() => afterCapture(), 2000);
+                                        setTimeout(() => {
+                                            // 次の処理へ進む前に画像を透明に戻す
+                                            if (monsterImg) monsterImg.style.opacity = '0';
+                                            afterCapture();
+                                        }, 2000);
                                     }, 600);
                                 } else {
+                                    if (monsterImg) monsterImg.style.opacity = '1';
                                     const newCompanions = this.storage.loadCompanions();
                                     newCompanions[m.name] = { name: m.name, imageSrc: m.imageSrc, capturedAt: Date.now() };
                                     this.storage.saveCompanions(newCompanions);
                                     this.sound.playSe('capture');
                                     this.ui.showMessage(`${m.name}を\nなかまにした！`, false, 2000, 'text-neutral');
-                                    setTimeout(() => afterCapture(), 2000);
+                                    setTimeout(() => {
+                                        if (monsterImg) monsterImg.style.opacity = '0';
+                                        afterCapture();
+                                    }, 2000);
                                 }
                                 return;
                             }
@@ -783,9 +808,9 @@ class Game {
             container.appendChild(btn);
         });
 
-        // 武具（bag.equipment）
+        // 武具（bag.equipment）— 装備中は売却不可
         const equipment = Array.isArray(this.backpack.equipment) ? this.backpack.equipment : [];
-        equipment.forEach(eq => {
+        equipment.filter(eq => !eq.equipped).forEach(eq => {
             const sellPrice = eq.sellPrice || 0;
             const folder = eq.type === 'sword' ? 'sword' : 'shield';
             const btn = document.createElement('button');
@@ -802,14 +827,21 @@ class Game {
         // メダル（モンスターハウス解放後）
         if (this.storage.isMonsterHouseUnlocked() && this.monsterHouse && window.MEDAL_LIST) {
             const medals = this.storage.loadMedals();
+            const companionMedals = this.storage.loadCompanionMedals();
+            const equippedCounts = {};
+            Object.values(companionMedals).forEach(id => {
+                equippedCounts[id] = (equippedCounts[id] || 0) + 1;
+            });
             window.MEDAL_LIST.forEach(medal => {
                 const count = medals[medal.id] || 0;
-                if (count <= 0) return;
+                const equipped = equippedCounts[medal.id] || 0;
+                const sellable = count - equipped;
+                if (sellable <= 0) return;
                 const btn = document.createElement('button');
                 btn.className = 'shop-item-btn';
                 btn.innerHTML = `
                     <img src="assets/image/item/medal/${medal.img}" alt="${medal.name}" class="shop-item-img" onerror="this.style.display='none'">
-                    <div class="shop-item-name">${medal.name} ×${count}</div>
+                    <div class="shop-item-name">${medal.name} ×${sellable}</div>
                     <div class="shop-item-price">${medal.sellPrice}マール</div>
                 `;
                 btn.addEventListener('click', () => this._openSellDetail({ ...medal, category: 'medal' }));
@@ -1080,6 +1112,54 @@ class Game {
         if (img) img.src = companion.imageSrc || '';
     }
 
+    _openBattleCompanionDetail() {
+        if (!this.storage.isMonsterHouseUnlocked()) return;
+        const activeCompanionName = this.storage.loadActiveCompanion();
+        if (!activeCompanionName) return;
+        const companions = this.storage.loadCompanions();
+        const companion = companions[activeCompanionName];
+        if (!companion) return;
+
+        const companionMedals = this.storage.loadCompanionMedals();
+        const medalId = companionMedals[activeCompanionName];
+        const medal = medalId && window.MEDAL_LIST ? window.MEDAL_LIST.find(m => m.id === medalId) : null;
+
+        const detailPanel = document.getElementById('battle-companion-detail');
+        if (!detailPanel) return;
+
+        detailPanel.innerHTML = `
+            <div class="mh-detail-partner-badge">パートナー</div>
+            <div class="mh-detail-img-wrapper">
+                <img src="${companion.imageSrc || ''}" class="mh-monster-detail-img" alt="${companion.name}" onerror="this.removeAttribute('src')">
+            </div>
+            <div class="mh-monster-detail-name">${companion.name}</div>
+            <hr class="mh-detail-divider">
+            ${medal ? `
+            <div class="mh-detail-medal-info">
+                <div class="mh-detail-medal-name">${medal.name}</div>
+                <img src="assets/image/item/medal/${medal.img}" class="mh-detail-medal-large-icon rarity-${medal.rarity}" alt="${medal.name}">
+                <div class="mh-detail-medal-effect-text">${medal.effectLabel}</div>
+            </div>` 
+            : '<div class="mh-detail-medal-label mh-no-medal">メダルなし</div>'}
+            <hr class="mh-detail-divider">
+            <div class="mh-detail-buttons">
+                <button class="orange-btn mh-detail-btn" id="battle-companion-close-btn">とじる</button>
+            </div>
+        `;
+
+        document.getElementById('battle-companion-close-btn').addEventListener('click', () => {
+            this.sound.playSe('back');
+            this._closeBattleCompanionDetail();
+        });
+
+        this.sound.playSe('note_details');
+        document.getElementById('battle-companion-overlay').classList.add('active');
+    }
+
+    _closeBattleCompanionDetail() {
+        const overlay = document.getElementById('battle-companion-overlay');
+        if (overlay) overlay.classList.remove('active');
+    }
     _openBattleBag() { return this.itemHandler._openBattleBag(); }
     _closeBattleBag() { return this.itemHandler._closeBattleBag(); }
     _executeBattleItemUse() { return this.itemHandler._executeBattleItemUse(); }

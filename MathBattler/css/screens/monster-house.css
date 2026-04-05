@@ -167,12 +167,14 @@
 
 /* ---- 詳細パネル ---- */
 #app.portrait-mode .mh-detail-panel {
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 24px 20px;
     gap: 16px;
     overflow-y: auto;
+    position: relative;
 }
 
 #app.portrait-mode .mh-detail-img-wrapper {
@@ -182,24 +184,29 @@
 
 #app.portrait-mode .mh-detail-partner-badge {
     position: absolute;
-    bottom: 12px;
-    left: 50%;
-    transform: translateX(-50%);
+    top: 0;
+    right: 0;
     font-family: var(--font-pixel);
-    font-size: 30px;
+    font-size: 30px; /* 元のサイズに戻す */
     background: rgba(255, 149, 0, 0.85);
     color: #fff;
-    border: 2px solid rgba(255, 149, 0, 0.9);
-    border-radius: 10px;
-    padding: 6px 20px;
+    border: 2px solid rgba(255, 149, 0, 0.9); /* 元の2pxに戻す */
+    border-radius: 10px; /* 元の10pxに戻す */
+    padding: 6px 20px; /* 元に戻す */
     white-space: nowrap;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
-    box-shadow: 0 2px 10px rgba(255, 149, 0, 0.5);
+    box-shadow: 0 2px 10px rgba(255, 149, 0, 0.5); /* 元に戻す */
+}
+
+#app.portrait-mode .mh-detail-panel.mh-detail-panel--partner {
+    border: 6px solid #ffd700;
+    border-radius: 12px;
+    box-shadow: 0 0 18px rgba(255, 215, 0, 0.4);
 }
 
 #app.portrait-mode .mh-monster-detail-img {
-    width: 480px;
-    height: 480px;
+    width: 480px;  /* 元のサイズに戻す */
+    height: 480px; /* 元のサイズに戻す */
     object-fit: contain;
     filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.9))
             drop-shadow(0 0 6px rgba(255, 255, 255, 0.5));
@@ -207,18 +214,18 @@
 
 #app.portrait-mode .mh-monster-detail-name {
     font-family: var(--font-pixel);
-    font-size: 40px;
+    font-size: 40px; /* 元のサイズに戻す */
     color: #fff;
     text-align: center;
 }
 
 #app.portrait-mode .mh-detail-medal-label {
     font-family: var(--font-pixel);
-    font-size: 28px;
+    font-size: 28px; /* 元のサイズに戻す */
     color: #ffd700;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 12px; /* 元のサイズに戻す */
 }
 
 #app.portrait-mode .mh-detail-medal-label.mh-no-medal {
@@ -226,22 +233,63 @@
 }
 
 #app.portrait-mode .mh-detail-medal-icon {
-    width: 48px;
-    height: 48px;
+    width: 48px;  /* 元のサイズに戻す */
+    height: 48px; /* 元のサイズに戻す */
     object-fit: contain;
+}
+
+#app.portrait-mode .mh-detail-medal-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+#app.portrait-mode .mh-detail-medal-large-icon {
+    width: 150px;
+    height: 150px;
+    object-fit: contain;
+}
+#app.portrait-mode .mh-detail-medal-large-icon.rarity-bronze  { filter: drop-shadow(0 0 8px rgba(205, 127, 50, 0.9)); }
+#app.portrait-mode .mh-detail-medal-large-icon.rarity-silver  { filter: drop-shadow(0 0 8px rgba(192, 192, 192, 0.9)); }
+#app.portrait-mode .mh-detail-medal-large-icon.rarity-gold    { filter: drop-shadow(0 0 10px rgba(255, 215, 0, 1.0)); }
+#app.portrait-mode .mh-detail-medal-large-icon.rarity-diamond { filter: drop-shadow(0 0 12px rgba(185, 242, 255, 1.0)); }
+
+#app.portrait-mode .mh-detail-medal-effect-text {
+    font-family: var(--font-pixel);
+    font-size: 32px;
+    color: #7df;
+    text-align: center;
+}
+
+#app.portrait-mode .mh-detail-medal-name {
+    font-family: var(--font-pixel);
+    font-size: 36px;
+    color: #ffd700;
+    text-align: center;
+    margin-bottom: 4px;
+}
+
+#app.portrait-mode .mh-detail-divider {
+    width: 90%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.6), transparent);
+    margin: 8px 0;
+    border: none;
 }
 
 #app.portrait-mode .mh-detail-buttons {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 16px; /* 元の間隔に戻す（垂直だけ広げるならここも24もありだが一旦元に戻す） */
     width: 100%;
-    max-width: 500px;
+    max-width: 500px; /* 元の幅に戻す */
+    margin: 0 auto;
 }
 
 #app.portrait-mode .mh-detail-btn {
-    font-size: 32px;
-    padding: 16px 20px;
+    font-size: 32px; /* 元のサイズに戻す */
+    padding: 16px 20px; /* 元のサイズに戻す */
 }
 
 #app.portrait-mode .mh-detail-buttons button {
@@ -346,8 +394,8 @@
 }
 
 #app.portrait-mode .mh-medal-detail-img {
-    width: 120px;
-    height: 120px;
+    width: 240px;
+    height: 240px;
     object-fit: contain;
 }
 
@@ -359,8 +407,7 @@
 
 #app.portrait-mode .mh-medal-detail-rarity,
 #app.portrait-mode .mh-medal-detail-effect,
-#app.portrait-mode .mh-medal-detail-count,
-#app.portrait-mode .mh-medal-detail-sell {
+#app.portrait-mode .mh-medal-detail-count {
     font-family: var(--font-pixel);
     font-size: 28px;
     color: #ccc;
@@ -371,11 +418,6 @@
     color: #7df;
 }
 
-#app.portrait-mode .mh-medal-detail-close-btn {
-    font-size: 32px;
-    padding: 14px 40px;
-    margin-top: 8px;
-}
 
 /* ---- おわかれ確認ダイアログ ---- */
 #mh-farewell-confirm-overlay .shop-msg-text {
@@ -431,19 +473,18 @@
 
 /* ---- 捕獲フェード ---- */
 #capture-fade {
-    display: none;
     position: fixed;
     inset: 0;
     background: #000;
     z-index: 200;
     opacity: 0;
-    transition: opacity 0.3s ease;
     pointer-events: none;
+    visibility: hidden;
 }
 
 #capture-fade.active {
-    display: block;
     opacity: 1;
+    visibility: visible;
 }
 
 /* ---- 汎用通知バブル ---- */
@@ -479,47 +520,59 @@
 /* ---- コンパニオンカットインオーバーレイ ---- */
 .companion-cutin-overlay {
     position: fixed;
-    right: 10px;
-    bottom: 30%;
-    width: 400px;
+    left: 50%;
+    bottom: 15%;
+    transform: translateX(-50%);
+    width: 800px;
     background: rgba(0, 20, 60, 0.92);
-    border: 3px solid rgba(79, 172, 254, 0.6);
-    border-radius: 20px;
-    padding: 20px 24px;
-    z-index: 90;
+    border: 6px solid rgba(79, 172, 254, 0.6);
+    border-radius: 40px;
+    padding: 40px 48px;
+    z-index: 10001;
     display: flex;
-    flex-direction: row;
+    justify-content: center;
     align-items: center;
-    gap: 16px;
-    will-change: transform;
-    transform: translateX(calc(100% + 30px));
-    transition: none;
+    opacity: 0;
     pointer-events: none;
+    transition: opacity 0.3s ease;
 }
 
 .companion-cutin-overlay.active {
-    animation: companion-slide-in-out 2s forwards;
+    opacity: 1;
 }
 
-@keyframes companion-slide-in-out {
-    0%   { transform: translateX(calc(100% + 30px)); animation-timing-function: ease-out; }
-    15%  { transform: translateX(0);                animation-timing-function: linear; }
-    80%  { transform: translateX(-200px);           animation-timing-function: ease-in; }
-    100% { transform: translateX(-160%); }
-}
-
+/* モンスター画像はウィンドウ外へ切り離してアニメーション */
 .companion-cutin-overlay .companion-cutin-img {
-    width: 90px;
-    height: 90px;
+    position: fixed;
+    bottom: calc(15% + 240px);
+    width: 810px;
+    height: 810px;
     object-fit: contain;
-    flex-shrink: 0;
+    left: 50%;
+    margin-left: -405px;
+    z-index: 10002;
+    transform: translateX(100vw);
+    will-change: transform;
+}
+
+.companion-cutin-overlay.active .companion-cutin-img {
+    animation: companion-img-slide 2.1s forwards;
+}
+
+@keyframes companion-img-slide {
+    0%   { transform: translateX(100vw); animation-timing-function: ease-out; }
+    15%  { transform: translateX(80px); animation-timing-function: linear; }
+    80%  { transform: translateX(-80px); animation-timing-function: ease-in; }
+    100% { transform: translateX(-100vw); }
 }
 
 .companion-cutin-overlay .companion-cutin-msg {
     font-family: var(--font-pixel);
-    font-size: 26px;
+    font-size: 52px;
     color: #fff;
     line-height: 1.5;
+    text-align: center;
+    white-space: pre-wrap;
 }
 
 /* ---- バトル画面コンパニオンスロット ---- */

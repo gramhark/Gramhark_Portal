@@ -249,6 +249,13 @@ class EventBinder {
             backpackSlotImg.addEventListener('touchstart', (e) => { e.preventDefault(); game._openBattleBag(); }, { passive: false });
         }
 
+        // Companion Slot (battle)
+        const companionSlotContainer = document.getElementById('companion-slot-container');
+        if (companionSlotContainer) {
+            companionSlotContainer.addEventListener('click', () => game._openBattleCompanionDetail());
+            companionSlotContainer.addEventListener('touchstart', (e) => { e.preventDefault(); game._openBattleCompanionDetail(); }, { passive: false });
+        }
+
         // Battle Bag Overlay
         document.getElementById('battle-bag-close-btn').addEventListener('click', () => { game.sound.playSe('back'); game._closeBattleBag(); });
         document.getElementById('battle-item-use-btn').addEventListener('click', () => { game.sound.playSe('btn'); game._executeBattleItemUse(); });

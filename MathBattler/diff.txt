@@ -1,0 +1,470 @@
+diff --git a/MathBattler/css/screens/monster-house.css b/MathBattler/css/screens/monster-house.css
+index 36bce9f..49ee049 100644
+--- a/MathBattler/css/screens/monster-house.css
++++ b/MathBattler/css/screens/monster-house.css
+@@ -167,12 +167,14 @@
+ 
+ /* ---- 詳細パネル ---- */
+ #app.portrait-mode .mh-detail-panel {
++    flex: 1;
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+     padding: 24px 20px;
+     gap: 16px;
+     overflow-y: auto;
++    position: relative;
+ }
+ 
+ #app.portrait-mode .mh-detail-img-wrapper {
+@@ -182,9 +184,8 @@
+ 
+ #app.portrait-mode .mh-detail-partner-badge {
+     position: absolute;
+-    bottom: 12px;
+-    left: 50%;
+-    transform: translateX(-50%);
++    top: 0;
++    right: 0;
+     font-family: var(--font-pixel);
+     font-size: 30px;
+     background: rgba(255, 149, 0, 0.85);
+@@ -197,6 +198,12 @@
+     box-shadow: 0 2px 10px rgba(255, 149, 0, 0.5);
+ }
+ 
++#app.portrait-mode .mh-detail-panel.mh-detail-panel--partner {
++    border: 6px solid #ffd700;
++    border-radius: 12px;
++    box-shadow: 0 0 18px rgba(255, 215, 0, 0.4);
++}
++
+ #app.portrait-mode .mh-monster-detail-img {
+     width: 480px;
+     height: 480px;
+@@ -237,6 +244,7 @@
+     gap: 16px;
+     width: 100%;
+     max-width: 500px;
++    margin: 0 auto;
+ }
+ 
+ #app.portrait-mode .mh-detail-btn {
+@@ -346,8 +354,8 @@
+ }
+ 
+ #app.portrait-mode .mh-medal-detail-img {
+-    width: 120px;
+-    height: 120px;
++    width: 240px;
++    height: 240px;
+     object-fit: contain;
+ }
+ 
+@@ -359,8 +367,7 @@
+ 
+ #app.portrait-mode .mh-medal-detail-rarity,
+ #app.portrait-mode .mh-medal-detail-effect,
+-#app.portrait-mode .mh-medal-detail-count,
+-#app.portrait-mode .mh-medal-detail-sell {
++#app.portrait-mode .mh-medal-detail-count {
+     font-family: var(--font-pixel);
+     font-size: 28px;
+     color: #ccc;
+@@ -371,11 +378,6 @@
+     color: #7df;
+ }
+ 
+-#app.portrait-mode .mh-medal-detail-close-btn {
+-    font-size: 32px;
+-    padding: 14px 40px;
+-    margin-top: 8px;
+-}
+ 
+ /* ---- おわかれ確認ダイアログ ---- */
+ #mh-farewell-confirm-overlay .shop-msg-text {
+@@ -431,19 +433,18 @@
+ 
+ /* ---- 捕獲フェード ---- */
+ #capture-fade {
+-    display: none;
+     position: fixed;
+     inset: 0;
+     background: #000;
+     z-index: 200;
+     opacity: 0;
+-    transition: opacity 0.3s ease;
+     pointer-events: none;
++    visibility: hidden;
+ }
+ 
+ #capture-fade.active {
+-    display: block;
+     opacity: 1;
++    visibility: visible;
+ }
+ 
+ /* ---- 汎用通知バブル ---- */
+diff --git "a/MathBattler/docs/specialEffectId\346\213\241\345\274\265.md" "b/MathBattler/docs/specialEffectId\346\213\241\345\274\265.md"
+deleted file mode 100644
+index fea8bc9..0000000
+--- "a/MathBattler/docs/specialEffectId\346\213\241\345\274\265.md"
++++ /dev/null
+@@ -1,19 +0,0 @@
+-新しい `specialEffectId` の定義と、それに対応させるべき必要なアセット（画像・音源）のリストです。
+-### 新規 specialEffectId と必要アセット一覧（カラー拡張版）
+-
+-| specialEffectId | 効果内容 | 攻撃エフェクト画像 (通常/クリティカル) | 再生SE音源ファイル (通常/クリティカル) |
+-| :--- | :--- | :--- | :--- |
+-| **Slash_red** | 赤い斬撃 | `attack_S_red.webp` / `critical_S_red.webp` | `slash_red.mp3` / `slash_crit_red.mp3` |
+-| **Slash_blue** | 青い斬撃 | `attack_S_blue.webp` / `critical_S_blue.webp` | `slash_blue.mp3` / `slash_crit_blue.mp3` |
+-| **Slash_green** | 緑の斬撃 | `attack_S_green.webp` / `critical_S_green.webp` | `slash_green.mp3` / `slash_crit_green.mp3` |
+-| **Slash_yellow** | 黄色の斬撃 | `attack_S_yellow.webp` / `critical_S_yellow.webp` | `slash_yellow.mp3` / `slash_crit_yellow.mp3` |
+-| **Slash_black** | 黒い斬撃 | `attack_S_black.webp` / `critical_S_black.webp` | `slash_black.mp3` / `slash_crit_black.mp3` |
+-| **Slash_white** | 白い斬撃 | `attack_S_white.webp` / `critical_S_white.webp` | `slash_white.mp3` / `slash_crit_white.mp3` |
+-
+----
+-
+-### アセットの保存場所 (参考)
+-プロジェクトの構成に合わせ、以下のディレクトリへ配置することを想定しています。
+-
+-*   **エフェクト画像 (`.webp`)**: `assets/image/effects/`
+-*   **SE音源 (`.mp3`)**: `assets/sound/se/`
+\ No newline at end of file
+diff --git a/MathBattler/index.html b/MathBattler/index.html
+index 1d604af..093299f 100644
+--- a/MathBattler/index.html
++++ b/MathBattler/index.html
+@@ -345,10 +345,10 @@
+             </div>
+         </div>
+ 
+-<!-- モンスターハウス画面 -->
+-<div id="monster-house-screen" class="screen">
+-    <div class="top-bg-container">
+-        <img src="assets/image/ui/BG_monsterhouse.webp" alt="背景" class="top-bg-img">
++        <!-- モンスターハウス画面 -->
++        <div id="monster-house-screen" class="screen">
++            <div class="top-bg-container">
++                <img src="assets/image/ui/BG_monsterhouse.webp" alt="背景" class="top-bg-img">
+             </div>
+             <div class="shop-header">
+                 <button id="mh-back-btn" class="quit-battle-btn">
+@@ -570,6 +570,13 @@
+             </div>
+         </div>
+ 
++        <!-- Battle Companion Detail Overlay (バトル中のパートナー詳細) -->
++        <div id="battle-companion-overlay" class="overlay">
++            <div id="battle-companion-detail" class="mh-detail-panel mh-medal-detail-content mh-detail-panel--partner" style="flex: initial; max-height: 80vh;">
++                <!-- Populated by JS -->
++            </div>
++        </div>
++
+         <!-- Equipment Drop Fly-in Animation (装備ドロップ ズームイン演出) -->
+         <div id="equip-drop-fly-overlay">
+             <img id="equip-drop-fly-img" src="" alt="">
+diff --git a/MathBattler/js/game.js b/MathBattler/js/game.js
+index 7dd3e8d..0edf93b 100644
+--- a/MathBattler/js/game.js
++++ b/MathBattler/js/game.js
+@@ -783,9 +783,9 @@ class Game {
+             container.appendChild(btn);
+         });
+ 
+-        // 武具（bag.equipment）
++        // 武具（bag.equipment）— 装備中は売却不可
+         const equipment = Array.isArray(this.backpack.equipment) ? this.backpack.equipment : [];
+-        equipment.forEach(eq => {
++        equipment.filter(eq => !eq.equipped).forEach(eq => {
+             const sellPrice = eq.sellPrice || 0;
+             const folder = eq.type === 'sword' ? 'sword' : 'shield';
+             const btn = document.createElement('button');
+@@ -802,14 +802,21 @@ class Game {
+         // メダル（モンスターハウス解放後）
+         if (this.storage.isMonsterHouseUnlocked() && this.monsterHouse && window.MEDAL_LIST) {
+             const medals = this.storage.loadMedals();
++            const companionMedals = this.storage.loadCompanionMedals();
++            const equippedCounts = {};
++            Object.values(companionMedals).forEach(id => {
++                equippedCounts[id] = (equippedCounts[id] || 0) + 1;
++            });
+             window.MEDAL_LIST.forEach(medal => {
+                 const count = medals[medal.id] || 0;
+-                if (count <= 0) return;
++                const equipped = equippedCounts[medal.id] || 0;
++                const sellable = count - equipped;
++                if (sellable <= 0) return;
+                 const btn = document.createElement('button');
+                 btn.className = 'shop-item-btn';
+                 btn.innerHTML = `
+                     <img src="assets/image/item/medal/${medal.img}" alt="${medal.name}" class="shop-item-img" onerror="this.style.display='none'">
+-                    <div class="shop-item-name">${medal.name} ×${count}</div>
++                    <div class="shop-item-name">${medal.name} ×${sellable}</div>
+                     <div class="shop-item-price">${medal.sellPrice}マール</div>
+                 `;
+                 btn.addEventListener('click', () => this._openSellDetail({ ...medal, category: 'medal' }));
+@@ -1080,6 +1087,46 @@ class Game {
+         if (img) img.src = companion.imageSrc || '';
+     }
+ 
++    _openBattleCompanionDetail() {
++        if (!this.storage.isMonsterHouseUnlocked()) return;
++        const activeCompanionName = this.storage.loadActiveCompanion();
++        if (!activeCompanionName) return;
++        const companions = this.storage.loadCompanions();
++        const companion = companions[activeCompanionName];
++        if (!companion) return;
++
++        const companionMedals = this.storage.loadCompanionMedals();
++        const medalId = companionMedals[activeCompanionName];
++        const medal = medalId && window.MEDAL_LIST ? window.MEDAL_LIST.find(m => m.id === medalId) : null;
++
++        const detailPanel = document.getElementById('battle-companion-detail');
++        if (!detailPanel) return;
++
++        detailPanel.innerHTML = `
++            <div class="mh-detail-partner-badge">パートナー</div>
++            <div class="mh-detail-img-wrapper">
++                <img src="${companion.imageSrc || ''}" class="mh-monster-detail-img" alt="${companion.name}" onerror="this.removeAttribute('src')">
++            </div>
++            <div class="mh-monster-detail-name">${companion.name}</div>
++            ${medal ? \`<div class="mh-detail-medal-label"><img src="assets/image/item/medal/${medal.img}" class="mh-detail-medal-icon" alt="${medal.name}">${medal.name}</div>\` : '<div class="mh-detail-medal-label mh-no-medal">メダルなし</div>'}
++            <div class="mh-detail-buttons">
++                <button class="orange-btn mh-detail-btn" id="battle-companion-close-btn">とじる</button>
++            </div>
++        `;
++
++        document.getElementById('battle-companion-close-btn').addEventListener('click', () => {
++            this.sound.playSe('back');
++            this._closeBattleCompanionDetail();
++        });
++
++        this.sound.playSe('note_details');
++        document.getElementById('battle-companion-overlay').classList.add('active');
++    }
++
++    _closeBattleCompanionDetail() {
++        const overlay = document.getElementById('battle-companion-overlay');
++        if (overlay) overlay.classList.remove('active');
++    }
+     _openBattleBag() { return this.itemHandler._openBattleBag(); }
+     _closeBattleBag() { return this.itemHandler._closeBattleBag(); }
+     _executeBattleItemUse() { return this.itemHandler._executeBattleItemUse(); }
+diff --git a/MathBattler/js/managers/monster-house-manager.js b/MathBattler/js/managers/monster-house-manager.js
+index 14c36e8..8badb4f 100644
+--- a/MathBattler/js/managers/monster-house-manager.js
++++ b/MathBattler/js/managers/monster-house-manager.js
+@@ -229,6 +229,7 @@ class MonsterHouseManager {
+             btn.className = 'mh-sort-btn' + (this._monsterSortKey === key ? ' active' : '');
+             btn.textContent = label + (this._monsterSortKey === key ? '▼' : '');
+             btn.addEventListener('click', () => {
++                this.sound.playSe('equip_sort');
+                 this._monsterSortKey = key;
+                 this._renderMonsterGrid();
+             });
+@@ -289,16 +290,18 @@ class MonsterHouseManager {
+         const medal = medalId && window.MEDAL_LIST ? window.MEDAL_LIST.find(m => m.id === medalId) : null;
+ 
+         const isActivePartner = name === activeCompanionName;
++        detailPanel.classList.toggle('mh-detail-panel--partner', isActivePartner);
+         detailPanel.innerHTML = `
++            ${isActivePartner ? '<div class="mh-detail-partner-badge">パートナー</div>' : ''}
+             <div class="mh-detail-img-wrapper">
+                 <img src="${companion.imageSrc || ''}" class="mh-monster-detail-img" alt="${companion.name}" onerror="this.removeAttribute('src')">
+-                ${isActivePartner ? '<div class="mh-detail-partner-badge">パートナー</div>' : ''}
+             </div>
+             <div class="mh-monster-detail-name">${companion.name}</div>
+             ${medal ? `<div class="mh-detail-medal-label"><img src="assets/image/item/medal/${medal.img}" class="mh-detail-medal-icon" alt="${medal.name}">${medal.name}</div>` : '<div class="mh-detail-medal-label mh-no-medal">メダルなし</div>'}
+             <div class="mh-detail-buttons">
+                 <button class="primary-btn mh-detail-btn" id="mh-detail-partner-btn">${isActivePartner ? 'つれていかない' : 'つれていく'}</button>
+                 <button class="green-btn mh-detail-btn" id="mh-detail-medal-btn">メダルをつける</button>
++                <button class="orange-btn mh-detail-btn" id="mh-detail-medal-remove-btn"${!medal ? ' disabled' : ''}>メダルをはずす</button>
+                 <button class="orange-btn mh-detail-btn" id="mh-detail-back-btn">やめる</button>
+             </div>
+         `;
+@@ -310,14 +313,23 @@ class MonsterHouseManager {
+             } else {
+                 this.storage.saveActiveCompanion(name);
+             }
+-            this._renderMonsterGrid();
++            this._showMonsterDetail(name);
+         });
+         document.getElementById('mh-detail-medal-btn').addEventListener('click', () => {
+             this.sound.playSe('btn');
+             this._showMedalSubPanel(name);
+         });
++        document.getElementById('mh-detail-medal-remove-btn').addEventListener('click', () => {
++            if (!medal) return;
++            this.sound.playSe('equip_remove');
++            const updated = this.storage.loadCompanionMedals();
++            delete updated[name];
++            this.storage.saveCompanionMedals(updated);
++            this._showMonsterDetail(name);
++        });
+         document.getElementById('mh-detail-back-btn').addEventListener('click', () => {
+             this.sound.playSe('back');
++            detailPanel.classList.remove('mh-detail-panel--partner');
+             detailPanel.style.display = 'none';
+             grid.style.display = '';
+             this._renderMonsterGrid();
+@@ -351,7 +363,7 @@ class MonsterHouseManager {
+                 const btn = document.createElement('button');
+                 btn.className = 'mh-sort-btn' + (sortKey === key ? ' active' : '');
+                 btn.textContent = label;
+-                btn.addEventListener('click', () => { sortKey = key; this._medalSortKey = key; renderSub(); });
++                btn.addEventListener('click', () => { this.sound.playSe('equip_sort'); sortKey = key; this._medalSortKey = key; renderSub(); });
+                 sortBar.appendChild(btn);
+             });
+             medalSubPanel.appendChild(sortBar);
+@@ -389,6 +401,7 @@ class MonsterHouseManager {
+                     ${isEquipped ? '<div class="mh-medal-equipped-badge">そうびちゅう</div>' : ''}
+                 `;
+                 card.addEventListener('click', () => {
++                    if (isEquipped) return;
+                     this.sound.playSe('equip_set');
+                     const updated = this.storage.loadCompanionMedals();
+                     if (updated[monsterName] === medal.id) {
+@@ -409,7 +422,7 @@ class MonsterHouseManager {
+             medalSubPanel.appendChild(cardGrid);
+ 
+             const backBtn = document.createElement('button');
+-            backBtn.className = 'orange-btn mh-back-btn';
++            backBtn.className = 'orange-btn mh-detail-btn';
+             backBtn.textContent = 'もどる';
+             backBtn.addEventListener('click', () => {
+                 this.sound.playSe('back');
+@@ -419,7 +432,10 @@ class MonsterHouseManager {
+                     this._showMonsterDetail(monsterName);
+                 }
+             });
+-            medalSubPanel.appendChild(backBtn);
++            const backBtnWrapper = document.createElement('div');
++            backBtnWrapper.className = 'mh-detail-buttons';
++            backBtnWrapper.appendChild(backBtn);
++            medalSubPanel.appendChild(backBtnWrapper);
+         };
+ 
+         renderSub();
+@@ -444,25 +460,56 @@ class MonsterHouseManager {
+             return;
+         }
+ 
+-        const grid = document.createElement('div');
+-        grid.className = 'mh-medal-card-grid';
+-        ownedMedals.forEach(medal => {
+-            const count = medals[medal.id] || 0;
+-            const rarityClass = `rarity-${medal.rarity}`;
+-            const card = document.createElement('div');
+-            card.className = 'mh-medal-card';
+-            card.innerHTML = `
+-                <img src="assets/image/item/medal/${medal.img}" class="mh-medal-card-img ${rarityClass}" alt="${medal.name}" onerror="this.style.display='none'">
+-                <div class="mh-medal-card-name">${medal.name}</div>
+-                <div class="mh-medal-card-count">×${count}</div>
+-            `;
+-            card.addEventListener('click', () => {
+-                this.sound.playSe('note_details');
+-                this._showMedalDetail(medal);
++        let sortKey = this._medalTabSortKey || 'name';
++
++        const render = () => {
++            container.innerHTML = '';
++
++            const sortBar = document.createElement('div');
++            sortBar.className = 'mh-sort-bar';
++            [['name', 'なまえじゅん'], ['effect', 'こうかじゅん']].forEach(([key, label]) => {
++                const btn = document.createElement('button');
++                btn.className = 'mh-sort-btn' + (sortKey === key ? ' active' : '');
++                btn.textContent = label;
++                btn.addEventListener('click', () => {
++                    this.sound.playSe('equip_sort');
++                    sortKey = key;
++                    this._medalTabSortKey = key;
++                    render();
++                });
++                sortBar.appendChild(btn);
+             });
+-            grid.appendChild(card);
+-        });
+-        container.appendChild(grid);
++            container.appendChild(sortBar);
++
++            const sorted = [...ownedMedals];
++            if (sortKey === 'name') {
++                sorted.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ja'));
++            } else {
++                sorted.sort((a, b) => (b.value || 0) - (a.value || 0));
++            }
++
++            const grid = document.createElement('div');
++            grid.className = 'mh-medal-card-grid';
++            sorted.forEach(medal => {
++                const count = medals[medal.id] || 0;
++                const rarityClass = `rarity-${medal.rarity}`;
++                const card = document.createElement('div');
++                card.className = 'mh-medal-card';
++                card.innerHTML = `
++                    <img src="assets/image/item/medal/${medal.img}" class="mh-medal-card-img ${rarityClass}" alt="${medal.name}" onerror="this.style.display='none'">
++                    <div class="mh-medal-card-name">${medal.name}</div>
++                    <div class="mh-medal-card-count">×${count}</div>
++                `;
++                card.addEventListener('click', () => {
++                    this.sound.playSe('note_details');
++                    this._showMedalDetail(medal);
++                });
++                grid.appendChild(card);
++            });
++            container.appendChild(grid);
++        };
++
++        render();
+     }
+ 
+     _showMedalDetail(medal) {
+@@ -480,8 +527,9 @@ class MonsterHouseManager {
+                 <div class="mh-medal-detail-rarity" style="color:${rarityColor}">レアリティ: ${rarityLabel}</div>
+                 <div class="mh-medal-detail-effect">${medal.desc}</div>
+                 <div class="mh-medal-detail-count">もちすう: ${count}まい</div>
+-                <div class="mh-medal-detail-sell">うりかね: ${medal.sellPrice}マール</div>
+-                <button class="primary-btn mh-medal-detail-close-btn" id="mh-medal-detail-close">とじる</button>
++                <div class="mh-detail-buttons">
++                    <button class="orange-btn mh-detail-btn" id="mh-medal-detail-close">とじる</button>
++                </div>
+             </div>
+         `;
+         overlay.classList.add('active');
+@@ -518,6 +566,7 @@ class MonsterHouseManager {
+             btn.className = 'mh-sort-btn' + (this._farewellSortKey === key ? ' active' : '');
+             btn.textContent = label + (this._farewellSortKey === key ? '▼' : '');
+             btn.addEventListener('click', () => {
++                this.sound.playSe('equip_sort');
+                 this._farewellSortKey = key;
+                 this._renderFarewellGrid(immediate);
+             });
+@@ -569,7 +618,7 @@ class MonsterHouseManager {
+             return;
+         }
+         const msgEl = document.getElementById('mh-farewell-confirm-msg');
+-        if (msgEl) msgEl.textContent = `${name}と おわかれする？`;
++        if (msgEl) msgEl.textContent = `${name}と\nおわかれする？`;
+         overlay.classList.add('active');
+ 
+         const yesBtn = document.getElementById('mh-farewell-yes-btn');
+diff --git a/MathBattler/js/ui/event-binder.js b/MathBattler/js/ui/event-binder.js
+index 0ab3c02..fee72cf 100644
+--- a/MathBattler/js/ui/event-binder.js
++++ b/MathBattler/js/ui/event-binder.js
+@@ -249,6 +249,13 @@ class EventBinder {
+             backpackSlotImg.addEventListener('touchstart', (e) => { e.preventDefault(); game._openBattleBag(); }, { passive: false });
+         }
+ 
++        // Companion Slot (battle)
++        const companionSlotContainer = document.getElementById('companion-slot-container');
++        if (companionSlotContainer) {
++            companionSlotContainer.addEventListener('click', () => game._openBattleCompanionDetail());
++            companionSlotContainer.addEventListener('touchstart', (e) => { e.preventDefault(); game._openBattleCompanionDetail(); }, { passive: false });
++        }
++
+         // Battle Bag Overlay
+         document.getElementById('battle-bag-close-btn').addEventListener('click', () => { game.sound.playSe('back'); game._closeBattleBag(); });
+         document.getElementById('battle-item-use-btn').addEventListener('click', () => { game.sound.playSe('btn'); game._executeBattleItemUse(); });
