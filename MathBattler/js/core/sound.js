@@ -585,13 +585,15 @@ class SoundManager {
             if (!bgm) return;
             bgm.muted = true;
             bgm.play().then(() => {
-                // muted=false を pause() より先に呼ぶ
-                // （iOS Safari では pause 済みの <audio loop> を unmute すると再起動するバグ対策）
-                bgm.muted = false;
                 // currentBgm として再生中のBGMはpauseしない（shop/dungeonBGMが即停止されるバグ対策）
                 if (bgm !== this.currentBgm) {
+                    // pause() を unmute より先に呼ぶ
+                    // （unmute した瞬間に音が出るのを防ぐ）
                     bgm.pause();
                     bgm.currentTime = 0;
+                    bgm.muted = false;
+                } else {
+                    bgm.muted = false;
                 }
             }).catch(() => {
                 bgm.muted = false;
