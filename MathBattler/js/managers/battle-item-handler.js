@@ -41,8 +41,19 @@ class BattleItemHandler {
         this.game.shop.onBattleBagItemTap(
             itemName, card, monster,
             (n) => this._canUseItem(n),
-            (n) => { this.game._battleSelectedItem = n; }
+            (n) => { this.game._battleSelectedItem = n; },
+            (n) => this._isAlreadyCaptured(n)
         );
+    }
+
+    /** ゆうじょうのみ対象モンスターがすでに捕獲済みかチェックする */
+    _isAlreadyCaptured(itemName) {
+        const _berryIds = ['friendshipBerry30', 'friendshipBerry60', 'friendshipBerry90', 'friendshipBerry100'];
+        if (!_berryIds.includes(itemName)) return false;
+        const m = this.game.monsters[this.game.currentMonsterIdx];
+        if (!m) return false;
+        const companions = this.storage.loadCompanions();
+        return !!companions[m.name];
     }
 
     /** アイテムが使用可能かチェックする */
@@ -67,6 +78,13 @@ class BattleItemHandler {
         if (!itemName) return;
 
         // 念のため再チェック
+        if (this._isAlreadyCaptured(itemName)) {
+            this.game.shop.showAlreadyCapturedMsg();
+            document.getElementById('battle-item-confirm').style.display = 'none';
+            this.game._battleSelectedItem = null;
+            document.querySelectorAll('.battle-bag-card.selected').forEach(c => c.classList.remove('selected'));
+            return;
+        }
         if (!this._canUseItem(itemName)) {
             this.game.shop.showItemLimitMsg();
             document.getElementById('battle-item-confirm').style.display = 'none';

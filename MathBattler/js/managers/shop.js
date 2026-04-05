@@ -225,10 +225,14 @@ class ShopManager {
         });
     }
 
-    onBattleBagItemTap(itemId, card, monster, canUseItemFn, onSelectFn) {
+    onBattleBagItemTap(itemId, card, monster, canUseItemFn, onSelectFn, alreadyCapturedFn) {
         // stoneOrbはボスには使えない
         if (itemId === 'stoneOrb' && monster.battleNumber === Constants.BOSS_BATTLE_NUMBER) {
             this.showBossBlockMsg();
+            return;
+        }
+        if (alreadyCapturedFn && alreadyCapturedFn(itemId)) {
+            this.showAlreadyCapturedMsg();
             return;
         }
         if (!canUseItemFn(itemId)) {
@@ -249,6 +253,18 @@ class ShopManager {
         overlay.classList.add('active');
         setTimeout(() => {
             overlay.classList.remove('active');
+        }, 1500);
+    }
+
+    showAlreadyCapturedMsg() {
+        const overlay = document.getElementById('item-limit-overlay');
+        const textEl = document.querySelector('.item-limit-text');
+        const origText = textEl ? textEl.textContent : '';
+        if (textEl) textEl.innerHTML = 'もう なかよくなった<br>モンスターだよ！';
+        overlay.classList.add('active');
+        setTimeout(() => {
+            overlay.classList.remove('active');
+            if (textEl) textEl.textContent = origText;
         }, 1500);
     }
 

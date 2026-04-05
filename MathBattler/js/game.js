@@ -279,29 +279,27 @@ class Game {
         const bossNextInfo = this._getBossNextImageSrc();
         if (bossNextInfo) monsterSrcs.push(bossNextInfo.src);
 
-        // ② アイテム画像（剣＋盾）
-        const itemSrcs = [
-            'assets/image/item/sword01.webp',
-            'assets/image/item/sword02.webp',
-            'assets/image/item/sword03.webp',
-            'assets/image/item/sword04.webp',
-            'assets/image/item/sword05.webp',
-            'assets/image/item/shield01.webp',
-            'assets/image/item/shield02.webp',
-            'assets/image/item/shield03.webp',
-            'assets/image/item/shield04.webp',
-            'assets/image/item/shield05.webp'
-        ];
-
         const effectSrcs = [
             'assets/image/effect/attack_H.webp',
             'assets/image/effect/critical_H.webp',
             'assets/image/effect/attack_S.webp',
             'assets/image/effect/critical_S.webp',
-            'assets/image/effect/attack_SP.webp'
+            'assets/image/effect/attack_SP.webp',
+            'assets/image/effect/attack_S_red.webp',
+            'assets/image/effect/critical_S_red.webp',
+            'assets/image/effect/attack_S_blue.webp',
+            'assets/image/effect/critical_S_blue.webp',
+            'assets/image/effect/attack_S_green.webp',
+            'assets/image/effect/critical_S_green.webp',
+            'assets/image/effect/attack_S_yellow.webp',
+            'assets/image/effect/critical_S_yellow.webp',
+            'assets/image/effect/attack_S_black.webp',
+            'assets/image/effect/critical_S_black.webp',
+            'assets/image/effect/attack_S_white.webp',
+            'assets/image/effect/critical_S_white.webp'
         ];
 
-        const allSrcs = [...monsterSrcs, ...itemSrcs, ...effectSrcs];
+        const allSrcs = [...monsterSrcs, ...effectSrcs];
 
         // 少し遅らせてバックグラウンドで読み込み
         setTimeout(() => {

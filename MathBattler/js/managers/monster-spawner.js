@@ -394,19 +394,63 @@ class MonsterSpawner {
         const nextInfo = this._getBossNextImageSrc();
         if (nextInfo && m.battleNumber === Constants.BOSS_BATTLE_NUMBER && m.hp <= 0 && !m.hasTransformed && m.name !== 'ヤンチヤントバーン') {
             m.hasTransformed = true;
+
+            // 1. ダメージメッセージを表示するための間（1.5秒待機）
             await new Promise(resolve => setTimeout(resolve, 1500));
 
+            // 2. フェイク撃破演出（下からのスライドマスクインの前に消滅させる）
+            this.sound.playSe('defeat');
+            this.ui.showMessage(`${m.name}をたおした！`, false, 2000, 'text-neutral');
+            const imgEl = document.getElementById('monster-img');
+            const nameEl = document.getElementById('monster-name');
+            const hpEl = document.getElementById('monster-hp-container');
+            const bgEl = document.getElementById('battle-bg-img');
+            imgEl.style.opacity = '0';
+            nameEl.style.opacity = '0';
+            hpEl.style.opacity = '0';
+
+            // 3. たおした余韻（2秒待機）
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            // 4. ステータス・画像・BG差し替え（消えている間に）
             m.maxHp = Math.ceil(m.maxHp * 1.5);
             m.hp = m.maxHp;
             m.attackPower = Math.ceil(m.attackPower * 1.5);
             m.imageSrc = nextInfo.src;
-            document.getElementById('monster-img').src = m.imageSrc;
             m.name = nextInfo.name;
-            document.getElementById('monster-name').textContent = m.name;
+            imgEl.src = m.imageSrc;
+            nameEl.textContent = m.name;
             this.ui.updateMonsterHp(m.hpRatio);
+            bgEl.src = 'assets/image/ui/battle/battlebg/BattleBG_Bossnext.webp';
+            bgEl.style.opacity = '0';
+
+            // 5. 下からのスライドマスクインアニメーション（モンスター）+ BG FI
+            imgEl.classList.add('boss-recover-anim');
+            nameEl.classList.add('boss-recover-anim-name');
+            hpEl.classList.add('boss-recover-anim-name');
+            bgEl.classList.add('boss-next-bg-fi');
+
             this.ui.showMessage("モンスターが しんのすがたを かいほうした！", false, 3000, 'text-neutral');
             this.sound.playSe('transform');
+            this.sound.playBossNextBgm();
+
+            // 6. 3秒間のアニメーションを見せる
             await new Promise(resolve => setTimeout(resolve, 3000));
+
+            this.ui.showMessage("たいりょくが ぜんかいふくした！", false, 1500, 'text-neutral');
+            this.sound.playSe('monster_recover');
+            await new Promise(resolve => setTimeout(resolve, 1500));
+
+            // 7. クリーンアップ
+            imgEl.style.opacity = '';
+            nameEl.style.opacity = '';
+            hpEl.style.opacity = '';
+            bgEl.style.opacity = '';
+            imgEl.classList.remove('boss-recover-anim');
+            nameEl.classList.remove('boss-recover-anim-name');
+            hpEl.classList.remove('boss-recover-anim-name');
+            bgEl.classList.remove('boss-next-bg-fi');
+
             return true;
         }
         // ヤンチヤントバーン 第一段階：気合の全回復（HP≤5で初回）

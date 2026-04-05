@@ -132,8 +132,9 @@ class InputHandler {
             let effectType;
             if (specialEffectId === 'Hitting') {
                 effectType = isCrit ? 'critical_H' : 'attack_H';
-            } else if (specialEffectId === 'Slash') {
-                effectType = isCrit ? 'critical_S' : 'attack_S';
+            } else if (specialEffectId && specialEffectId.startsWith('Slash')) {
+                const colorSuffix = specialEffectId.includes('_') ? '_' + specialEffectId.split('_')[1] : '';
+                effectType = isCrit ? `critical_S${colorSuffix}` : `attack_S${colorSuffix}`;
             } else {
                 effectType = isCrit ? 'critical' : 'attack';
             }
@@ -146,8 +147,9 @@ class InputHandler {
             }
             if (specialEffectId === 'Hitting') {
                 this.sound.playSe(isCrit ? 'hitting_crit' : 'hitting');
-            } else if (specialEffectId === 'Slash') {
-                this.sound.playSe(isCrit ? 'slash_crit' : 'slash');
+            } else if (specialEffectId && specialEffectId.startsWith('Slash')) {
+                const colorSuffix = specialEffectId.includes('_') ? '_' + specialEffectId.split('_')[1] : '';
+                this.sound.playSe(isCrit ? `slash_crit${colorSuffix}` : `slash${colorSuffix}`);
             } else {
                 this.sound.playSe(isCrit ? 'sword_crit' : 'sword');
             }
@@ -203,12 +205,10 @@ class InputHandler {
                 const angerChance = isBoss ? 0.1 : 0.05;
                 if (Math.random() < angerChance) {
                     m.isAngry = true;
-                    m.attackPower += isBoss ? 2 : 1;
+                    m.attackPower = Math.round(m.attackPower * (isBoss ? 1.5 : 1.2));
                     document.querySelector('.monster-container').classList.add('angry');
+                    this.sound.playAngryBgm(isBoss);
                     angerTriggered = true;
-                    if (isBoss) {
-                        this.sound.playBossAngryBgm();
-                    }
                 }
             }
 

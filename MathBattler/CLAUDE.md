@@ -247,7 +247,7 @@ Unlocked after clearing floor 100 on any difficulty. Managed by `MonsterHouseMan
 
 ### Audio
 
-All audio is `.mp3` format. BGM tracks are under `assets/audio/BGM/` with subfolders: `battle/` (battle_01〜battle_20, 5階ごとに1曲), `boss/` (boss, boss_angry), `encounter/` (heal, rare, srare, special), `result/` (clear, gameover), `ui/` (title, menu, shop). SE is under `assets/audio/SE/`. BGM tracks continue playing across monsters (battle BGM resumes from where it paused when returning from boss/rare/heal tracks). iOS autoplay is unlocked via a silent AudioContext buffer on the first user interaction.
+All audio is `.mp3` format. BGM tracks are under `assets/audio/BGM/` with subfolders: `battle/` (battle_01〜battle_20, 5階ごとに1曲), `boss/` (boss, boss_next), `encounter/` (heal, rare, srare, special), `result/` (clear, gameover), `ui/` (title, menu, shop). SE is under `assets/audio/SE/`. BGM tracks continue playing across monsters (battle BGM resumes from where it paused when returning from boss/rare/heal tracks). iOS autoplay is unlocked via a silent AudioContext buffer on the first user interaction.
 
 ### Screen Transition System
 

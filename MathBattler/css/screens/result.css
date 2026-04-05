@@ -74,7 +74,7 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    height: 200px;
+    min-height: 200px;
     position: relative;
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
@@ -103,9 +103,11 @@
     font-size: 18px;
     color: #cbd5e1;
     text-align: center;
-    white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    word-break: break-all;
     width: 100%;
 }
 

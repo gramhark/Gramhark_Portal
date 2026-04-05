@@ -9,7 +9,9 @@ class SoundManager {
             this.bgmBattle.push(document.getElementById(`bgm-battle-${String(i).padStart(2, '0')}`));
         }
         this.bgmBoss      = document.getElementById('bgm-boss');
-        this.bgmBossAngry = document.getElementById('bgm-boss-angry');
+        this.bgmBossNext    = document.getElementById('bgm-boss-next');
+        this.bgmBossAngry   = document.getElementById('bgm-boss-angry');
+        this.bgmMonsterAngry = document.getElementById('bgm-monster-angry');
         this.bgmSrare     = document.getElementById('bgm-srare');
         this.bgmRare      = document.getElementById('bgm-rare');
         this.bgmHeal      = document.getElementById('bgm-heal');
@@ -28,6 +30,18 @@ class SoundManager {
         this.seHittingCrit  = document.getElementById('se-hitting-crit');
         this.seSlash        = document.getElementById('se-slash');
         this.seSlashCrit    = document.getElementById('se-slash-crit');
+        this.seSlashRed     = document.getElementById('se-slash-red');
+        this.seSlashCritRed = document.getElementById('se-slash-crit-red');
+        this.seSlashBlue     = document.getElementById('se-slash-blue');
+        this.seSlashCritBlue = document.getElementById('se-slash-crit-blue');
+        this.seSlashGreen     = document.getElementById('se-slash-green');
+        this.seSlashCritGreen = document.getElementById('se-slash-crit-green');
+        this.seSlashYellow     = document.getElementById('se-slash-yellow');
+        this.seSlashCritYellow = document.getElementById('se-slash-crit-yellow');
+        this.seSlashBlack     = document.getElementById('se-slash-black');
+        this.seSlashCritBlack = document.getElementById('se-slash-crit-black');
+        this.seSlashWhite     = document.getElementById('se-slash-white');
+        this.seSlashCritWhite = document.getElementById('se-slash-crit-white');
         this.seSpecial      = document.getElementById('se-special');
         this.sePlayerHit    = document.getElementById('se-player-hit');
         this.seShieldBlock  = document.getElementById('se-shield-block');
@@ -101,8 +115,10 @@ class SoundManager {
         this.bgmBattle.forEach((el, i) => {
             el.src = `assets/audio/BGM/battle/battle_${String(i + 1).padStart(2, '0')}.mp3`;
         });
-        this.bgmBoss.src      = 'assets/audio/BGM/boss/boss.mp3';
-        this.bgmBossAngry.src = 'assets/audio/BGM/boss/boss_angry.mp3';
+        this.bgmBoss.src        = 'assets/audio/BGM/boss/boss.mp3';
+        this.bgmBossNext.src    = 'assets/audio/BGM/boss/boss_next.mp3';
+        this.bgmBossAngry.src   = 'assets/audio/BGM/boss/boss_angry.mp3';
+        this.bgmMonsterAngry.src = 'assets/audio/BGM/battle/monster_angry.mp3';
         this.bgmSrare.src     = 'assets/audio/BGM/encounter/srare.mp3';
         this.bgmRare.src      = 'assets/audio/BGM/encounter/rare.mp3';
         this.bgmHeal.src      = 'assets/audio/BGM/encounter/heal.mp3';
@@ -121,6 +137,18 @@ class SoundManager {
         this.seHittingCrit.src  = 'assets/audio/SE/battle/hitting_crit.mp3';
         this.seSlash.src        = 'assets/audio/SE/battle/slash.mp3';
         this.seSlashCrit.src    = 'assets/audio/SE/battle/slash_crit.mp3';
+        this.seSlashRed.src         = 'assets/audio/SE/battle/slash_red.mp3';
+        this.seSlashCritRed.src     = 'assets/audio/SE/battle/slash_crit_red.mp3';
+        this.seSlashBlue.src        = 'assets/audio/SE/battle/slash_blue.mp3';
+        this.seSlashCritBlue.src    = 'assets/audio/SE/battle/slash_crit_blue.mp3';
+        this.seSlashGreen.src       = 'assets/audio/SE/battle/slash_green.mp3';
+        this.seSlashCritGreen.src   = 'assets/audio/SE/battle/slash_crit_green.mp3';
+        this.seSlashYellow.src      = 'assets/audio/SE/battle/slash_yellow.mp3';
+        this.seSlashCritYellow.src  = 'assets/audio/SE/battle/slash_crit_yellow.mp3';
+        this.seSlashBlack.src       = 'assets/audio/SE/battle/slash_black.mp3';
+        this.seSlashCritBlack.src   = 'assets/audio/SE/battle/slash_crit_black.mp3';
+        this.seSlashWhite.src       = 'assets/audio/SE/battle/slash_white.mp3';
+        this.seSlashCritWhite.src   = 'assets/audio/SE/battle/slash_crit_white.mp3';
         this.seSpecial.src      = 'assets/audio/SE/battle/special.mp3';
         this.sePlayerHit.src    = 'assets/audio/SE/battle/player_hit.mp3';
         this.seShieldBlock.src  = 'assets/audio/SE/battle/shield_block.mp3';
@@ -389,7 +417,8 @@ class SoundManager {
         const allBgms = [
             this.bgmTitle, this.bgmMenu, this.bgmDungeon,
             ...this.bgmBattle,
-            this.bgmBoss, this.bgmBossAngry, this.bgmSrare, this.bgmRare,
+            this.bgmBoss, this.bgmBossNext, this.bgmBossAngry, this.bgmMonsterAngry,
+            this.bgmSrare, this.bgmRare,
             this.bgmHeal, this.bgmSpecial, this.bgmShop, this.bgmClear, this.bgmGameover,
             this.bgmMonsterHouse
         ].filter(Boolean);
@@ -418,6 +447,18 @@ class SoundManager {
             'hitting_crit':   this.seHittingCrit,
             'slash':          this.seSlash,
             'slash_crit':     this.seSlashCrit,
+            'slash_red':          this.seSlashRed,
+            'slash_crit_red':     this.seSlashCritRed,
+            'slash_blue':         this.seSlashBlue,
+            'slash_crit_blue':    this.seSlashCritBlue,
+            'slash_green':        this.seSlashGreen,
+            'slash_crit_green':   this.seSlashCritGreen,
+            'slash_yellow':       this.seSlashYellow,
+            'slash_crit_yellow':  this.seSlashCritYellow,
+            'slash_black':        this.seSlashBlack,
+            'slash_crit_black':   this.seSlashCritBlack,
+            'slash_white':        this.seSlashWhite,
+            'slash_crit_white':   this.seSlashCritWhite,
             'special':        this.seSpecial,
             'player_hit':     this.sePlayerHit,
             'shield_block':   this.seShieldBlock,
@@ -485,15 +526,30 @@ class SoundManager {
         }
     }
 
-    playBossAngryBgm() {
+    playBossNextBgm() {
         if (!this.bgmEnabled) return;
         if (this.currentBgm) {
             if (this.currentBgm._fadeInterval) clearInterval(this.currentBgm._fadeInterval);
             this.currentBgm.pause();
         }
-        this.currentBgm = this.bgmBossAngry;
-        this.bgmBossAngry.currentTime = 0;
-        this.fadeInBgm(this.bgmBossAngry, this._getBgmVol(), 500);
+        this.currentBgm = this.bgmBossNext;
+        this.bgmBossNext.currentTime = 0;
+        this.fadeInBgm(this.bgmBossNext, this._getBgmVol(), 500);
+    }
+
+    playAngryBgm(isBoss) {
+        if (!this.bgmEnabled) return;
+        const target = isBoss ? this.bgmBossAngry : this.bgmMonsterAngry;
+        if (this.currentBgm && this.currentBgm !== target) {
+            if (this.currentBgm._fadeInterval) clearInterval(this.currentBgm._fadeInterval);
+            this.currentBgm.pause();
+            if (!this.bgmBattle.includes(this.currentBgm)) {
+                this.currentBgm.currentTime = 0;
+            }
+        }
+        this.currentBgm = target;
+        target.currentTime = 0;
+        this.fadeInBgm(target, this._getBgmVol(), 500);
     }
 
     unlockAll() {
@@ -518,7 +574,7 @@ class SoundManager {
         const allBgms = [
             this.bgmTitle, this.bgmMenu, this.bgmDungeon,
             ...this.bgmBattle,
-            this.bgmBoss, this.bgmBossAngry,
+            this.bgmBoss, this.bgmBossNext, this.bgmBossAngry, this.bgmMonsterAngry,
             this.bgmSrare, this.bgmRare, this.bgmHeal, this.bgmSpecial,
             this.bgmShop, this.bgmClear, this.bgmGameover, this.bgmMonsterHouse,
         ].filter(Boolean);
@@ -526,12 +582,14 @@ class SoundManager {
             if (!bgm) return;
             bgm.muted = true;
             bgm.play().then(() => {
+                // muted=false を pause() より先に呼ぶ
+                // （iOS Safari では pause 済みの <audio loop> を unmute すると再起動するバグ対策）
+                bgm.muted = false;
                 // currentBgm として再生中のBGMはpauseしない（shop/dungeonBGMが即停止されるバグ対策）
                 if (bgm !== this.currentBgm) {
                     bgm.pause();
                     bgm.currentTime = 0;
                 }
-                bgm.muted = false;
             }).catch(() => {
                 bgm.muted = false;
             });

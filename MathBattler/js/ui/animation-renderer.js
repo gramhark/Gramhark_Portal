@@ -56,9 +56,9 @@ class AnimationRenderer {
 
         if (type === 'attack_SP') {
             animClass = 'anim-sp-attack';
-        } else if (type === 'critical_S') {
+        } else if (type.startsWith('critical_S')) {
             animClass = 'anim-crescent';
-        } else if (type === 'attack_S') {
+        } else if (type.startsWith('attack_S')) {
             animClass = 'anim-slash';
         } else if (type === 'critical_H' || type === 'critical') {
             animClass = 'anim-critical-hit';
