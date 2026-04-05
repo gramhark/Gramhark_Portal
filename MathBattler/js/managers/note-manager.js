@@ -100,7 +100,7 @@ class NoteManager {
         const textEl = document.getElementById('note-progress-text');
         const pctEl = document.getElementById('note-progress-pct');
         const barEl = document.getElementById('note-progress-bar');
-        if (textEl) textEl.textContent = `${totalDefeated}/${totalCount}体`;
+        if (textEl) textEl.textContent = `${totalDefeated}/${totalCount}たい`;
         if (pctEl) pctEl.textContent = `（${pct}%）`;
         if (barEl) barEl.style.width = `${pct}%`;
     }
@@ -247,7 +247,7 @@ class NoteManager {
                 starsEl.textContent = stars;
                 const timeEl = document.createElement('span');
                 timeEl.className = 'diff-time';
-                timeEl.textContent = cleared ? `${time.toFixed(1)}秒` : '--';
+                timeEl.textContent = cleared ? `${time.toFixed(1)}びょう` : '--';
                 row.appendChild(badge);
                 row.appendChild(starsEl);
                 row.appendChild(timeEl);
@@ -285,7 +285,7 @@ class NoteManager {
         const textEl = document.getElementById('item-note-progress-text');
         const pctEl = document.getElementById('item-note-progress-pct');
         const barEl = document.getElementById('item-note-progress-bar');
-        if (textEl) textEl.textContent = `${totalDefeated}/${totalCount}個`;
+        if (textEl) textEl.textContent = `${totalDefeated}/${totalCount}こ`;
         if (pctEl) pctEl.textContent = `（${pct}%）`;
         if (barEl) barEl.style.width = `${pct}%`;
     }

@@ -126,6 +126,16 @@ class EventBinder {
             mhBackBtn.addEventListener('click', () => { game.sound.playSe('back'); game.hideMonsterHouse(); });
         }
 
+        // Intro Overlay
+        document.getElementById('intro-start-btn').addEventListener('click', () => {
+            game.sound.playSe('btn');
+            document.getElementById('intro-overlay').classList.remove('active');
+        });
+        document.getElementById('setting-intro-btn').addEventListener('click', () => {
+            game.sound.playSe('btn');
+            document.getElementById('intro-overlay').classList.add('active');
+        });
+
         // Setting Screen
         document.getElementById('close-setting-btn').addEventListener('click', () => { game.sound.playSe('back'); game._withSlide(() => game.hideSetting(), 'back'); });
         document.getElementById('setting-bgm-on').addEventListener('click', () => game._setSoundEnabled('bgm', true));

@@ -37,6 +37,12 @@ class ScreenManager {
             mhRow.style.display = this.storage.isMonsterHouseUnlocked() ? '' : 'none';
         }
 
+        // チュートリアル初回表示
+        if (!this.storage.isIntroSeen()) {
+            this.storage.setIntroSeen();
+            document.getElementById('intro-overlay').classList.add('active');
+        }
+
         // モンスターハウス初回解放通知バブル
         if (this.storage.isMonsterHouseUnlocked() && !this.storage.isMonsterHouseNotified()) {
             this.storage.setMonsterHouseNotified();

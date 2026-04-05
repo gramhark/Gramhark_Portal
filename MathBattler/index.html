@@ -27,6 +27,7 @@
     <link rel="stylesheet" href="css/overlays/navigation-btn.css">
     <link rel="stylesheet" href="css/overlays/request.css">
     <link rel="stylesheet" href="css/overlays/whiteout.css">
+    <link rel="stylesheet" href="css/overlays/intro.css">
     <link rel="stylesheet" href="css/screens/loading.css">
     <link rel="stylesheet" href="css/screens/top.css">
     <link rel="stylesheet" href="css/screens/dungeon.css">
@@ -264,6 +265,12 @@
                         <input type="file" id="setting-import-file" accept=".json" style="display:none">
                     </div>
                 </div>
+                <div class="setting-item">
+                    <div class="setting-item-header">あそびかた</div>
+                    <div class="setting-backup-area">
+                        <button id="setting-intro-btn" class="primary-btn setting-backup-btn">せつめい</button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -293,7 +300,7 @@
             <!-- 進捗表示エリア -->
             <div id="item-note-progress-area" class="note-progress-area">
                 <div class="note-progress-summary">
-                    <span id="item-note-progress-text" class="note-progress-text">0/0個</span>
+                    <span id="item-note-progress-text" class="note-progress-text">0/0こ</span>
                     <span id="item-note-progress-pct" class="note-progress-pct">（0%）</span>
                 </div>
                 <div class="note-progress-bar-wrap">
@@ -572,7 +579,8 @@
 
         <!-- Battle Companion Detail Overlay (バトル中のパートナー詳細) -->
         <div id="battle-companion-overlay" class="overlay">
-            <div id="battle-companion-detail" class="mh-detail-panel mh-medal-detail-content mh-detail-panel--partner" style="flex: initial; height: 1150px; max-height: none;">
+            <div id="battle-companion-detail" class="mh-detail-panel mh-medal-detail-content mh-detail-panel--partner"
+                style="flex: initial; height: 1150px; max-height: none;">
                 <!-- Populated by JS -->
             </div>
         </div>
@@ -620,6 +628,40 @@
         <div id="item-limit-overlay" class="overlay item-limit-overlay">
             <div class="item-limit-content">
                 <p class="item-limit-text">つかえないよ！</p>
+            </div>
+        </div>
+
+        <!-- チュートリアル（初回説明）オーバーレイ -->
+        <div id="intro-overlay" class="overlay intro-overlay">
+            <div class="intro-content">
+                <div class="intro-scroll-area">
+                    <p class="intro-title">マスバトールのせかいへ<br>ようこそ！</p>
+                    <p class="intro-text">
+                        このゲームは けいさんもんだいをといて モンスターをたおす さんすうバトルゲームだよ。
+                    </p>
+                    <p class="intro-text">
+                        バトルのむずかしさは 3つにわかれているよ。
+                    </p>
+                    <div class="intro-difficulty-list">
+                        <p class="intro-text">★：たしざんと ひきざん だけ</p>
+                        <p class="intro-text">★★：かけざんと わりざんも でる</p>
+                        <p class="intro-text">★★★：すごく むずかしい！</p>
+                    </div>
+                    <p class="intro-text">
+                        じぶんができる むずかしさを えらんでね。
+                    </p>
+                    <p class="intro-text intro-text-hint">
+                        まずは 【ショップ】の おじいさんから<br>「きのけん」を かおう。<br>
+                        かったけんは 【リュック】から そうびしよう。
+                    </p>
+                    <p class="intro-text">
+                        【せってい】で データを ほぞんしておくと もしデータがきえたときも ふっかつできるよ。
+                    </p>
+                    <p class="intro-text intro-text-last">
+                        それじゃあ みんなで<br>マスバトールの せかいを<br>たのしんでね！！
+                    </p>
+                </div>
+                <button id="intro-start-btn" class="primary-btn intro-start-btn">ぼうけんかいし</button>
             </div>
         </div>
 
@@ -738,7 +780,7 @@
             <!-- 進捗表示エリア -->
             <div id="note-progress-area" class="note-progress-area">
                 <div class="note-progress-summary">
-                    <span id="note-progress-text" class="note-progress-text">0/0体</span>
+                    <span id="note-progress-text" class="note-progress-text">0/0たい</span>
                     <span id="note-progress-pct" class="note-progress-pct">（0%）</span>
                 </div>
                 <div class="note-progress-bar-wrap">

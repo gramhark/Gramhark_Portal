@@ -362,7 +362,7 @@ class UIManager {
                 starsEl.textContent = stars;
                 const timeEl = document.createElement('span');
                 timeEl.className = 'diff-time';
-                timeEl.textContent = cleared ? `${time.toFixed(1)}秒` : '--';
+                timeEl.textContent = cleared ? `${time.toFixed(1)}びょう` : '--';
                 row.appendChild(badge);
                 row.appendChild(starsEl);
                 row.appendChild(timeEl);
@@ -372,7 +372,7 @@ class UIManager {
 
             const countEl = document.createElement('span');
             countEl.className = 'modal-count';
-            countEl.textContent = `${count}回たおした`;
+            countEl.textContent = `${count}かいたおした`;
             captionText.appendChild(countEl);
 
             if (onDiarySave) {

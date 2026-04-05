@@ -297,6 +297,16 @@ class StorageManager {
         return { bgmEnabled: true, seEnabled: true, bgmVolume: 100, seVolume: 100 };
     }
 
+    // --- チュートリアル（初回説明） ---
+
+    isIntroSeen() {
+        return localStorage.getItem('math_battle_intro_seen') === 'true';
+    }
+
+    setIntroSeen() {
+        localStorage.setItem('math_battle_intro_seen', 'true');
+    }
+
     // --- モンスターハウス解放 ---
 
     isMonsterHouseUnlocked() {

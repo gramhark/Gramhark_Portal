@@ -56,7 +56,7 @@ class ResultsManager {
         // Calculate Total
         const times = this.game.defeatTimes.map(item => parseFloat(item.time));
         const totalTime = times.reduce((a, b) => a + b, 0).toFixed(1);
-        document.getElementById('total-time-display').textContent = `${totalTime}秒`;
+        document.getElementById('total-time-display').textContent = `${totalTime}びょう`;
 
         // Display floor info
         document.getElementById('result-settings-text').textContent = `${this.game.currentFloor}かいダンジョン`;
@@ -88,7 +88,7 @@ class ResultsManager {
                 </div>
                 <div class="result-info">
                     <span class="result-name">${item.name}</span>
-                    <span class="${timeClass}">${item.time}秒</span>
+                    <span class="${timeClass}">${item.time}びょう</span>
                 </div>
             `;
             list.appendChild(li);
@@ -185,7 +185,7 @@ class ResultsManager {
             ctx.shadowColor = 'rgba(79,172,254,0.6)';
             ctx.shadowBlur = 12;
             ctx.font = 'bold 88px "DotGothic16", sans-serif';
-            ctx.fillText(`${totalTime}秒`, W / 2, imgY + imgSize + 260);
+            ctx.fillText(`${totalTime}びょう`, W / 2, imgY + imgSize + 260);
             ctx.shadowBlur = 0;
 
             // Attribution
