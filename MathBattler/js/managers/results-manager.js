@@ -66,17 +66,23 @@ class ResultsManager {
         const minTime = Math.min(...times);
         const maxTime = Math.max(...times);
 
+        const capturedThisRun = this.game.capturedThisRun;
+
         this.game.defeatTimes.forEach((item, i) => {
             const val = parseFloat(item.time);
             const li = document.createElement('li');
-            li.className = 'result-card'; // Add class for styling
+            const isFriend = capturedThisRun && capturedThisRun.has(item.name);
+            li.className = 'result-card' + (isFriend ? ' result-card--friend' : '');
 
             let timeClass = 'result-time';
             if (val === minTime) timeClass += ' time-fastest';
             else if (val === maxTime) timeClass += ' time-slowest';
 
+            const friendLabel = isFriend ? `<span class="result-friend-label">ともだち</span>` : '';
+
             // Construct Inner HTML with Image
             li.innerHTML = `
+                ${friendLabel}
                 <div class="result-img-container" data-src="${item.imageSrc}" data-name="${item.name}">
                     <img src="${item.imageSrc}" class="result-img" alt="${item.name}" loading="lazy">
                 </div>
@@ -290,15 +296,69 @@ class ResultsManager {
         if (candidates.length === 0) { onComplete(); return; }
         const medal = candidates[Math.floor(Math.random() * candidates.length)];
 
-        // 枚数増加
+        const imgSrc = `assets/image/item/medal/${medal.img}`;
+
+        // ① ズームインアニメーション
+        const flyOverlay = document.getElementById('medal-drop-fly-overlay');
+        const flyImg = document.getElementById('medal-drop-fly-img');
+        flyImg.src = imgSrc;
+
+        // レアリティ別グロークラスを設定
+        flyOverlay.className = `rarity-${rarity}`;
+
+        // モンスター画像中心からズームイン
+        const monsterImgEl = document.getElementById('monster-img');
+        const appEl = document.getElementById('app');
+        const monsterRect = monsterImgEl.getBoundingClientRect();
+        const appRect = appEl.getBoundingClientRect();
+        const appScale = appRect.width / 800;
+        const flyImgSize = appEl.classList.contains('portrait-mode') ? 450 : 330;
+        const monsterCX = (monsterRect.left + monsterRect.width / 2 - appRect.left) / appScale;
+        const monsterCY = (monsterRect.top + monsterRect.height / 2 - appRect.top) / appScale;
+        flyImg.style.transformOrigin = `${flyImgSize / 2 + (monsterCX - 400)}px ${flyImgSize / 2 + (monsterCY - 800)}px`;
+
+        flyImg.style.animation = 'none';
+        void flyImg.offsetWidth;
+        flyImg.style.animation = '';
+        flyOverlay.classList.add('active');
+        this.sound.playSe('equip_get');
+
+        // ② 600ms + 2秒待機 → ポップアップ表示
+        setTimeout(() => {
+            flyOverlay.classList.remove('active');
+            this.game._medalDropItem = medal;
+            this.game._medalDropCallback = onComplete;
+            const overlay = document.getElementById('medal-drop-overlay');
+            overlay.dataset.rarity = rarity;
+            document.getElementById('medal-drop-img').src = imgSrc;
+            document.getElementById('medal-drop-name').textContent = medal.name;
+            document.getElementById('medal-drop-desc').textContent = medal.desc || '';
+            overlay.classList.add('active');
+        }, 2600);
+    }
+
+    /**
+     * メダルドロップ選択（リュックにいれる / すてる）
+     */
+    _onMedalDropChoice(choice) {
+        document.getElementById('medal-drop-overlay').classList.remove('active');
+        const medal = this.game._medalDropItem;
+        this.game._medalDropItem = null;
+        const onComplete = this.game._medalDropCallback;
+        this.game._medalDropCallback = null;
+
+        if (!medal || choice === 'discard') {
+            if (onComplete) onComplete();
+            return;
+        }
+
+        // リュックにいれる: 枚数増加
         const medals = this.storage.loadMedals();
         const current = medals[medal.id] || 0;
         medals[medal.id] = Math.min(current + 1, 99);
         this.storage.saveMedals(medals);
 
-        const rarityLabel = { bronze: '（銅）', silver: '（銀）', gold: '（金）', diamond: '（ダイヤ）' }[rarity] || '';
-        this.ui.showMessage(`${medal.name.replace(/（.*?）/, '')}${rarityLabel}を\nてにいれた！`, false, 2000, 'text-neutral');
-
-        setTimeout(() => onComplete(), 2000);
+        this.ui.showMessage(`${medal.name}を\nリュックにいれた！`, false, 1500, 'text-neutral');
+        setTimeout(() => { if (onComplete) onComplete(); }, 1500);
     }
 }

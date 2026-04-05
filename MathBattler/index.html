@@ -597,6 +597,25 @@
             </div>
         </div>
 
+        <!-- Medal Drop Fly-in Animation (メダルドロップ ズームイン演出) -->
+        <div id="medal-drop-fly-overlay">
+            <img id="medal-drop-fly-img" src="" alt="">
+        </div>
+
+        <!-- Medal Drop Popup (メダルドロップ選択) -->
+        <div id="medal-drop-overlay" class="overlay medal-drop-overlay">
+            <div class="overlay-content medal-drop-content">
+                <p class="medal-drop-label">メダルを てにいれた！</p>
+                <img id="medal-drop-img" class="medal-drop-img" src="" alt="">
+                <p id="medal-drop-name" class="medal-drop-name"></p>
+                <p id="medal-drop-desc" class="medal-drop-desc"></p>
+                <div class="medal-drop-buttons">
+                    <button id="medal-drop-carry-btn" class="orange-btn">リュックにいれる</button>
+                    <button id="medal-drop-discard-btn" class="secondary-btn">すてる</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Item Use Limit Message (つかえないよ！) -->
         <div id="item-limit-overlay" class="overlay item-limit-overlay">
             <div class="item-limit-content">
@@ -864,6 +883,7 @@
             <audio id="se-capture" preload="auto"></audio>
             <audio id="se-companion-cutin" preload="auto"></audio>
             <audio id="se-friendship-berry" preload="auto"></audio>
+            <audio id="se-companion-go" preload="auto"></audio>
             <div id="whiteout-overlay"></div>
             <div id="fadeout-overlay"></div>
             <!-- 捕獲フェード -->
@@ -872,11 +892,13 @@
             <div id="game-notification-bubble" class="game-notification-bubble"></div>
             <!-- コンパニオンエントリーカットイン -->
             <div id="companion-entry-overlay" class="companion-cutin-overlay">
+                <img class="companion-cutin-bg" src="" alt="">
                 <img class="companion-cutin-img" src="" alt="">
                 <div class="companion-cutin-msg"></div>
             </div>
             <!-- コンパニオンメダル発動カットイン -->
             <div id="companion-cutin-overlay" class="companion-cutin-overlay">
+                <img class="companion-cutin-bg" src="" alt="">
                 <img class="companion-cutin-img" src="" alt="">
                 <div class="companion-cutin-msg"></div>
             </div>

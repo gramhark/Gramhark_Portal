@@ -20,6 +20,7 @@ class StorageManager {
     }
 
     loadMalle() {
+        if (typeof DEBUG_MODE !== 'undefined' && DEBUG_MODE) return 100000;
         return Math.min(parseInt(localStorage.getItem('math_battle_malle')) || 0, Constants.MAX_MALLE);
     }
 

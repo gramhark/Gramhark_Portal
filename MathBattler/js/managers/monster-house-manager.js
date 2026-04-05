@@ -307,10 +307,11 @@ class MonsterHouseManager {
         `;
 
         document.getElementById('mh-detail-partner-btn').addEventListener('click', () => {
-            this.sound.playSe('btn');
             if (name === activeCompanionName) {
+                this.sound.playSe('btn');
                 this.storage.saveActiveCompanion(null);
             } else {
+                this.sound.playSe('companion_go');
                 this.storage.saveActiveCompanion(name);
             }
             this._showMonsterDetail(name);
@@ -322,6 +323,9 @@ class MonsterHouseManager {
         document.getElementById('mh-detail-medal-remove-btn').addEventListener('click', () => {
             if (!medal) return;
             this.sound.playSe('equip_remove');
+            const medals = this.storage.loadMedals();
+            medals[medalId] = (medals[medalId] || 0) + 1;
+            this.storage.saveMedals(medals);
             const updated = this.storage.loadCompanionMedals();
             delete updated[name];
             this.storage.saveCompanionMedals(updated);
@@ -369,7 +373,7 @@ class MonsterHouseManager {
             medalSubPanel.appendChild(sortBar);
 
             const ownedMedals = window.MEDAL_LIST
-                ? window.MEDAL_LIST.filter(m => (medals[m.id] || 0) > 0)
+                ? window.MEDAL_LIST.filter(m => (medals[m.id] || 0) > 0 || m.id === currentMedalId)
                 : [];
 
             if (sortKey === 'name') {
@@ -394,21 +398,25 @@ class MonsterHouseManager {
                 const card = document.createElement('div');
                 card.className = 'mh-medal-card' + (isEquipped ? ' equipped' : '');
                 const rarityClass = `rarity-${medal.rarity}`;
+                const available = medals[medal.id] || 0;
                 card.innerHTML = `
                     <img src="assets/image/item/medal/${medal.img}" class="mh-medal-card-img ${rarityClass}" alt="${medal.name}" onerror="this.style.display='none'">
                     <div class="mh-medal-card-name">${medal.name}</div>
-                    <div class="mh-medal-card-count">×${count}</div>
-                    ${isEquipped ? '<div class="mh-medal-equipped-badge">そうびちゅう</div>' : ''}
+                    ${isEquipped ? '<div class="mh-medal-equipped-badge">そうびちゅう</div>' : `<div class="mh-medal-card-count">×${available}</div>`}
                 `;
                 card.addEventListener('click', () => {
                     if (isEquipped) return;
                     this.sound.playSe('equip_set');
+                    const updatedMedals = this.storage.loadMedals();
                     const updated = this.storage.loadCompanionMedals();
-                    if (updated[monsterName] === medal.id) {
-                        delete updated[monsterName];
-                    } else {
-                        updated[monsterName] = medal.id;
+                    // 前のメダルを返却
+                    if (updated[monsterName]) {
+                        updatedMedals[updated[monsterName]] = (updatedMedals[updated[monsterName]] || 0) + 1;
                     }
+                    // 新しいメダルを消費
+                    updatedMedals[medal.id] = Math.max(0, (updatedMedals[medal.id] || 0) - 1);
+                    this.storage.saveMedals(updatedMedals);
+                    updated[monsterName] = medal.id;
                     this.storage.saveCompanionMedals(updated);
                     medalSubPanel.style.display = 'none';
                     if (detailPanel) {
@@ -450,7 +458,9 @@ class MonsterHouseManager {
         if (!window.MEDAL_LIST) return;
 
         const medals = this.storage.loadMedals();
-        const ownedMedals = window.MEDAL_LIST.filter(m => (medals[m.id] || 0) > 0);
+        const companionMedals = this.storage.loadCompanionMedals();
+        const equippedIds = new Set(Object.values(companionMedals));
+        const ownedMedals = window.MEDAL_LIST.filter(m => (medals[m.id] || 0) > 0 || equippedIds.has(m.id));
 
         if (ownedMedals.length === 0) {
             const msg = document.createElement('p');
@@ -491,14 +501,17 @@ class MonsterHouseManager {
             const grid = document.createElement('div');
             grid.className = 'mh-medal-card-grid';
             sorted.forEach(medal => {
-                const count = medals[medal.id] || 0;
+                const unequipped = medals[medal.id] || 0;
+                const equippedCount = Object.values(companionMedals).filter(id => id === medal.id).length;
+                const totalCount = unequipped + equippedCount;
                 const rarityClass = `rarity-${medal.rarity}`;
                 const card = document.createElement('div');
                 card.className = 'mh-medal-card';
                 card.innerHTML = `
                     <img src="assets/image/item/medal/${medal.img}" class="mh-medal-card-img ${rarityClass}" alt="${medal.name}" onerror="this.style.display='none'">
                     <div class="mh-medal-card-name">${medal.name}</div>
-                    <div class="mh-medal-card-count">×${count}</div>
+                    <div class="mh-medal-card-count">×${totalCount}</div>
+                    ${equippedCount > 0 ? `<div class="mh-medal-equipped-badge">装備中×${equippedCount}</div>` : ''}
                 `;
                 card.addEventListener('click', () => {
                     this.sound.playSe('note_details');
@@ -516,9 +529,17 @@ class MonsterHouseManager {
         const overlay = document.getElementById('mh-medal-detail-overlay');
         if (!overlay) return;
         const medals = this.storage.loadMedals();
-        const count = medals[medal.id] || 0;
+        const companionMedals = this.storage.loadCompanionMedals();
+        const unequipped = medals[medal.id] || 0;
+        const equippedMonsters = Object.entries(companionMedals)
+            .filter(([, id]) => id === medal.id)
+            .map(([name]) => name);
+        const totalCount = unequipped + equippedMonsters.length;
         const rarityLabel = { bronze: '銅', silver: '銀', gold: '金', diamond: 'ダイヤ' }[medal.rarity] || medal.rarity;
         const rarityColor = { bronze: '#cd7f32', silver: '#c0c0c0', gold: '#ffd700', diamond: '#b9f2ff' }[medal.rarity] || '#fff';
+        const equippedHtml = equippedMonsters.length > 0
+            ? `<div class="mh-medal-detail-equipped">装備中: ${equippedMonsters.join('、')}</div>`
+            : '';
 
         overlay.innerHTML = `
             <div class="mh-medal-detail-content">
@@ -526,7 +547,8 @@ class MonsterHouseManager {
                 <div class="mh-medal-detail-name" style="color:${rarityColor}">${medal.name}</div>
                 <div class="mh-medal-detail-rarity" style="color:${rarityColor}">レアリティ: ${rarityLabel}</div>
                 <div class="mh-medal-detail-effect">${medal.desc}</div>
-                <div class="mh-medal-detail-count">もちすう: ${count}まい</div>
+                <div class="mh-medal-detail-count">もちすう: ${totalCount}まい（未装備: ${unequipped}）</div>
+                ${equippedHtml}
                 <div class="mh-detail-buttons">
                     <button class="orange-btn mh-detail-btn" id="mh-medal-detail-close">とじる</button>
                 </div>

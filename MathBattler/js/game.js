@@ -123,6 +123,7 @@ class Game {
         // Init Monsters
         this.monsters = [];
         this.defeatTimes = [];
+        this.capturedThisRun = new Set();
         this.specialMonstersAppeared = [];
         this.specialAppeared = false;
         this.healAppeared = false;
@@ -171,10 +172,10 @@ class Game {
                 if (medalId && window.MEDAL_LIST) {
                     const medal = window.MEDAL_LIST.find(m => m.id === medalId);
                     if (medal) {
-                        if (medal.type === 'defense')      this.companionDefenseBonus = medal.value;
-                        if (medal.type === 'extra_damage') this.companionExtraDamage  = medal.value;
-                        if (medal.type === 'malle')        this.companionMalleBonus   = medal.value;
-                        if (medal.type === 'exp')          this.companionExpBonus     = medal.value;
+                        if (medal.type === 'defense') this.companionDefenseBonus = medal.value;
+                        if (medal.type === 'extra_damage') this.companionExtraDamage = medal.value;
+                        if (medal.type === 'malle') this.companionMalleBonus = medal.value;
+                        if (medal.type === 'exp') this.companionExpBonus = medal.value;
                     }
                 }
             }
@@ -223,12 +224,18 @@ class Game {
             document.getElementById('battle-screen').classList.add('active');
             document.getElementById('stage-progress').innerHTML = '';
 
-            this.sound.playBgm({ floor: this.currentFloor });
             this.state = GameState.INTERVAL;
 
             setTimeout(() => this.ui.adjustScale(), 200);
 
+            // 同伴モンスターアイコン更新
+            this._updateCompanionSlot();
+
+            // モンスター出現画面を先に準備（カットインの裏に待機）
+            this.showInterval();
+
             // コンパニオンエントリーカットイン
+            let hasCompanionCutin = false;
             if (this.storage.isMonsterHouseUnlocked()) {
                 const activeCompanionName = this.storage.loadActiveCompanion();
                 if (activeCompanionName) {
@@ -238,18 +245,19 @@ class Game {
                         const companionMedals = this.storage.loadCompanionMedals();
                         const medalId = companionMedals[activeCompanionName];
                         const medal = medalId && window.MEDAL_LIST ? window.MEDAL_LIST.find(m => m.id === medalId) : null;
+                        hasCompanionCutin = true;
                         this._showCompanionEntryOverlay(companion, medal);
-                        await new Promise(resolve => setTimeout(resolve, 2500));
+                        // カットインが完全に不透明になるまで待ってからホワイトアウトを解除
+                        // （解除中は不透明なカットインが手前にあるので裏の画面は見えない）
+                        await new Promise(resolve => setTimeout(resolve, 700));
+                        if (whiteout) whiteout.classList.remove('active');
+                        await new Promise(resolve => setTimeout(resolve, 1800));
                     }
                 }
             }
 
-            // 同伴モンスターアイコン更新
-            this._updateCompanionSlot();
-
-            this.showInterval();
-
-            if (whiteout) {
+            // カットインなし：通常どおりホワイトアウト解除
+            if (!hasCompanionCutin && whiteout) {
                 await new Promise(resolve => setTimeout(resolve, 100));
                 whiteout.classList.remove('active');
             }
@@ -628,52 +636,33 @@ class Game {
                             const existingCompanions = this.storage.loadCompanions();
                             const alreadyCaptured = !!existingCompanions[m.name];
                             if (!alreadyCaptured) {
-                                // 捕獲成功（100%）
-                                const captureBlackout = document.getElementById('capture-fade');
+                                // 捕獲演出: 消えてFIで戻る
                                 const monsterImg = document.getElementById('monster-img');
-                                
-                                if (captureBlackout) {
-                                    captureBlackout.classList.add('active');
-                                    // 捕獲演出時にモンスターを最前面に再表示
+                                if (monsterImg) {
+                                    monsterImg.style.transition = 'none';
+                                    monsterImg.style.opacity = '0';
+                                }
+                                setTimeout(() => {
                                     if (monsterImg) {
+                                        monsterImg.style.transition = 'opacity 0.6s ease';
                                         monsterImg.style.opacity = '1';
-                                        if (monsterImg.parentElement) {
-                                            monsterImg.parentElement.style.position = 'relative';
-                                            monsterImg.parentElement.style.zIndex = '201';
-                                        }
                                     }
-                                    
                                     setTimeout(() => {
-                                        captureBlackout.classList.remove('active');
-                                        // 黒背景解除時に最前面設定を戻す（画像は表示したままにする）
-                                        if (monsterImg && monsterImg.parentElement) {
-                                            monsterImg.parentElement.style.position = '';
-                                            monsterImg.parentElement.style.zIndex = '';
-                                        }
-                                        
                                         const newCompanions = this.storage.loadCompanions();
                                         newCompanions[m.name] = { name: m.name, imageSrc: m.imageSrc, capturedAt: Date.now() };
                                         this.storage.saveCompanions(newCompanions);
+                                        this.capturedThisRun.add(m.name);
                                         this.sound.playSe('capture');
                                         this.ui.showMessage(`${m.name}を\nなかまにした！`, false, 2000, 'text-neutral');
                                         setTimeout(() => {
-                                            // 次の処理へ進む前に画像を透明に戻す
-                                            if (monsterImg) monsterImg.style.opacity = '0';
+                                            if (monsterImg) {
+                                                monsterImg.style.transition = '';
+                                                monsterImg.style.opacity = '0';
+                                            }
                                             afterCapture();
                                         }, 2000);
                                     }, 600);
-                                } else {
-                                    if (monsterImg) monsterImg.style.opacity = '1';
-                                    const newCompanions = this.storage.loadCompanions();
-                                    newCompanions[m.name] = { name: m.name, imageSrc: m.imageSrc, capturedAt: Date.now() };
-                                    this.storage.saveCompanions(newCompanions);
-                                    this.sound.playSe('capture');
-                                    this.ui.showMessage(`${m.name}を\nなかまにした！`, false, 2000, 'text-neutral');
-                                    setTimeout(() => {
-                                        if (monsterImg) monsterImg.style.opacity = '0';
-                                        afterCapture();
-                                    }, 2000);
-                                }
+                                }, 100);
                                 return;
                             }
                         }
@@ -1054,6 +1043,7 @@ class Game {
     _onGameClear() { return this.results._onGameClear(); }
     _doMalleDrop(cb, amt) { return this.results._doMalleDrop(cb, amt); }
     _doMedalDrop(m, cb) { return this.results._doMedalDrop(m, cb); }
+    _onMedalDropChoice(choice) { return this.results._onMedalDropChoice(choice); }
     _downloadShareImage() { return this.results._downloadShareImage(); }
 
     showMonsterHouse() { return this.screens.showMonsterHouse(); }
@@ -1064,24 +1054,40 @@ class Game {
         if (!overlay || !companion) return;
         const img = overlay.querySelector('.companion-cutin-img');
         const msg = overlay.querySelector('.companion-cutin-msg');
+        const bgImg = overlay.querySelector('.companion-cutin-bg');
         if (img) img.src = companion.imageSrc || '';
 
-        const RARITY_PREFIX = { bronze: '', silver: 'すごく　', gold: 'ものすごく　', diamond: 'とてつもなく　' };
+        const CUTIN_BG = {
+            defense: 'assets/image/ui/battle/companion_cutin_def.webp',
+            extra_damage: 'assets/image/ui/battle/companion_cutin_dmg.webp',
+            exp: 'assets/image/ui/battle/companion_cutin_exp.webp',
+            malle: 'assets/image/ui/battle/companion_cutin_mal.webp',
+            poison: 'assets/image/ui/battle/companion_cutin_psn.webp',
+            stone: 'assets/image/ui/battle/companion_cutin_stn.webp',
+            paralyze: 'assets/image/ui/battle/companion_cutin_plz.webp',
+        };
+        if (bgImg) {
+            const bgSrc = medal && CUTIN_BG[medal.type] ? CUTIN_BG[medal.type] : '';
+            bgImg.src = bgSrc;
+            bgImg.classList.toggle('visible', !!bgSrc);
+        }
+
+        const RARITY_PREFIX = { bronze: 'なんと', silver: 'すごく', gold: 'ものすごく', diamond: 'とてつもなく' };
         const TYPE_MSG = {
-            extra_damage: (f) => `${companion.name}が　いっしょに　${f}たたかう！`,
-            defense:      (f) => `${companion.name}が　${f}まもってくれる！`,
-            poison:       (f) => `${companion.name}が　${f}どくをあたえる！`,
-            paralyze:     (f) => `${companion.name}が　${f}まひをあたえる！`,
-            stone:        (f) => `${companion.name}が　${f}いしにする！`,
-            malle:        (f) => `${companion.name}が　${f}マールをふやす！`,
-            exp:          (f) => `${companion.name}が　${f}けいけんちをふやす！`,
+            extra_damage: (f) => `${companion.name}　が\n${f}\nいっしょにたたかう！`,
+            defense: (f) => `${companion.name}　が\n${f}\nまもってくれる！`,
+            poison: (f) => `${companion.name}　が\n${f}\nどくをあたえる！`,
+            paralyze: (f) => `${companion.name}　が\n${f}\nまひをあたえる！`,
+            stone: (f) => `${companion.name}　が\n${f}\nせきかにする！`,
+            malle: (f) => `${companion.name}　が\n${f}\nマールをふやす！`,
+            exp: (f) => `${companion.name}　が\n${f}\nけいけんちをふやす！`,
         };
         let text;
         if (medal && TYPE_MSG[medal.type]) {
             const f = RARITY_PREFIX[medal.rarity] ?? '';
             text = TYPE_MSG[medal.type](f);
         } else {
-            text = `${companion.name}が　いっしょに　たたかう！`;
+            text = `${companion.name}が　\nいっしょに　たたかう！`;
         }
         if (msg) msg.innerHTML = text;
         overlay.classList.add('active');
@@ -1139,8 +1145,8 @@ class Game {
                 <div class="mh-detail-medal-name">${medal.name}</div>
                 <img src="assets/image/item/medal/${medal.img}" class="mh-detail-medal-large-icon rarity-${medal.rarity}" alt="${medal.name}">
                 <div class="mh-detail-medal-effect-text">${medal.effectLabel}</div>
-            </div>` 
-            : '<div class="mh-detail-medal-label mh-no-medal">メダルなし</div>'}
+            </div>`
+                : '<div class="mh-detail-medal-label mh-no-medal">メダルなし</div>'}
             <hr class="mh-detail-divider">
             <div class="mh-detail-buttons">
                 <button class="orange-btn mh-detail-btn" id="battle-companion-close-btn">とじる</button>

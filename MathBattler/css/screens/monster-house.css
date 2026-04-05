@@ -407,11 +407,16 @@
 
 #app.portrait-mode .mh-medal-detail-rarity,
 #app.portrait-mode .mh-medal-detail-effect,
-#app.portrait-mode .mh-medal-detail-count {
+#app.portrait-mode .mh-medal-detail-count,
+#app.portrait-mode .mh-medal-detail-equipped {
     font-family: var(--font-pixel);
     font-size: 28px;
     color: #ccc;
     text-align: center;
+}
+
+#app.portrait-mode .mh-medal-detail-equipped {
+    color: #ffd700;
 }
 
 #app.portrait-mode .mh-medal-detail-effect {
@@ -471,21 +476,8 @@
     margin-bottom: 12px;
 }
 
-/* ---- 捕獲フェード ---- */
-#capture-fade {
-    position: fixed;
-    inset: 0;
-    background: #000;
-    z-index: 200;
-    opacity: 0;
-    pointer-events: none;
-    visibility: hidden;
-}
-
-#capture-fade.active {
-    opacity: 1;
-    visibility: visible;
-}
+/* ---- 捕獲フェード (未使用) ---- */
+#capture-fade { display: none; }
 
 /* ---- 汎用通知バブル ---- */
 .game-notification-bubble {
@@ -520,25 +512,40 @@
 /* ---- コンパニオンカットインオーバーレイ ---- */
 .companion-cutin-overlay {
     position: fixed;
+    top: 0;
     left: 50%;
-    bottom: 15%;
     transform: translateX(-50%);
     width: 800px;
-    background: rgba(0, 20, 60, 0.92);
-    border: 6px solid rgba(79, 172, 254, 0.6);
-    border-radius: 40px;
-    padding: 40px 48px;
+    height: 100%;
+    background: transparent;
     z-index: 10001;
+    overflow: hidden;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-end;
+    padding-bottom: 15%;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.6s ease;
 }
 
 .companion-cutin-overlay.active {
     opacity: 1;
+}
+
+/* メダルタイプ別背景画像（画面全体を覆う） */
+.companion-cutin-overlay .companion-cutin-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+    z-index: 0;
+}
+.companion-cutin-overlay .companion-cutin-bg.visible {
+    display: block;
 }
 
 /* モンスター画像はウィンドウ外へ切り離してアニメーション */
@@ -573,6 +580,14 @@
     line-height: 1.5;
     text-align: center;
     white-space: pre-wrap;
+    position: relative;
+    z-index: 1;
+    background: rgba(0, 20, 60, 0.92);
+    border: 6px solid rgba(79, 172, 254, 0.6);
+    border-radius: 40px;
+    padding: 40px 48px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 /* ---- バトル画面コンパニオンスロット ---- */

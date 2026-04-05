@@ -9,6 +9,8 @@ class MonsterSpawner {
 
     showInterval() {
         this.game.state = GameState.INTERVAL;
+        this.ui.clearMessageLog();
+        this.ui.clearProblemDisplay();
         const m = this.game.monsters[this.game.currentMonsterIdx];
 
         // いかりクラスをリセット
@@ -95,13 +97,13 @@ class MonsterSpawner {
         } else {
             const blackout = document.getElementById('interval-blackout');
             const content = document.querySelector('#interval-overlay .overlay-content');
-            blackout.classList.remove('fade-out');
+            // ブラックアウトは即座に透明（非表示）に
+            blackout.classList.add('fade-out');
             // コンテンツのFIアニメーションを毎回リセット
             content.style.animation = 'none';
             content.offsetHeight; // reflow
             content.style.animation = '';
             document.getElementById('interval-overlay').classList.add('active');
-            setTimeout(() => blackout.classList.add('fade-out'), 300);
         }
     }
 

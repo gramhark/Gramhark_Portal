@@ -68,7 +68,7 @@ Game logic is split across `js/` by feature. Load order in `index.html` matters 
 - **`js/data/monster_list.js`** — auto-generated object `window.MONSTER_ASSETS`. Must be loaded first.
 - **`js/data/equipment_list.js`** — `window.EQUIPMENT_LIST` array of sword/shield definitions.
 - **`js/data/item_list.js`** — `window.ITEM_LIST` array of consumable item definitions.
-- **`js/data/medal_list.js`** — `window.MEDAL_LIST` array of medal definitions (attack/defense/extra_damage/malle types, four rarity tiers: bronze/silver/gold/diamond).
+- **`js/data/medal_list.js`** — `window.MEDAL_LIST` array of medal definitions (defense/extra_damage/malle/exp/poison/paralyze/stone types, four rarity tiers: bronze/silver/gold/diamond).
 - **`js/core/constants.js`** — `Constants`, `Difficulty`, `DIFFICULTY_TIMER`, `GameState`, `ITEM_DATA`, `FORM_CONFIG`, drop rate arrays.
 - **`js/core/sound.js`** — `SoundManager` class.
 - **`js/core/math_problem.js`** — `MathProblem` class.
@@ -107,7 +107,7 @@ Styles are split across `css/` by feature. Load order in `index.html` matters:
 | `css/components/monster-effects.css` | Monster image, attack effects |
 | `css/components/animations.css` | Keyframe animations |
 | `css/components/message.css` | Message overlay |
-| `css/overlays.css` | All overlay/modal styles (interval, boss cutin, equip drop, image zoom, battle bag, etc.) |
+| `css/overlays/` | Per-overlay CSS files: `base.css`, `interval.css`, `boss-cutin.css`, `equip-drop.css`, `drop-animations.css`, `image-modal.css`, `battle-bag.css`, `bag-detail.css`, `confirm-dialogs.css`, `info-overlay.css`, `item-limit.css`, `navigation-btn.css`, `shop-overlays.css`, `whiteout.css`, `request.css` |
 | `css/screens/*.css` | One file per screen: `top`, `dungeon`, `battle`, `result`, `shop`, `bag`, `equip`, `setting`, `note`, `monster-house` |
 
 ### JS Classes
@@ -240,8 +240,8 @@ Equipment definitions live in `js/data/equipment_list.js` as `window.EQUIPMENT_L
 Unlocked after clearing floor 100 on any difficulty. Managed by `MonsterHouseManager`.
 
 - **Capture**: Normal, DungeonRare, SuperRare monsters only (1 per species). Requires `ゆうじょうのみ` item (shop-only after unlock). Capture chance varies by monster HP% at battle end.
-- **Medals**: Drop from all-boss clears after unlock. Defined in `window.MEDAL_LIST` (`js/data/medal_list.js`). Types: `attack`, `defense`, `extra_damage`, `malle`, `exp`, `poison`, `paralyze`, `stone`. Rarities: `bronze` → `silver` → `gold` → `diamond`. Up to 3 medals per companion slot. Drop rates per rarity by difficulty are in `window.MEDAL_DROP_TABLE` (also in `medal_list.js`).
-- **Active companion**: One companion can be set active per dungeon run, contributing its medal bonuses (attack, defense, extra_damage, malle %) to the player's combat stats.
+- **Medals**: Drop from all-boss clears after unlock. Defined in `window.MEDAL_LIST` (`js/data/medal_list.js`). Types: `defense`, `extra_damage`, `malle`, `exp`, `poison`, `paralyze`, `stone`. Rarities: `bronze` → `silver` → `gold` → `diamond`. Up to 3 medals per companion slot. Drop rates per rarity by difficulty are in `window.MEDAL_DROP_TABLE` (also in `medal_list.js`).
+- **Active companion**: One companion can be set active per dungeon run, contributing its medal bonuses (defense, extra_damage, malle, exp %) to the player's combat stats. When a medal activates in battle, a type-specific cutin image fires (`assets/image/ui/battle/companion_cutin_{type}.webp` where `{type}` is `def`, `dmg`, `exp`, `mal`, `psn`, `stn`, or `plz`).
 - **Capacity**: Max 50 companions. Exceeding 50 triggers an overflow (farewell) flow on Monster House entry.
 - **Farewell**: Releasing a companion returns it to the wild (removes from `companions`, clears its equipped medals back to inventory).
 

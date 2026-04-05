@@ -104,7 +104,7 @@ class InputHandler {
         // ダメージ計算（必殺技は specialStandby で発動）
         const { damage, isSpecial } = this.game.battle.calcPlayerDamage(
             this.game._getEquippedSwordBonus(), this.game.swordBonus, isCrit, this.game.specialStandby,
-            this.game.companionExtraDamage || 0
+            0
         );
 
         // 必殺技後の状態リセット
@@ -164,27 +164,58 @@ class InputHandler {
             this.sound.playSe(isCrit ? 'punch_crit' : 'punch');
         }
 
+        // 攻撃メッセージが終わるまで待機
+        await new Promise(resolve => setTimeout(resolve, 1500));
+
+        // コンパニオン名の取得（追加ダメージ・状態異常共通）
+        let companionName = null;
+        if (this.game.storage && this.game.storage.isMonsterHouseUnlocked()) {
+            const _acn = this.game.storage.loadActiveCompanion();
+            if (_acn) {
+                const _comps = this.game.storage.loadCompanions();
+                companionName = (_comps[_acn] || {}).name || _acn;
+            }
+        }
+
+        // コンパニオン追加ダメージ（extra_damage）
+        const extraDamage = isCrit ? Math.floor((this.game.companionExtraDamage || 0) * 1.5) : (this.game.companionExtraDamage || 0);
+        if (extraDamage > 0 && companionName && m.hp > 0) {
+            m.takeDamage(extraDamage);
+            this.ui.updateMonsterHp(m.hpRatio);
+            this.ui.showAttackEffect(isCrit ? 'critical_H' : 'attack_H');
+            this.ui.flashScreen(isCrit ? 'critical' : 'normal');
+            this.ui.showMessage(`${companionName}の こうげき！\n${extraDamage}ダメージ！`, false, 1500, 'text-player-action');
+            this.sound.playSe(isCrit ? 'hitting_crit' : 'hitting');
+            await new Promise(resolve => setTimeout(resolve, 1500));
+        }
+
         // コンパニオンメダル状態異常チェック（プレイヤーターン・通常攻撃）
-        if (!isSpecial && m.hp > 0) {
-            const activeCompanionName = this.game.storage ? this.game.storage.loadActiveCompanion() : null;
-            if (activeCompanionName) {
+        if (!isSpecial && m.hp > 0 && companionName) {
+            const _acn2 = this.game.storage.loadActiveCompanion();
+            if (_acn2) {
                 const companionMedals = this.game.storage.loadCompanionMedals();
-                const medalId = companionMedals[activeCompanionName];
+                const medalId = companionMedals[_acn2];
                 const medal = medalId && window.MEDAL_LIST ? window.MEDAL_LIST.find(md => md.id === medalId) : null;
                 if (medal && ['poison', 'paralyze', 'stone'].includes(medal.type)) {
                     const isBoss = m.battleNumber === Constants.BOSS_BATTLE_NUMBER;
-                    // せきかはボスに無効
-                    if (medal.type === 'stone' && isBoss) {
-                        // スキップ
-                    } else if (Math.random() < medal.value) {
+                    if (!(medal.type === 'stone' && isBoss) && Math.random() < medal.value) {
                         if (medal.type === 'poison' && !m.isPoisoned) {
                             m.isPoisoned = true;
                             this.ui.applyMonsterStatusMask('poison');
+                            this.sound.playSe('poison');
+                            this.ui.showMessage(`${companionName}は どくをあたえた！`, false, 1500, 'text-player-action');
+                            await new Promise(resolve => setTimeout(resolve, 1500));
                         } else if (medal.type === 'paralyze' && !m.isParalyzed) {
                             m.isParalyzed = true;
                             this.ui.applyMonsterStatusMask('paralyzed');
+                            this.sound.playSe('paralyze');
+                            this.ui.showMessage(`${companionName}は まひをあたえた！`, false, 1500, 'text-player-action');
+                            await new Promise(resolve => setTimeout(resolve, 1500));
                         } else if (medal.type === 'stone' && !m.isStoned) {
                             m.isStoned = true;
+                            this.sound.playSe('stone');
+                            this.ui.showMessage(`${companionName}は せきかをあたえた！`, false, 1500, 'text-player-action');
+                            await new Promise(resolve => setTimeout(resolve, 1500));
                         }
                     }
                 }
@@ -196,7 +227,7 @@ class InputHandler {
         if (!hasEvent && m.hp <= 0) {
             // イベントなし＋HP0 → 撃破
             if (this.game.timerIntervalId) cancelAnimationFrame(this.game.timerIntervalId);
-            setTimeout(() => this.game._onMonsterDefeated(m), 1500);
+            this.game._onMonsterDefeated(m);
         } else if (!hasEvent) {
             // いかりチェック（HP残あり・未いかり・Rare/Heal以外・HP30%未満）
             let angerTriggered = false;
@@ -213,14 +244,11 @@ class InputHandler {
             }
 
             if (angerTriggered) {
-                // 攻撃メッセージが終わってからいかりメッセージを表示
-                setTimeout(() => {
-                    this.ui.showMessage(`${m.name}は\nいかりくるった！`, false, 1500, 'text-monster-action');
-                    setTimeout(() => this.game.startMonsterTurn(), 1500);
-                }, 1500);
+                this.ui.showMessage(`${m.name}は\nいかりくるった！`, false, 1500, 'text-monster-action');
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                this.game.startMonsterTurn();
             } else {
-                // イベントなし＋HP残あり → モンスターターンへ
-                setTimeout(() => this.game.startMonsterTurn(), 1500);
+                this.game.startMonsterTurn();
             }
         } else {
             // イベント発火（HP回復済み）→ モンスターターンへ
@@ -228,7 +256,7 @@ class InputHandler {
         }
     }
 
-    _onWrong() {
+    async _onWrong() {
         this.game.state = GameState.TRANSITION; // Block input while processing messages
 
         if (this.game.isPlayerTurn) {
@@ -277,12 +305,24 @@ class InputHandler {
 
         if (this.game.playerHp <= 0) {
             this.game._onGameOver();
-        } else {
-            setTimeout(() => {
-                this.ui.updateProblemDisplay(this.game.problem.displayText, this.game.inputBuffer, this.game.isPlayerTurn, this.game.problem.fillInBlank); // Clear the answer display for retry
-                this.game._afterMonsterTurnEffects(() => this.game.startPlayerTurn());
-            }, 1500);
+            return;
         }
+
+        await new Promise(resolve => setTimeout(resolve, 1500));
+
+        // コンパニオン防御メッセージ
+        if (this.game.companionDefenseBonus > 0 && this.game.storage && this.game.storage.isMonsterHouseUnlocked()) {
+            const _acn = this.game.storage.loadActiveCompanion();
+            if (_acn) {
+                const _comps = this.game.storage.loadCompanions();
+                const _cname = (_comps[_acn] || {}).name || _acn;
+                this.ui.showMessage(`${_cname}は ${this.game.playerName}を まもった！`, false, 1500, 'text-player-action');
+                await new Promise(resolve => setTimeout(resolve, 1500));
+            }
+        }
+
+        this.ui.updateProblemDisplay(this.game.problem.displayText, this.game.inputBuffer, this.game.isPlayerTurn, this.game.problem.fillInBlank);
+        this.game._afterMonsterTurnEffects(() => this.game.startPlayerTurn());
     }
 
     startBattle() {
@@ -422,7 +462,7 @@ class InputHandler {
         }
     }
 
-    _onTimerExpiredMonsterTurn() {
+    async _onTimerExpiredMonsterTurn() {
         // state が BATTLE のときだけ実行（二重呼び出し対策）
         if (this.game.state !== GameState.BATTLE) return;
 
@@ -466,12 +506,24 @@ class InputHandler {
 
         if (this.game.playerHp <= 0) {
             this.game._onGameOver();
-        } else {
-            setTimeout(() => {
-                this.ui.updateProblemDisplay(this.game.problem.displayText, this.game.inputBuffer, this.game.isPlayerTurn, this.game.problem.fillInBlank);
-                this.game._afterMonsterTurnEffects(() => this.game.startPlayerTurn());
-            }, 1500);
+            return;
         }
+
+        await new Promise(resolve => setTimeout(resolve, 1500));
+
+        // コンパニオン防御メッセージ
+        if (this.game.companionDefenseBonus > 0 && this.game.storage && this.game.storage.isMonsterHouseUnlocked()) {
+            const _acn = this.game.storage.loadActiveCompanion();
+            if (_acn) {
+                const _comps = this.game.storage.loadCompanions();
+                const _cname = (_comps[_acn] || {}).name || _acn;
+                this.ui.showMessage(`${_cname}は ${this.game.playerName}を まもった！`, false, 1500, 'text-player-action');
+                await new Promise(resolve => setTimeout(resolve, 1500));
+            }
+        }
+
+        this.ui.updateProblemDisplay(this.game.problem.displayText, this.game.inputBuffer, this.game.isPlayerTurn, this.game.problem.fillInBlank);
+        this.game._afterMonsterTurnEffects(() => this.game.startPlayerTurn());
     }
 
     _onQuitBattleBtnClick() {

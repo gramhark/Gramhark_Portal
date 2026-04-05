@@ -107,6 +107,7 @@ class SoundManager {
         this.seCapture        = document.getElementById('se-capture');
         this.seCompanionCutin = document.getElementById('se-companion-cutin');
         this.seFriendshipBerry = document.getElementById('se-friendship-berry');
+        this.seCompanionGo    = document.getElementById('se-companion-go');
 
         // BGM sources
         this.bgmTitle.src    = 'assets/audio/BGM/ui/title.mp3';
@@ -214,6 +215,7 @@ class SoundManager {
         if (this.seCapture)        this.seCapture.src        = 'assets/audio/SE/battle/capture.mp3';
         if (this.seCompanionCutin) this.seCompanionCutin.src = 'assets/audio/SE/battle/companion_cutin.mp3';
         if (this.seFriendshipBerry) this.seFriendshipBerry.src = 'assets/audio/SE/item/friendship_berry.mp3';
+        if (this.seCompanionGo)    this.seCompanionGo.src    = 'assets/audio/SE/ui/companion_go.mp3';
 
         this.currentBgm = null;
         this.isPausedByVisibility = false;
@@ -517,6 +519,7 @@ class SoundManager {
             'capture':          this.seCapture,
             'companion_cutin':  this.seCompanionCutin,
             'friendship_berry': this.seFriendshipBerry,
+            'companion_go':     this.seCompanionGo,
         };
         const se = map[type];
         if (se) {

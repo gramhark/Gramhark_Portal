@@ -155,6 +155,10 @@ class EventBinder {
         document.getElementById('equip-drop-carry-btn').addEventListener('click', () => { game.sound.playSe('btn'); game._onEquipDropChoice('carry'); });
         document.getElementById('equip-drop-discard-btn').addEventListener('click', () => { game.sound.playSe('btn'); game._onEquipDropChoice('discard'); });
 
+        // Medal Drop Popup
+        document.getElementById('medal-drop-carry-btn').addEventListener('click', () => { game.sound.playSe('btn'); game._onMedalDropChoice('carry'); });
+        document.getElementById('medal-drop-discard-btn').addEventListener('click', () => { game.sound.playSe('btn'); game._onMedalDropChoice('discard'); });
+
         // Shop Tabs
         document.getElementById('shop-tab-item').addEventListener('click', () => game._switchShopTab('item'));
         document.getElementById('shop-tab-sword').addEventListener('click', () => game._switchShopTab('sword'));
