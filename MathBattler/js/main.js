@@ -143,30 +143,41 @@ function _runLoadingScreen(game) {
             const loadingScreen = document.getElementById('loading-screen');
 
             const onTap = (e) => {
-                e.preventDefault();
                 loadingScreen.removeEventListener('click', onTap);
-                loadingScreen.removeEventListener('touchstart', onTap);
+                loadingScreen.removeEventListener('touchend', onTap);
 
-                game.sound.unlockAll();
+                game.sound.initHowls();
 
-                const fadeout = document.getElementById('fadeout-overlay');
-                fadeout.classList.add('active');
-
-                setTimeout(() => {
-                    loadingScreen.classList.remove('active');
-                    document.getElementById('top-screen').classList.add('active');
-                    game.state = GameState.TOP;
-                    game.ui.adjustScale();
-                    game.sound.playTitleBgm();
+                const startBgm = () => {
+                    const fadeout = document.getElementById('fadeout-overlay');
+                    if (fadeout) fadeout.classList.add('active');
 
                     setTimeout(() => {
-                        fadeout.classList.remove('active');
-                    }, 100);
-                }, 750);
+                        loadingScreen.classList.remove('active');
+                        document.getElementById('top-screen').classList.add('active');
+                        game.state = GameState.TOP;
+                        game.ui.adjustScale();
+                        game.sound.playTitleBgm();
+
+                        setTimeout(() => {
+                            if (fadeout) fadeout.classList.remove('active');
+                        }, 100);
+                    }, 750);
+                };
+
+                if (Howler.ctx && Howler.ctx.state === 'suspended') {
+                    Howler.ctx.resume().then(() => {
+                        startBgm();
+                    }).catch(() => {
+                        startBgm();
+                    });
+                } else {
+                    startBgm();
+                }
             };
 
             loadingScreen.addEventListener('click', onTap);
-            loadingScreen.addEventListener('touchstart', onTap, { passive: false });
+            loadingScreen.addEventListener('touchend', onTap);
         }, 300);
     }
 }
