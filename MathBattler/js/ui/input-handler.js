@@ -95,7 +95,13 @@ class InputHandler {
                 this.sound.playSe('gauge_up');
             }
 
-            setTimeout(() => this.game._afterMonsterTurnEffects(() => this.game.startPlayerTurn()), 1500);
+            const afterMonsterTurn = () => this.game._afterMonsterTurnEffects(() => this.game.startPlayerTurn());
+            if (dodgeResult.specialMoveReady && !prevSpecialMoveReady && !this.game.storage.isAuraTutorialSeen()) {
+                this.game.storage.setAuraTutorialSeen();
+                setTimeout(() => this.game._showAuraTutorial(afterMonsterTurn), 1500);
+            } else {
+                setTimeout(afterMonsterTurn, 1500);
+            }
             return;
         }
 

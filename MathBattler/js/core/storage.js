@@ -228,6 +228,7 @@ class StorageManager {
             berry60Notified:       localStorage.getItem('math_battle_berry60_notified'),
             berry90Notified:       localStorage.getItem('math_battle_berry90_notified'),
             berry100Notified:      localStorage.getItem('math_battle_berry100_notified'),
+            auraTutorialSeen:      localStorage.getItem('math_battle_aura_tutorial_seen'),
             companions:            localStorage.getItem('math_battle_companions'),
             activeCompanion:       localStorage.getItem('math_battle_active_companion'),
             lastSelectedCompanion: localStorage.getItem('math_battle_last_selected_companion'),
@@ -264,6 +265,7 @@ class StorageManager {
         set('math_battle_berry60_notified',        rest.berry60Notified);
         set('math_battle_berry90_notified',        rest.berry90Notified);
         set('math_battle_berry100_notified',       rest.berry100Notified);
+        set('math_battle_aura_tutorial_seen',       rest.auraTutorialSeen);
         set('math_battle_companions',              rest.companions);
         set('math_battle_active_companion',        rest.activeCompanion);
         set('math_battle_last_selected_companion', rest.lastSelectedCompanion);
@@ -305,6 +307,14 @@ class StorageManager {
 
     setIntroSeen() {
         localStorage.setItem('math_battle_intro_seen', 'true');
+    }
+
+    isAuraTutorialSeen() {
+        return localStorage.getItem('math_battle_aura_tutorial_seen') === 'true';
+    }
+
+    setAuraTutorialSeen() {
+        localStorage.setItem('math_battle_aura_tutorial_seen', 'true');
     }
 
     // --- モンスターハウス解放 ---

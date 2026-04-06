@@ -93,6 +93,7 @@ class MonsterHouseManager {
             const { tier, message } = notifications[i];
             bubble.innerHTML = message;
             bubble.classList.add('active');
+            this.sound.playSe('note');
             setTimeout(() => {
                 bubble.classList.remove('active');
                 this.storage.setBerryNotified(tier);
@@ -511,7 +512,7 @@ class MonsterHouseManager {
                     <img src="assets/image/item/medal/${medal.img}" class="mh-medal-card-img ${rarityClass}" alt="${medal.name}" onerror="this.style.display='none'">
                     <div class="mh-medal-card-name">${medal.name}</div>
                     <div class="mh-medal-card-count">×${totalCount}</div>
-                    ${equippedCount > 0 ? `<div class="mh-medal-equipped-badge">装備中×${equippedCount}</div>` : ''}
+                    ${equippedCount > 0 ? `<div class="mh-medal-equipped-badge">そうびちゅう×${equippedCount}</div>` : ''}
                 `;
                 card.addEventListener('click', () => {
                     this.sound.playSe('note_details');
@@ -535,10 +536,10 @@ class MonsterHouseManager {
             .filter(([, id]) => id === medal.id)
             .map(([name]) => name);
         const totalCount = unequipped + equippedMonsters.length;
-        const rarityLabel = { bronze: '銅', silver: '銀', gold: '金', diamond: 'ダイヤ' }[medal.rarity] || medal.rarity;
+        const rarityLabel = { bronze: 'どう', silver: 'ぎん', gold: 'きん', diamond: 'ダイヤ' }[medal.rarity] || medal.rarity;
         const rarityColor = { bronze: '#cd7f32', silver: '#c0c0c0', gold: '#ffd700', diamond: '#b9f2ff' }[medal.rarity] || '#fff';
         const equippedHtml = equippedMonsters.length > 0
-            ? `<div class="mh-medal-detail-equipped">装備中: ${equippedMonsters.join('、')}</div>`
+            ? `<div class="mh-medal-detail-equipped">そうびちゅう: ${equippedMonsters.join('、')}</div>`
             : '';
 
         overlay.innerHTML = `
@@ -547,7 +548,7 @@ class MonsterHouseManager {
                 <div class="mh-medal-detail-name" style="color:${rarityColor}">${medal.name}</div>
                 <div class="mh-medal-detail-rarity" style="color:${rarityColor}">レアリティ: ${rarityLabel}</div>
                 <div class="mh-medal-detail-effect">${medal.desc}</div>
-                <div class="mh-medal-detail-count">もちすう: ${totalCount}まい（未装備: ${unequipped}）</div>
+                <div class="mh-medal-detail-count">もちすう: ${totalCount}まい（みそうび: ${unequipped}）</div>
                 ${equippedHtml}
                 <div class="mh-detail-buttons">
                     <button class="orange-btn mh-detail-btn" id="mh-medal-detail-close">とじる</button>

@@ -754,7 +754,8 @@
         </a>
         <span class="header-title">マスバトール 遊び方ガイド</span>
         <div style="display:flex; align-items:center; gap:0.75rem;">
-          <a href="./manual_en.html" style="font-size:0.8125rem; font-weight:500; color:var(--color-text-muted); white-space:nowrap;">English</a>
+          <a href="./manual_en.html"
+            style="font-size:0.8125rem; font-weight:500; color:var(--color-text-muted); white-space:nowrap;">English</a>
           <a href="./" class="play-btn" aria-label="マスバトールをプレイする">
             プレイする →
           </a>
@@ -800,7 +801,7 @@
             <div class="overview-card__icon oc--blue">🗺️</div>
             <div>
               <p class="overview-card__title">100階のダンジョンを攻略</p>
-              <p class="overview-card__body">ダンジョンは全100フロア。1フロアに10たいのモンスターが出現し、10たい目はボスです。クリアして先へ進もう！</p>
+              <p class="overview-card__body">ダンジョンは全100フロア。1フロアに10体のモンスターが出現し、10体目はボスです。クリアして先へ進もう！</p>
             </div>
           </div>
           <div class="overview-card">
@@ -855,7 +856,7 @@
             <div class="flow-num">3</div>
             <div class="flow-content">
               <h3>計算問題でバトル！</h3>
-              <p>モンスターが登場したら計算問題が出題されます。テンキーで答えを入力して「答え」ボタンを押そう。正解なら攻撃、不正解はモンスターに攻撃されます。</p>
+              <p>モンスターが登場したら計算問題が出題されます。テンキーで答えを入力して「〇」ボタンを押そう。正解なら攻撃！</p>
               <div class="flow-img">
                 <img src="assets/image/ui/main_battle_short02.webp" alt="バトル画面のバックグラウンド">
               </div>
@@ -893,12 +894,12 @@
             <div class="step-card step-card--dodge">
               <p class="step-card__label">Step 2 &nbsp; 相手のターン（かいひターン）</p>
               <p class="step-card__title">問題を解いて攻撃を避ける</p>
-              <p class="step-card__body">モンスターが攻撃してくるターンです。正解するとダメージを完全にかいひ！不正解だと攻撃を受けます。時間切れでも攻撃を受けます。</p>
+              <p class="step-card__body">モンスターが攻撃してくるターンです。正解するとダメージを完全に回避！不正解だと攻撃を受けます。時間切れでも攻撃を受けます。</p>
             </div>
             <div class="step-card step-card--critical">
               <p class="step-card__label">Bonus &nbsp; クリティカル！</p>
               <p class="step-card__title">素早く答えると大ダメージ</p>
-              <p class="step-card__body">こうげきターンで制限時間内に答えると「クリティカル！」が発生し、ダメージが1.5ばいになります。</p>
+              <p class="step-card__body">攻撃ターンで制限時間内に答えると「クリティカル！」が発生し、ダメージが上がります。</p>
             </div>
           </div>
         </div>
@@ -909,14 +910,14 @@
             <div class="highlight__icon">⚡</div>
             <div>
               <p class="highlight__title">クリティカルの時間</p>
-              <p class="highlight__body">★ なら5びょう以内、★★ は4びょう、★★★ は3びょう以内に正解するとクリティカル発動。難しいほどシビア！</p>
+              <p class="highlight__body">★ なら5秒以内、★★ は4秒、★★★ は3秒以内に正解するとクリティカル発動。難しいほどシビア！</p>
             </div>
           </div>
           <div class="highlight highlight--purple">
             <div class="highlight__icon">🔥</div>
             <div>
               <p class="highlight__title">必殺技を使おう</p>
-              <p class="highlight__body">かいひターンで4かい連続で正解すると必殺技ゲージが満タンに！次のこうげきターンでテンキーが赤く光ったら答えを入力すると2ばいダメージの必殺技が発動！</p>
+              <p class="highlight__body">回避ターンで4かい連続で正解すると必殺技ゲージが満タンに！次の攻撃ターンでテンキーが赤く光ったら答えを入力すると最強ダメージの必殺技が発動！</p>
             </div>
           </div>
         </div>
@@ -948,8 +949,8 @@
             </div>
             <div class="monster-card__body">
               <span class="monster-card__badge badge--heal">ヒール</span>
-              <p class="monster-card__name">かいふくモンスター</p>
-              <p class="monster-card__desc">倒すとHPがかいふくするラッキーな存在。HPが少ないほど出やすい！</p>
+              <p class="monster-card__name">回復モンスター</p>
+              <p class="monster-card__desc">HPを回復してくれるラッキーな存在。HPが少ないほど出やすい！</p>
             </div>
           </div>
 
@@ -983,7 +984,7 @@
             <div class="monster-card__body">
               <span class="monster-card__badge badge--boss">ボス</span>
               <p class="monster-card__name">ボスモンスター</p>
-              <p class="monster-card__desc">10たい目は必ずボス！HPが高く手強い。HPが減ると形態が変わることも…？</p>
+              <p class="monster-card__desc">10体目は必ずボス！HPが高く手強い。HPが減ると形態が変わることも…？</p>
             </div>
           </div>
 
@@ -1014,12 +1015,12 @@
             <div class="equip-block__header">
               <img src="assets/image/equipment/sword/D024_てつのけん.webp" alt="けん" class="equip-block__icon">
               <div>
-                <p class="equip-block__title">けん（攻撃力アップ）</p>
+                <p class="equip-block__title">剣（攻撃力アップ）</p>
                 <p class="equip-block__sub">ダンジョンドロップ / ショップで購入</p>
               </div>
             </div>
             <p class="equip-block__body">
-              装備するとモンスターへのダメージが増加します。モンスターを倒したときや、ショップで強いけんを入手しよう。フロアが上がるほど良い装備が手に入りやすくなります。
+              装備するとモンスターへのダメージが増加します。モンスターを倒したときや、ショップで強い剣を入手しよう。フロアが上がるほど良い装備が手に入りやすくなります。
             </p>
           </div>
 
@@ -1027,12 +1028,12 @@
             <div class="equip-block__header">
               <img src="assets/image/equipment/shield/D024_てつのたて.webp" alt="たて" class="equip-block__icon">
               <div>
-                <p class="equip-block__title">たて（防御力アップ）</p>
+                <p class="equip-block__title">盾（防御力アップ）</p>
                 <p class="equip-block__sub">ダンジョンドロップ / ショップで購入</p>
               </div>
             </div>
             <p class="equip-block__body">
-              装備するとモンスターから受けるダメージを減らせます。かいひに失敗してもたてがあれば安心！けんと合わせてしっかりゲットしよう。
+              装備するとモンスターから受けるダメージを減らせます。回避に失敗しても盾があれば安心！剣と合わせてしっかりゲットしよう。
             </p>
           </div>
 
@@ -1041,7 +1042,7 @@
               <img src="assets/image/item/attackOrb.webp" alt="どうぐ" class="equip-block__icon"
                 style="image-rendering:auto;">
               <div>
-                <p class="equip-block__title">どうぐ（バトル中に使えるアイテム）</p>
+                <p class="equip-block__title">道具（バトル中に使えるアイテム）</p>
                 <p class="equip-block__sub">ショップで購入 / ダンジョンドロップ</p>
               </div>
             </div>

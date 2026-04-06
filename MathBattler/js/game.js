@@ -304,10 +304,26 @@ class Game {
             'assets/image/effect/attack_S_black.webp',
             'assets/image/effect/critical_S_black.webp',
             'assets/image/effect/attack_S_white.webp',
-            'assets/image/effect/critical_S_white.webp'
+            'assets/image/effect/critical_S_white.webp',
+            'assets/image/effect/ora04.webp',
         ];
 
-        const allSrcs = [...monsterSrcs, ...effectSrcs];
+        const battleUiSrcs = [
+            // ダンジョン進捗アイコン
+            'assets/image/ui/icon/icon_0.webp',
+            'assets/image/ui/icon/icon_1.webp',
+            'assets/image/ui/icon/icon_2.webp',
+            'assets/image/ui/icon/icon_3.webp',
+            'assets/image/ui/icon/icon_4.webp',
+            'assets/image/ui/icon/icon_5.webp',
+            'assets/image/ui/icon/icon_6.webp',
+            'assets/image/ui/icon/icon_7.webp',
+            'assets/image/ui/icon/icon_8.webp',
+            'assets/image/ui/icon/icon_9.webp',
+            'assets/image/ui/icon/icon_dungeonClear.webp',
+        ];
+
+        const allSrcs = [...monsterSrcs, ...effectSrcs, ...battleUiSrcs];
 
         // 少し遅らせてバックグラウンドで読み込み
         setTimeout(() => {
@@ -326,6 +342,24 @@ class Game {
     /**
      * Heal/Special 選択ポップアップを表示し、はい/いいえコールバックを登録する。
      */
+    _showAuraTutorial(callback) {
+        const overlay = document.getElementById('aura-tutorial-overlay');
+        const btn = document.getElementById('aura-tutorial-ok-btn');
+        if (!overlay || !btn) { callback(); return; }
+
+        this.state = GameState.TRANSITION;
+        overlay.classList.add('active');
+
+        const onOk = () => {
+            this.sound.playSe('btn');
+            btn.removeEventListener('click', onOk);
+            overlay.classList.remove('active');
+            this.state = GameState.BATTLE;
+            callback();
+        };
+        btn.addEventListener('click', onOk);
+    }
+
     _showEncounterChoice(msg, onYes, onNo) {
         const overlay = document.getElementById('encounter-choice-overlay');
         document.getElementById('encounter-choice-msg').textContent = msg;

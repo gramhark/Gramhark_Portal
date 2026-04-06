@@ -483,15 +483,15 @@
 .game-notification-bubble {
     display: none;
     position: fixed;
-    bottom: 120px;
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%) translateY(0);
+    transform: translateX(-50%) translateY(-50%);
     background: rgba(0, 60, 120, 0.95);
-    border: 3px solid rgba(79, 172, 254, 0.8);
-    border-radius: 20px;
-    padding: 24px 40px;
+    border: 6px solid rgba(79, 172, 254, 0.8);
+    border-radius: 40px;
+    padding: 48px 80px;
     font-family: var(--font-pixel);
-    font-size: 38px;
+    font-size: 76px;
     color: #fff;
     text-align: center;
     z-index: 300;
@@ -505,8 +505,8 @@
 }
 
 @keyframes game-bubble-in {
-    from { opacity: 0; transform: translateX(-50%) translateY(20px); }
-    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+    from { opacity: 0; transform: translateX(-50%) translateY(calc(-50% + 20px)); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(-50%); }
 }
 
 /* ---- コンパニオンカットインオーバーレイ ---- */
@@ -558,7 +558,7 @@
     left: 50%;
     margin-left: -405px;
     z-index: 10002;
-    transform: translateX(100vw);
+    transform: translateX(calc(-50vw - 500px));
     will-change: transform;
 }
 
@@ -567,10 +567,10 @@
 }
 
 @keyframes companion-img-slide {
-    0%   { transform: translateX(100vw); animation-timing-function: ease-out; }
+    0%   { transform: translateX(calc(50vw + 500px)); animation-timing-function: ease-out; }
     15%  { transform: translateX(80px); animation-timing-function: linear; }
     80%  { transform: translateX(-80px); animation-timing-function: ease-in; }
-    100% { transform: translateX(-100vw); }
+    100% { transform: translateX(calc(-50vw - 500px)); }
 }
 
 .companion-cutin-overlay .companion-cutin-msg {

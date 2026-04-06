@@ -66,6 +66,7 @@
 #app.portrait-mode .intro-text-last {
     color: #ffe97a;
     text-align: center;
+    font-size: 50px;
 }
 
 #app.portrait-mode .intro-start-btn {

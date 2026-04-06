@@ -66,8 +66,18 @@ function _runLoadingScreen(game) {
     ];
     const PRELOAD_AUDIO_IDS = ['bgm-title', 'bgm-menu'];
 
-    // ノート画像をバックグラウンドでプリロード（プログレスバーには含めない）
-    _getNoteImagePaths().forEach(src => { const img = new Image(); img.src = src; });
+    // バックグラウンドでプリロード（プログレスバーには含めない）
+    const BG_PRELOAD = [
+        // コンパニオンカットイン（バトル開始直後に使われるためローディング時に先読み）
+        'assets/image/ui/battle/companion_cutin_def.webp',
+        'assets/image/ui/battle/companion_cutin_dmg.webp',
+        'assets/image/ui/battle/companion_cutin_exp.webp',
+        'assets/image/ui/battle/companion_cutin_mal.webp',
+        'assets/image/ui/battle/companion_cutin_plz.webp',
+        'assets/image/ui/battle/companion_cutin_psn.webp',
+        'assets/image/ui/battle/companion_cutin_stn.webp',
+    ];
+    [...BG_PRELOAD, ..._getNoteImagePaths()].forEach(src => { const img = new Image(); img.src = src; });
 
     const msgEl   = document.getElementById('loading-msg');
     const barEl   = document.getElementById('loading-bar');

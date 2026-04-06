@@ -68,12 +68,12 @@ class SoundManager {
         this.seSlashWhite      = this._se('assets/audio/SE/battle/slash_white.mp3');
         this.seSlashCritWhite  = this._se('assets/audio/SE/battle/slash_crit_white.mp3');
         this.seSpecial         = this._se('assets/audio/SE/battle/special.mp3');
-        this.sePlayerHit       = this._se('assets/audio/SE/battle/player_hit.mp3');
+        this.sePlayerHit       = this._se('assets/audio/SE/battle/player_hitX.mp3');
         this.seShieldBlock     = this._se('assets/audio/SE/battle/shield_block.mp3');
         this.sePlayerDodge     = this._se('assets/audio/SE/battle/player_dodge.mp3');
         this.seMonsterMiss     = this._se('assets/audio/SE/battle/monster_miss.mp3');
         this.seGaugeUp         = this._se('assets/audio/SE/battle/gauge_up.mp3');
-        this.seGaugeMax        = this._se('assets/audio/SE/battle/gauge_max.mp3');
+        this.seGaugeMax        = this._se('assets/audio/SE/battle/gauge_maxX.mp3');
         this.seStandby         = this._se('assets/audio/SE/battle/gauge_standby.mp3');
         // status
         this.sePoison          = this._se('assets/audio/SE/status/poison_set.mp3');
@@ -108,7 +108,7 @@ class SoundManager {
         this.seSlideClose      = this._se('assets/audio/SE/ui/screen_slide_closeX.mp3');
         this.seTitleTap        = this._se('assets/audio/SE/ui/title_tap.mp3');
         this.seBuy             = this._se('assets/audio/SE/ui/buy.mp3');
-        this.seSell            = this._se('assets/audio/SE/ui/sell.mp3');
+        this.seSell            = this._se('assets/audio/SE/ui/buy.mp3');
         this.seTimerWarn       = this._se('assets/audio/SE/ui/timer_warn.mp3');
         this.seTimerOut        = this._se('assets/audio/SE/ui/timer_out.mp3');
         this.seDungeonPin01    = this._se('assets/audio/SE/ui/dungeon_pin_01.mp3');
