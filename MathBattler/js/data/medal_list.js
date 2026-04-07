@@ -3,8 +3,8 @@ window.MEDAL_LIST = [
     // --- 防御メダル ---
     { id: 'defense_bronze',  type: 'defense',      rarity: 'bronze',   name: 'ぼうぎょメダル（どう）',     img: 'medal_defense_bronze.webp',       value: 10,   sellPrice: 100, desc: 'ぼうぎょりょく +10', effectLabel: 'ぼうぎょりょく +10' },
     { id: 'defense_silver',  type: 'defense',      rarity: 'silver',   name: 'ぼうぎょメダル（ぎん）',     img: 'medal_defense_silver.webp',       value: 20,   sellPrice: 200, desc: 'ぼうぎょりょく +20', effectLabel: 'ぼうぎょりょく +20' },
-    { id: 'defense_gold',    type: 'defense',      rarity: 'gold',     name: 'ぼうぎょメダル（きん）',     img: 'medal_defense_gold.webp',         value: 40,   sellPrice: 300, desc: 'ぼうぎょりょく +40', effectLabel: 'ぼうぎょりょく +40' },
-    { id: 'defense_diamond', type: 'defense',      rarity: 'diamond',  name: 'ぼうぎょメダル（ダイヤ）', img: 'medal_defense_diamond.webp',      value: 70,   sellPrice: 500, desc: 'ぼうぎょりょく +70', effectLabel: 'ぼうぎょりょく +70' },
+    { id: 'defense_gold',    type: 'defense',      rarity: 'gold',     name: 'ぼうぎょメダル（きん）',     img: 'medal_defense_gold.webp',         value: 30,   sellPrice: 300, desc: 'ぼうぎょりょく +30', effectLabel: 'ぼうぎょりょく +30' },
+    { id: 'defense_diamond', type: 'defense',      rarity: 'diamond',  name: 'ぼうぎょメダル（ダイヤ）', img: 'medal_defense_diamond.webp',      value: 40,   sellPrice: 500, desc: 'ぼうぎょりょく +40', effectLabel: 'ぼうぎょりょく +40' },
     // --- 追加ダメージメダル ---
     { id: 'extra_damage_bronze',  type: 'extra_damage', rarity: 'bronze',  name: 'ダメージメダル（どう）',     img: 'medal_extra_damage_bronze.webp',  value: 10,  sellPrice: 100, desc: 'ついかダメージ +10', effectLabel: 'ついかダメージ +10' },
     { id: 'extra_damage_silver',  type: 'extra_damage', rarity: 'silver',  name: 'ダメージメダル（ぎん）',     img: 'medal_extra_damage_silver.webp',  value: 20,  sellPrice: 200, desc: 'ついかダメージ +20', effectLabel: 'ついかダメージ +20' },

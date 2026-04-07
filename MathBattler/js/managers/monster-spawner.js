@@ -330,20 +330,20 @@ class MonsterSpawner {
     async _checkBossEvents(m) {
         // ボス回復イベント（HP<=0で全回復・1回のみ）⑤ → nextイベント①の順で必ず両方発動させるため先に評価
         const BOSS_RECOVER_EVENTS = {
-            'がんす':               'くずれたほねが かってにくっついた！',
-            'ブロンズライオン':     'モンスターは しっぽを さがしている！',
-            'もりをまもるえいし':   'もりのちからが えいしにやどる！',
-            'メガトンてつじん':     'てつじんは たおれない！',
-            'サバンナぞくちょう':   'ぞくちょうは ふっかつのダンス！',
-            'きしがりのオーガン':   'オーガンは そうびを てばなさない！',
-            'うみのしはいしゃモサ': 'モサは さらに あばれだした！',
-            'ほろびのこくおう':     'こくおうは えいえんに ふめつ！',
+            'がんす': 'くずれたほねが かってにくっついた！',
+            'ブロンズライオン': 'ライオンは しっぽを さがしている！',
+            'もりをまもるえいし': 'もりのちからが えいしにやどる！',
+            'メガトンてつじん': 'てつじんは たおれない！',
+            'サバンナぞくちょう': 'ぞくちょうは ふっかつのダンス！',
+            'きしがりのオーガン': 'オーガンは そうびを てばなさない！',
+            'うみのしはいしゃモサ': 'モサは いっそう あばれだした！',
+            'ほろびのこくおう': 'おうは えいえんに ふめつ！',
             'こうてつカブトサムライ': 'サムライに はいぼくは ない！',
         };
         const recoverMsg = BOSS_RECOVER_EVENTS[m.name];
         if (recoverMsg && m.hp <= 0 && !m.hasEatenMeat) {
             m.hasEatenMeat = true;
-            
+
             // 1. ダメージメッセージを表示するための間（1.5秒待機）
             await new Promise(resolve => setTimeout(resolve, 1500));
 
@@ -353,10 +353,10 @@ class MonsterSpawner {
             document.getElementById('monster-img').style.opacity = '0';
             document.getElementById('monster-name').style.opacity = '0';
             document.getElementById('monster-hp-container').style.opacity = '0';
-            
+
             // 3. たおした余韻（2秒待機）
             await new Promise(resolve => setTimeout(resolve, 2000));
-            
+
             // 4. ゆっくり下からフェードインさせるクラスを付与
             const imgEl = document.getElementById('monster-img');
             const nameEl = document.getElementById('monster-name');
@@ -417,7 +417,7 @@ class MonsterSpawner {
             // 4. ステータス・画像・BG差し替え（消えている間に）
             m.maxHp = Math.ceil(m.maxHp * 1.5);
             m.hp = m.maxHp;
-            m.attackPower = Math.ceil(m.attackPower * 1.5);
+            m.attackPower = Math.ceil(m.attackPower * 2.0);
             m.imageSrc = nextInfo.src;
             m.name = nextInfo.name;
             imgEl.src = m.imageSrc;
@@ -458,7 +458,7 @@ class MonsterSpawner {
         // ヤンチヤントバーン 第一段階：気合の全回復（HP≤5で初回）
         if (m.name === 'ヤンチヤントバーン' && m.hp <= 0 && !m.hasEatenMeat) {
             m.hasEatenMeat = true;
-            
+
             // 1. ダメージメッセージを表示するための間（1.5秒待機）
             await new Promise(resolve => setTimeout(resolve, 1500));
 
@@ -468,10 +468,10 @@ class MonsterSpawner {
             document.getElementById('monster-img').style.opacity = '0';
             document.getElementById('monster-name').style.opacity = '0';
             document.getElementById('monster-hp-container').style.opacity = '0';
-            
+
             // 3. たおした余韻（2秒待機）
             await new Promise(resolve => setTimeout(resolve, 2000));
-            
+
             // 4. ゆっくり下からフェードインさせるクラスを付与
             const imgEl = document.getElementById('monster-img');
             const nameEl = document.getElementById('monster-name');

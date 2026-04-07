@@ -67,9 +67,9 @@ class MonsterHouseManager {
 
         const tiers = [
             { tier: 30, threshold: 0, name: 'ゆうじょうのみ★30★' },
-            { tier: 60, threshold: 10, name: 'ゆうじょうのみ★60★' },
-            { tier: 90, threshold: 20, name: 'ゆうじょうのみ★90★' },
-            { tier: 100, threshold: 30, name: 'ゆうじょうのみ★100★' },
+            { tier: 60, threshold: 15, name: 'ゆうじょうのみ★60★' },
+            { tier: 90, threshold: 30, name: 'ゆうじょうのみ★90★' },
+            { tier: 100, threshold: 50, name: 'ゆうじょうのみ★100★' },
         ];
         for (const { tier, threshold, name } of tiers) {
             if (count >= threshold && !this.storage.isBerryNotified(tier)) {
