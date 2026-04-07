@@ -128,6 +128,18 @@ class MonsterHouseManager {
     onLeave() {
         const quoteEl = document.getElementById('mh-clerk-quote');
         if (quoteEl) quoteEl.innerHTML = 'またきてね！';
+
+        // 開いているパネル・オーバーレイをすべて閉じて背景のみ表示
+        const detailPanel = document.getElementById('mh-monster-detail');
+        const medalSubPanel = document.getElementById('mh-medal-sub');
+        if (detailPanel) { detailPanel.classList.remove('mh-detail-panel--partner'); detailPanel.style.display = 'none'; }
+        if (medalSubPanel) medalSubPanel.style.display = 'none';
+        ['mh-medal-detail-overlay', 'mh-farewell-confirm-overlay', 'mh-msg-overlay'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.classList.remove('active');
+        });
+        if (this._mhMsgTimeout) { clearTimeout(this._mhMsgTimeout); this._mhMsgTimeout = null; }
+        this._hideContentArea();
     }
 
     /** セリフ更新 */
