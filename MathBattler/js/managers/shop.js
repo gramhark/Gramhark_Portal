@@ -227,7 +227,8 @@ class ShopManager {
 
     onBattleBagItemTap(itemId, card, monster, canUseItemFn, onSelectFn, alreadyCapturedFn) {
         // stoneOrbはボスには使えない
-        if (itemId === 'stoneOrb' && monster.battleNumber === Constants.BOSS_BATTLE_NUMBER) {
+        if (itemId === 'stoneOrb' && (monster.battleNumber === Constants.BOSS_BATTLE_NUMBER ||
+            (Constants.DEBUG_BOSS_ON_SECOND_BATTLE && monster.battleNumber === 2))) {
             this.showBossBlockMsg();
             return;
         }

@@ -4,7 +4,7 @@
  **************デバッグモード*****************
  *  true にすると以下がすべて有効になる:
  *    - 全ダンジョン解放
- *    - プレイヤー攻撃力 100
+ *    - プレイヤー攻撃力 500
  *    - プレイヤー防御力 100
  *    - 武具ドロップ率 100%
  *    - マール 100000固定
@@ -24,6 +24,7 @@ const Constants = {
     MAX_MALLE: 9999999,
     MAX_ITEM: 10,
     DEBUG_ALL_FLOORS_OPEN: false, // true にすると全ダンジョン解放（DEBUG_MODE と同効果）
+    DEBUG_BOSS_ON_SECOND_BATTLE: false, // true にすると2戦目をボスにする（デバッグ用）
     // レベルシステム
     PLAYER_MAX_LEVEL: 100,
     PLAYER_LEVEL_HP_BASE: 10,

@@ -63,7 +63,7 @@ class BattleItemHandler {
         const _berryFloorLimit = { friendshipBerry30: 30, friendshipBerry60: 60, friendshipBerry90: 90, friendshipBerry100: 100 };
         if (itemName in _berryFloorLimit) {
             if (!m || m.isBoss || m.isHeal || m.isSpecial || m.isSuperRare || m.isDungeonRare ||
-                m.battleNumber === Constants.BOSS_BATTLE_NUMBER ||
+                (m.battleNumber === Constants.BOSS_BATTLE_NUMBER || (Constants.DEBUG_BOSS_ON_SECOND_BATTLE && m.battleNumber === 2)) ||
                 this.game.currentFloor > _berryFloorLimit[itemName]) return false;
         }
         return this.game.battle.canUseItem(

@@ -161,12 +161,12 @@ class EquipmentManager {
     }
 
     _getEquippedSwordBonus() {
-        if (DEBUG_MODE) return 100;
+        if (DEBUG_MODE) return 500;
         const equip = Array.isArray(this.game.backpack.equipment) ? this.game.backpack.equipment : [];
         const sword = equip.find(e => e.type === 'sword' && e.equipped);
         const shield = equip.find(e => e.type === 'shield' && e.equipped);
         const base = (sword ? (sword.attack || sword.bonus || 0) : 0)
-                   + (shield ? (shield.attack || 0) : 0);
+            + (shield ? (shield.attack || 0) : 0);
         return this.game.swordMultiplied ? Math.floor(base * 1.5) : base;
     }
 
@@ -188,7 +188,7 @@ class EquipmentManager {
         const sword = equip.find(e => e.type === 'sword' && e.equipped);
         const shield = equip.find(e => e.type === 'shield' && e.equipped);
         const base = (shield ? (shield.defense || shield.bonus || 0) : 0)
-                   + (sword ? (sword.defense || 0) : 0);
+            + (sword ? (sword.defense || 0) : 0);
         const multiplied = this.game.shieldMultiplied ? Math.floor(base * 1.5) : base;
         return multiplied + (this.game.companionDefenseBonus || 0);
     }

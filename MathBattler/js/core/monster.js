@@ -47,6 +47,10 @@ class Monster {
         this.hasTransformed = false;
         this.isAngry = false;
 
+        // デバッグフラグ: 2戦目をボス扱いにする
+        const isBossNum = battleNumber === Constants.BOSS_BATTLE_NUMBER ||
+            (Constants.DEBUG_BOSS_ON_SECOND_BATTLE && battleNumber === 2);
+
         // HP計算（新バランス式）
         if (isHeal || isSpecial || isSuperRare) {
             this.maxHp = 1;
@@ -59,7 +63,7 @@ class Monster {
             this.maxHp = Math.min(Math.round(normalHp * 1.5), bossHp - 1);
         } else {
             const n = (floor - 1) * 10 + battleNumber;
-            if (battleNumber === Constants.BOSS_BATTLE_NUMBER) {
+            if (isBossNum) {
                 // ボスモンスター: HP = floor(n × 1.0) + 10
                 this.maxHp = Math.floor(n * 1.0) + 10;
             } else {
@@ -80,7 +84,7 @@ class Monster {
             this.attackPower = Math.min(Math.round(normalAttack * 1.5), bossAttack - 1);
         } else {
             const n = (floor - 1) * 10 + battleNumber;
-            if (battleNumber === Constants.BOSS_BATTLE_NUMBER) {
+            if (isBossNum) {
                 // ボスモンスター: 攻撃力 = floor(n / 5) + 2
                 this.attackPower = Math.floor(n / 5) + 2;
             } else {
@@ -201,7 +205,8 @@ function findMonsterImage(monster, excludeImages = null) {
         }
         if (candidates.length === 0) candidates = list;
 
-    } else if (monster.battleNumber === Constants.BOSS_BATTLE_NUMBER) {
+    } else if (monster.battleNumber === Constants.BOSS_BATTLE_NUMBER ||
+        (Constants.DEBUG_BOSS_ON_SECOND_BATTLE && monster.battleNumber === 2)) {
         // ボス: Boss{floor}_ プレフィックス
         folder = 'Boss';
         const list = getList('Boss');
@@ -240,7 +245,9 @@ function findMonsterImage(monster, excludeImages = null) {
     } catch (e) { }
 
     // ヤン系出現制限チェック（通常モンスターのみ）
-    if (!monster.isHeal && !monster.isSpecial && !monster.isSuperRare && !monster.isDungeonRare && monster.battleNumber !== Constants.BOSS_BATTLE_NUMBER) {
+    if (!monster.isHeal && !monster.isSpecial && !monster.isSuperRare && !monster.isDungeonRare &&
+        monster.battleNumber !== Constants.BOSS_BATTLE_NUMBER &&
+        !(Constants.DEBUG_BOSS_ON_SECOND_BATTLE && monster.battleNumber === 2)) {
         const filteredByYan = candidates.filter(f => {
             let n = f.replace(/\.(webp|png|jpg|jpeg)$/i, '');
             n = n.replace(/^(?:rare_|heal_|special_|srare_|boss\d+next_|boss\d+_|\d+_|d\d+_)/i, '');
@@ -249,20 +256,7 @@ function findMonsterImage(monster, excludeImages = null) {
         if (filteredByYan.length > 0) candidates = filteredByYan;
     }
 
-    const weights = candidates.map(f => {
-        let n = f.replace(/\.(webp|png|jpg|jpeg)$/i, '');
-        n = n.replace(/^(?:rare_|heal_|special_|srare_|boss\d+next_|boss\d+_|\d+_|d\d+_)/i, '');
-        const isYan = YAN_SERIES_ORDER.indexOf(n) !== -1;
-        const inCollection = collection[n] && collection[n].defeated;
-        return (isYan && !inCollection) ? 10.0 : 1.0;
-    });
-    const totalWeight = weights.reduce((s, w) => s + w, 0);
-    let rand = Math.random() * totalWeight;
-    let choice = candidates[candidates.length - 1];
-    for (let i = 0; i < candidates.length; i++) {
-        rand -= weights[i];
-        if (rand <= 0) { choice = candidates[i]; break; }
-    }
+    const choice = candidates[Math.floor(Math.random() * candidates.length)];
 
     // 名前をファイル名から抽出
     let name = choice.replace(/\.(webp|png|jpg|jpeg)$/i, '');

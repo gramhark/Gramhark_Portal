@@ -49,23 +49,23 @@ class SoundManager {
         // battle
         this.sePunch           = this._se('assets/audio/SE/battle/punch.mp3');
         this.sePunchCrit       = this._se('assets/audio/SE/battle/punch_crit.mp3');
-        this.seSword           = this._se('assets/audio/SE/battle/sword.mp3');
-        this.seSwordCrit       = this._se('assets/audio/SE/battle/sword_crit.mp3');
+        this.seSword           = this._se('assets/audio/SE/battle/sword.mp3?v=20260408');
+        this.seSwordCrit       = this._se('assets/audio/SE/battle/sword_crit.mp3?v=20260408');
         this.seHitting         = this._se('assets/audio/SE/battle/hitting.mp3');
         this.seHittingCrit     = this._se('assets/audio/SE/battle/hitting_crit.mp3');
-        this.seSlash           = this._se('assets/audio/SE/battle/slash.mp3');
-        this.seSlashCrit       = this._se('assets/audio/SE/battle/slash_crit.mp3');
-        this.seSlashRed        = this._se('assets/audio/SE/battle/slash_red.mp3');
+        this.seSlash           = this._se('assets/audio/SE/battle/slash.mp3?v=20260408');
+        this.seSlashCrit       = this._se('assets/audio/SE/battle/slash_crit.mp3?v=20260408');
+        this.seSlashRed        = this._se('assets/audio/SE/battle/slash_red.mp3?v=20260408');
         this.seSlashCritRed    = this._se('assets/audio/SE/battle/slash_crit_red.mp3');
-        this.seSlashBlue       = this._se('assets/audio/SE/battle/slash_blue.mp3');
+        this.seSlashBlue       = this._se('assets/audio/SE/battle/slash_blue.mp3?v=20260408');
         this.seSlashCritBlue   = this._se('assets/audio/SE/battle/slash_crit_blue.mp3');
-        this.seSlashGreen      = this._se('assets/audio/SE/battle/slash_green.mp3');
+        this.seSlashGreen      = this._se('assets/audio/SE/battle/slash_green.mp3?v=20260408');
         this.seSlashCritGreen  = this._se('assets/audio/SE/battle/slash_crit_green.mp3');
-        this.seSlashYellow     = this._se('assets/audio/SE/battle/slash_yellow.mp3');
+        this.seSlashYellow     = this._se('assets/audio/SE/battle/slash_yellow.mp3?v=20260408');
         this.seSlashCritYellow = this._se('assets/audio/SE/battle/slash_crit_yellow.mp3');
-        this.seSlashBlack      = this._se('assets/audio/SE/battle/slash_black.mp3');
+        this.seSlashBlack      = this._se('assets/audio/SE/battle/slash_black.mp3?v=20260408');
         this.seSlashCritBlack  = this._se('assets/audio/SE/battle/slash_crit_black.mp3');
-        this.seSlashWhite      = this._se('assets/audio/SE/battle/slash_white.mp3');
+        this.seSlashWhite      = this._se('assets/audio/SE/battle/slash_white.mp3?v=20260408');
         this.seSlashCritWhite  = this._se('assets/audio/SE/battle/slash_crit_white.mp3');
         this.seSpecial         = this._se('assets/audio/SE/battle/special.mp3');
         this.sePlayerHit       = this._se('assets/audio/SE/battle/player_hitX.mp3');
@@ -83,7 +83,7 @@ class SoundManager {
         this.seStone           = this._se('assets/audio/SE/status/stone_throw.mp3');
         this.seStoneProc       = this._se('assets/audio/SE/status/stone_proc.mp3');
         // item
-        this.seHeal            = this._se('assets/audio/SE/item/heal.mp3');
+        this.seHeal            = this._se('assets/audio/SE/item/heal.mp3?v=20260408');
         this.seAtkUp           = this._se('assets/audio/SE/item/atk_up.mp3');
         this.seDefUp           = this._se('assets/audio/SE/item/def_up.mp3');
         this.seThrow           = this._se('assets/audio/SE/item/spike_throw.mp3');
@@ -98,14 +98,14 @@ class SoundManager {
         this.seTransform       = this._se('assets/audio/SE/event/boss_transform.mp3');
         this.seBossResurrection= this._se('assets/audio/SE/event/boss_resurrection.mp3');
         this.seMonsterRecover  = this._se('assets/audio/SE/event/monster_recover.mp3');
-        this.seLevelUp         = this._se('assets/audio/SE/event/level_up.mp3');
+        this.seLevelUp         = this._se('assets/audio/SE/event/level_up.mp3?v=20260408');
         this.seClear           = this._se('assets/audio/SE/event/dungeon_clearX.mp3');
         this.seGameover        = this._se('assets/audio/SE/event/gameover.mp3');
         this.seNote            = this._se('assets/audio/SE/event/note_reg.mp3');
         // ui
         this.seNumpad          = this._se('assets/audio/SE/ui/numpadX.mp3');
         this.seSlideOpen       = this._se('assets/audio/SE/ui/screen_slide_open.mp3');
-        this.seSlideClose      = this._se('assets/audio/SE/ui/screen_slide_closeX.mp3');
+        this.seSlideClose      = this._se('assets/audio/SE/ui/screen_slide_closeX.mp3?v=20260408');
         this.seTitleTap        = this._se('assets/audio/SE/ui/title_tap.mp3');
         this.seBuy             = this._se('assets/audio/SE/ui/buy.mp3');
         this.seSell            = this._se('assets/audio/SE/ui/buy.mp3');

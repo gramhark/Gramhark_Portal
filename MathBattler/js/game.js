@@ -554,7 +554,8 @@ class Game {
         });
 
         // EXP取得・レベルアップ判定
-        const isBossForExp = m.battleNumber === Constants.BOSS_BATTLE_NUMBER;
+        const isBossForExp = m.battleNumber === Constants.BOSS_BATTLE_NUMBER ||
+            (Constants.DEBUG_BOSS_ON_SECOND_BATTLE && m.battleNumber === 2);
         const lvResult = this._addExp(this.currentFloor, isBossForExp, m.isSuperRare);
         this._updateLevelUI();
 
@@ -643,7 +644,8 @@ class Game {
                 const delayAfterBonus = hasBonus ? 2000 : 0;
 
                 setTimeout(() => {
-                    const isBoss = m.battleNumber === Constants.BOSS_BATTLE_NUMBER;
+                    const isBoss = m.battleNumber === Constants.BOSS_BATTLE_NUMBER ||
+                        (Constants.DEBUG_BOSS_ON_SECOND_BATTLE && m.battleNumber === 2);
                     const isSuperRare = m.isSuperRare;
 
                     // ドロップ後にノート登録メッセージを挟むラッパー
@@ -662,7 +664,8 @@ class Game {
                             (this._monsterItemUsage.friendshipBerry90 || 0) > 0 ? 90 : 0,
                             (this._monsterItemUsage.friendshipBerry100 || 0) > 0 ? 100 : 0
                         );
-                        const canCapture = (m.battleNumber !== Constants.BOSS_BATTLE_NUMBER)
+                        const canCapture = (m.battleNumber !== Constants.BOSS_BATTLE_NUMBER &&
+                            !(Constants.DEBUG_BOSS_ON_SECOND_BATTLE && m.battleNumber === 2))
                             && !m.isHeal && !m.isSpecial && !m.isSuperRare && !m.isDungeonRare
                             && _berryFloorLimit > 0 && this.currentFloor <= _berryFloorLimit
                             && this.storage.isMonsterHouseUnlocked();

@@ -7,6 +7,12 @@ class MonsterSpawner {
         this.ui = game.ui;
     }
 
+    /** デバッグフラグを考慮したボス判定 */
+    _isBoss(battleNumber) {
+        return battleNumber === Constants.BOSS_BATTLE_NUMBER ||
+            (Constants.DEBUG_BOSS_ON_SECOND_BATTLE && battleNumber === 2);
+    }
+
     showInterval() {
         this.game.state = GameState.INTERVAL;
         this.ui.clearMessageLog();
@@ -18,7 +24,7 @@ class MonsterSpawner {
 
         // BGM Check (Boss or Normal or Rare or Heal or Special)
         this.sound.playBgm({
-            isBoss: m.battleNumber === Constants.BOSS_BATTLE_NUMBER,
+            isBoss: this._isBoss(m.battleNumber),
             isSuperRare: m.isSuperRare,
             isDungeonRare: m.isDungeonRare,
             isHeal: m.isHeal,
@@ -56,19 +62,47 @@ class MonsterSpawner {
             quoteEl.style.display = 'none';
         }
 
-        // 95階ボス：ヤンシリーズ未制覇の場合はボスが出現しない（画像セット前にチェック）
-        if (m.battleNumber === Constants.BOSS_BATTLE_NUMBER && this.game.currentFloor === 95) {
-            let collection = {};
-            try {
-                const stored = localStorage.getItem('math_battle_collection_v1');
-                if (stored) collection = JSON.parse(stored);
-            } catch (e) { }
-            if (!isYanMonsterUnlocked('ヤンチヤントバーン', collection)) {
-                this.game.state = GameState.TRANSITION;
-                this.sound.stopBgm();
-                this.ui.showMessage('ボスがいない・・', false, 2500);
-                setTimeout(() => this.game._onGameClear(), 2500);
-                return;
+        // ボス欠如イベント（ボス名で判定）
+        if (this._isBoss(m.battleNumber)) {
+            const MISSING_BOSS_EVENTS = [
+                {
+                    // ヤンチヤントバーン：ヤンシリーズ未制覇の場合はボスが出現しない
+                    bossName: 'ヤンチヤントバーン',
+                    check: (col) => !isYanMonsterUnlocked('ヤンチヤントバーン', col),
+                    message: 'ボスは そうびを さがしていて \nでてこられない・・・',
+                },
+                {
+                    // ひのたまがったいヒノタマン：ひのたまメンバー全員が未登録の場合はボスが出現しない
+                    bossName: 'ひのたまがったいヒノタマン',
+                    check: (col) => ['ひのたまイエロー', 'ひのたまレッド', 'ひのたまグリーン', 'ひのたまピンク', 'ひのたまブルー'].some(n => !col[n]?.defeated),
+                    message: 'メンバーが あつまらないので \nでてこられない・・・',
+                },
+                {
+                    // メガトンてつじん：いにしえのてつじんが未登録の場合はボスが出現しない
+                    bossName: 'メガトンてつじん',
+                    check: (col) => !col['いにしえのてつじん']?.defeated,
+                    message: 'ボスは からだを みがいていて \nでてこられない・・・',
+                },
+                {
+                    // おすなばあそびセット：スナシリーズ全員が未登録の場合はボスが出現しない
+                    bossName: 'おすなばあそびセット',
+                    check: (col) => ['スナック', 'スナベル', 'スナケツ', 'スナシャベ', 'スナジョウ', 'スナッフル', 'スナデクマ'].some(n => !col[n]?.defeated),
+                    message: 'みんなが そろわないと \nあそべないらしい・・',
+                },
+            ];
+            const event = MISSING_BOSS_EVENTS.find(e => e.bossName === m.name);
+            if (event) {
+                let collection = {};
+                try {
+                    const stored = localStorage.getItem('math_battle_collection_v1');
+                    if (stored) collection = JSON.parse(stored);
+                } catch (e) { }
+                if (event.check(collection)) {
+                    m.isMissingBoss = true;
+                    m.missingBossMessage = event.message;
+                    // 透明な画像に差し替え（1x1透明GIF）
+                    m.imageSrc = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+                }
             }
         }
 
@@ -85,14 +119,20 @@ class MonsterSpawner {
 
         this.ui.updateMonsterHp(m.hpRatio);
         const monsterNameEl = document.getElementById('monster-name');
-        monsterNameEl.textContent = m.name;
-        // 文字数に応じてフォントスケールを調整（10文字を基準とした縮小）
-        const nameScale = m.name.length > 10 ? 10 / m.name.length : 1;
-        monsterNameEl.style.setProperty('--monster-name-scale', nameScale);
+        // isMissingBoss（ボスがいない）のときは名前を非表示にする
+        if (m.isMissingBoss) {
+            monsterNameEl.textContent = '';
+            monsterNameEl.style.setProperty('--monster-name-scale', 1);
+        } else {
+            monsterNameEl.textContent = m.name;
+            // 文字数に応じてフォントスケールを調整（10文字を基準とした縮小）
+            const nameScale = m.name.length > 10 ? 10 / m.name.length : 1;
+            monsterNameEl.style.setProperty('--monster-name-scale', nameScale);
+        }
         this.ui.updateStageProgress(this.game.monsters, this.game.currentMonsterIdx, Constants.MONSTERS_PER_FLOOR);
 
         // ボスの場合はカットインを表示（interval-overlay は使わない）
-        if (m.battleNumber === Constants.BOSS_BATTLE_NUMBER) {
+        if (this._isBoss(m.battleNumber)) {
             this._showBossCutIn(m);
         } else {
             const blackout = document.getElementById('interval-blackout');
@@ -127,8 +167,9 @@ class MonsterSpawner {
         // ボスのセリフ（名前を「！」付きで叫ぶ）
         // ヤン系ボスのみ叫ぶ（名前に「ヤン」を含む場合）
         // ※「ぼろぼろのヤンダ」は変身イベントのメッセージで叫んでいるので除外
+        // ※isMissingBoss（ボスがいない）のときはセリフを出さない
         if (quoteEl) {
-            const isYanBoss = m.name.includes('ヤン') && m.name !== 'ぼろぼろのヤンダ';
+            const isYanBoss = !m.isMissingBoss && m.name.includes('ヤン') && m.name !== 'ぼろぼろのヤンダ';
             if (isYanBoss) {
                 quoteEl.textContent = `${m.name}！`;
                 quoteEl.style.display = 'block';
@@ -175,11 +216,13 @@ class MonsterSpawner {
 
     _showInfoOverlay() {
         const m = this.game.monsters[this.game.currentMonsterIdx];
+        // ボス欠如イベント中は名前を隠す
+        const displayMonster = m.isMissingBoss ? { ...m, name: '？？？' } : m;
         const playerAtk = 1 + this.game._getEquippedSwordBonus() + this.game.swordBonus;
         const playerDef = this.game._getEquippedShieldBonus() + this.game.defenseBonus;
         const isMaxLevel = this.game.playerLevel >= Constants.PLAYER_MAX_LEVEL;
         const expNeeded = isMaxLevel ? null : Constants.EXP_LEVEL_BASE + (this.game.playerLevel - 1) * Constants.EXP_LEVEL_STEP;
-        this.ui.showInfoOverlay(m, {
+        this.ui.showInfoOverlay(displayMonster, {
             hp: this.game.playerHp,
             maxHp: this.game.playerMaxHp,
             atk: playerAtk,
@@ -202,7 +245,7 @@ class MonsterSpawner {
         const m = this.game.monsters[idx];
 
         // ボス（最後のモンスター）は抽選対象外
-        if (m.battleNumber === Constants.BOSS_BATTLE_NUMBER) {
+        if (this._isBoss(m.battleNumber)) {
             return;
         }
 
@@ -394,7 +437,7 @@ class MonsterSpawner {
         // ボスnext変身イベント（HPが0以下、未変身）
         // ヤンチヤントバーンは独自の2段階イベントで処理するためここでは除外
         const nextInfo = this._getBossNextImageSrc();
-        if (nextInfo && m.battleNumber === Constants.BOSS_BATTLE_NUMBER && m.hp <= 0 && !m.hasTransformed && m.name !== 'ヤンチヤントバーン') {
+        if (nextInfo && this._isBoss(m.battleNumber) && m.hp <= 0 && !m.hasTransformed && m.name !== 'ヤンチヤントバーン') {
             m.hasTransformed = true;
 
             // 1. ダメージメッセージを表示するための間（1.5秒待機）
@@ -534,7 +577,7 @@ class MonsterSpawner {
 
     _getBattleBgSrc(m) {
         const base = 'assets/image/ui/battle/battlebg/';
-        if (m.battleNumber === Constants.BOSS_BATTLE_NUMBER) return `${base}BattleBG_BossX.webp`;
+        if (this._isBoss(m.battleNumber)) return `${base}BattleBG_BossX.webp`;
         if (m.isSuperRare) return `${base}BattleBG_SRare.webp`;
         if (m.isDungeonRare) return `${base}BattleBG_Rare.webp`;
         if (m.isHeal) return `${base}BattleBG_Heal.webp`;

@@ -203,7 +203,8 @@ class InputHandler {
                 const medalId = companionMedals[_acn2];
                 const medal = medalId && window.MEDAL_LIST ? window.MEDAL_LIST.find(md => md.id === medalId) : null;
                 if (medal && ['poison', 'paralyze', 'stone'].includes(medal.type)) {
-                    const isBoss = m.battleNumber === Constants.BOSS_BATTLE_NUMBER;
+                    const isBoss = m.battleNumber === Constants.BOSS_BATTLE_NUMBER ||
+                        (Constants.DEBUG_BOSS_ON_SECOND_BATTLE && m.battleNumber === 2);
                     if (!(medal.type === 'stone' && isBoss) && Math.random() < medal.value) {
                         if (medal.type === 'poison' && !m.isPoisoned) {
                             m.isPoisoned = true;
@@ -238,7 +239,8 @@ class InputHandler {
             // いかりチェック（HP残あり・未いかり・Rare/Heal以外・HP30%未満）
             let angerTriggered = false;
             if (!m.isAngry && m.hp > 0 && m.hpRatio < 0.3 && !m.isSuperRare && !m.isDungeonRare && !m.isHeal && !m.isSpecial) {
-                const isBoss = m.battleNumber === Constants.BOSS_BATTLE_NUMBER;
+                const isBoss = m.battleNumber === Constants.BOSS_BATTLE_NUMBER ||
+                    (Constants.DEBUG_BOSS_ON_SECOND_BATTLE && m.battleNumber === 2);
                 const angerChance = isBoss ? 0.1 : 0.05;
                 if (Math.random() < angerChance) {
                     m.isAngry = true;
@@ -275,7 +277,8 @@ class InputHandler {
         }
 
         const m = this.game.monsters[this.game.currentMonsterIdx];
-        const isBossWrong = m.battleNumber === Constants.BOSS_BATTLE_NUMBER;
+        const isBossWrong = m.battleNumber === Constants.BOSS_BATTLE_NUMBER ||
+            (Constants.DEBUG_BOSS_ON_SECOND_BATTLE && m.battleNumber === 2);
         // 連続回避カウント更新（被弾時）
         const wrongHitResult = this.game.battle.updateDodgeStreak(
             { dodgeStreak: this.game.dodgeStreak, specialMoveReady: this.game.specialMoveReady }, true, this.game._hasEquippedShield() ? 1 : 0, isBossWrong
@@ -371,6 +374,37 @@ class InputHandler {
         // スペシャルモンスターはバトルなし：バフを付与して去るフローへ
         if (bm.isSpecial) {
             this.game._onSpecialMonsterLeave(bm);
+            return;
+        }
+
+        // ボス欠如イベント
+        if (bm.isMissingBoss) {
+            this.game.state = GameState.TRANSITION;
+            this.sound.stopBgm();
+            this.ui.showMessage(bm.missingBossMessage, false, 4000);
+            setTimeout(() => {
+                // 5の倍数フロアの未入手装備をドロップ
+                const floor = this.game.currentFloor;
+                const equipList = (window.EQUIPMENT_LIST && window.EQUIPMENT_LIST.length > 0) ? window.EQUIPMENT_LIST : null;
+                let dropItems = [];
+                if (equipList && floor % 5 === 0) {
+                    const itemCollection = this.storage.loadItemCollection();
+                    dropItems = equipList.filter(e => e.minFloor % 5 === 0 && e.minFloor === floor && !itemCollection[e.name]);
+                }
+                if (dropItems.length > 0) {
+                    this.ui.showMessage('なにか おちている・・・', false, 2500);
+                    setTimeout(() => {
+                        const chainDrop = (remaining) => {
+                            if (remaining.length === 0) { this.game._onGameClear(); return; }
+                            const [first, ...rest] = remaining;
+                            this.game._doEquipDrop(first, () => chainDrop(rest), 500);
+                        };
+                        chainDrop(dropItems);
+                    }, 2500);
+                } else {
+                    this.game._onGameClear();
+                }
+            }, 4000);
             return;
         }
 
@@ -476,7 +510,8 @@ class InputHandler {
         this.game.state = GameState.TRANSITION; // 入力をブロック
 
         const m = this.game.monsters[this.game.currentMonsterIdx];
-        const isBossTimer = m.battleNumber === Constants.BOSS_BATTLE_NUMBER;
+        const isBossTimer = m.battleNumber === Constants.BOSS_BATTLE_NUMBER ||
+            (Constants.DEBUG_BOSS_ON_SECOND_BATTLE && m.battleNumber === 2);
         // 連続回避カウント更新（被弾時）
         const timerHitResult = this.game.battle.updateDodgeStreak(
             { dodgeStreak: this.game.dodgeStreak, specialMoveReady: this.game.specialMoveReady }, true, this.game._hasEquippedShield() ? 1 : 0, isBossTimer

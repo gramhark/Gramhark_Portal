@@ -103,3 +103,31 @@
     border-top-color: rgba(0, 60, 120, 0.88);
     border-bottom: 0;
 }
+
+/* ボスカットイン内のセリフ（ヤンチヤントバーンなど）はinterval-overlayと同じデザイン */
+#boss-cutin-overlay .special-quote {
+    font-size: 42px !important;
+    background: rgba(0, 60, 120, 0.88);
+    border: 2px solid rgba(100, 200, 255, 0.6);
+    border-radius: 16px;
+    padding: 18px 32px;
+    margin-bottom: 24px;
+    width: 600px;
+    max-width: 90%;
+    min-width: 300px;
+    position: relative;
+    white-space: pre-wrap;
+    word-break: normal;
+}
+
+/* 吹き出しの尻尾（モンスター方向＝下向き：セリフを画像の上に配置） */
+#boss-cutin-overlay .special-quote::after {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 20px solid transparent;
+    border-top-color: rgba(0, 60, 120, 0.88);
+    border-bottom: 0;
+}
