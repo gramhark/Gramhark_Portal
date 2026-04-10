@@ -210,9 +210,48 @@ class ScreenManager {
             return;
         }
 
-        const bgSrc = `assets/image/ui/BTN_dungeon_0${this.game.difficulty}.webp`;
+        const STAGE_TITLES = [
+            'はじまりの まち\n≪イコール・タウン≫',
+            'さわやかな へいげん\n≪プラス・プレーン≫',
+            'みどり ゆたかな しんりん\n≪マルチ・フォレスト≫',
+            'ぶきみな ようかん\n≪マイナス・マンション≫',
+            'かぜが ふく サバンナ\n≪ディバイド・ステップ≫',
+            'こうねつの さばく\n≪デジット・デザート≫',
+            'はいきょの きょうかい\n≪オーダー・サンクチュアリ≫',
+            'なみが うちよせる かいがん\n≪リマインダー・ショア≫',
+            'ごつごつした いわやま\n≪ミックス・ピーク≫',
+            'やみに たつ さいごの しろ\n≪アンサー・キャッスル≫',
+        ];
+
+        const STAGE_OVERLAY_OPACITY = [0.60, 0.65, 0.55, 0.45, 0.60, 0.65, 0.50, 0.65, 0.55, 0.30];
+
+        const bgSrc = `assets/image/ui/button/BTN_dungeon_0${this.game.difficulty}.webp`;
         const frag = document.createDocumentFragment();
         for (let i = 1; i <= Constants.TOTAL_FLOORS; i++) {
+            const isCleared = !!cleared[i];
+            const isUnlocked = DEBUG_MODE || Constants.DEBUG_ALL_FLOORS_OPEN || i === 1 || !!cleared[i - 1];
+            if (!isUnlocked) continue;
+
+            // 10フロアごとのステージタイトルを挿入
+            if ((i - 1) % 10 === 0) {
+                const stageIndex = Math.floor((i - 1) / 10);
+                const [descPart, namePart] = STAGE_TITLES[stageIndex].split('\n');
+                const stageNum = String(stageIndex + 1).padStart(2, '0');
+                const opacity = STAGE_OVERLAY_OPACITY[stageIndex];
+                const titleEl = document.createElement('div');
+                titleEl.className = 'dungeon-stage-title';
+                titleEl.style.backgroundImage = `linear-gradient(rgba(0,0,0,${opacity}), rgba(0,0,0,${opacity})), url('assets/image/ui/title/stage/StageTitle_${stageNum}.webp')`;
+                const descEl = document.createElement('span');
+                descEl.className = 'dungeon-stage-desc';
+                descEl.textContent = descPart;
+                const nameEl = document.createElement('span');
+                nameEl.className = 'dungeon-stage-name';
+                nameEl.textContent = namePart;
+                titleEl.appendChild(descEl);
+                titleEl.appendChild(nameEl);
+                frag.appendChild(titleEl);
+            }
+
             const btn = document.createElement('button');
             btn.className = 'dungeon-cell';
 
@@ -234,8 +273,6 @@ class ScreenManager {
             btn.appendChild(img);
             btn.appendChild(numContainer);
 
-            const isCleared = !!cleared[i];
-            const isUnlocked = DEBUG_MODE || Constants.DEBUG_ALL_FLOORS_OPEN || i === 1 || !!cleared[i - 1];
             if (isCleared) {
                 btn.classList.add('cleared');
                 const clearIcon = document.createElement('img');
@@ -244,17 +281,12 @@ class ScreenManager {
                 clearIcon.alt = '';
                 btn.appendChild(clearIcon);
             }
-            if (!isUnlocked) {
-                btn.classList.add('locked');
-                btn.disabled = true;
-            } else {
-                btn.addEventListener('click', () => {
-                    this.sound.playSe('dungeon_pin', this.game.difficulty);
-                    this.game._pendingFloor = i;
-                    document.getElementById('dungeon-start-confirm-msg').innerHTML = `${i}かいダンジョン`;
-                    document.getElementById('dungeon-start-confirm-overlay').classList.add('active');
-                });
-            }
+            btn.addEventListener('click', () => {
+                this.sound.playSe('dungeon_pin', this.game.difficulty);
+                this.game._pendingFloor = i;
+                document.getElementById('dungeon-start-confirm-msg').innerHTML = `${i}かいダンジョン`;
+                document.getElementById('dungeon-start-confirm-overlay').classList.add('active');
+            });
             frag.appendChild(btn);
         }
 

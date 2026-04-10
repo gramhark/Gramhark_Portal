@@ -342,10 +342,9 @@ class InputHandler {
         // メッセージログをクリア（新しいバトル開始時）
         this.ui.clearMessageLog();
 
-        // モンスター1体ごとのアイテム使用回数リセット（rainbowOrbUsedはダンジョン全体で有効なので引き継ぐ）
-        this.game._monsterItemUsage = { spikeOrb: 0, poisonOrb: false, paralyzeOrb: false, stoneOrb: false, attackOrb: 0, defenseOrb: 0, rainbowOrbUsed: this.game._monsterItemUsage.rainbowOrbUsed, friendshipBerry30: 0, friendshipBerry60: 0, friendshipBerry90: 0, friendshipBerry100: 0 };
-        this.game.swordBonus = 0; // こうげきだま効果リセット
-        this.game.defenseBonus = 0; // ぼうぎょだま効果リセット
+        // モンスター1体ごとのアイテム使用回数リセット（rainbowOrbUsed・attackOrb・defenseOrbはダンジョン全体で有効なので引き継ぐ）
+        this.game._monsterItemUsage = { spikeOrb: 0, poisonOrb: false, paralyzeOrb: false, stoneOrb: false, attackOrb: this.game._monsterItemUsage.attackOrb, defenseOrb: this.game._monsterItemUsage.defenseOrb, rainbowOrbUsed: this.game._monsterItemUsage.rainbowOrbUsed, friendshipBerry30: 0, friendshipBerry60: 0, friendshipBerry90: 0, friendshipBerry100: 0 };
+        // swordBonus・defenseBonus はダンジョン中継続（次のダンジョン侵入時に startGame でリセット）
 
         // モンスターのステータス状態をリセット
         const bm = this.game.monsters[this.game.currentMonsterIdx];

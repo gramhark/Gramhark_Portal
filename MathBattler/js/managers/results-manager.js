@@ -30,8 +30,8 @@ class ResultsManager {
         this.game.state = GameState.RESULT;
         // ダンジョンクリアを保存
         this.storage.saveFloorClear(this.game.currentFloor, this.game.difficulty);
-        // 100階クリア時にモンスターハウスを解放
-        if (this.game.currentFloor === 100 && !this.storage.isMonsterHouseUnlocked()) {
+        // 50階クリア時にモンスターハウスを解放
+        if (this.game.currentFloor === 50 && !this.storage.isMonsterHouseUnlocked()) {
             this.storage.setMonsterHouseUnlocked();
         }
         this.sound.stopBgm();
@@ -243,7 +243,7 @@ class ResultsManager {
         // マール画像をモンスターコンテナに表示
         const monsterContainer = document.querySelector('.monster-container');
         const malleImg = document.createElement('img');
-        malleImg.src = 'assets/image/ui/malle.webp';
+        malleImg.src = 'assets/image/ui/common/malle.webp';
         malleImg.className = 'malle-drop-img';
         monsterContainer.appendChild(malleImg);
 

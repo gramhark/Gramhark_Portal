@@ -81,12 +81,44 @@
 #app.portrait-mode .dungeon-grid {
     display: grid;
     grid-template-columns: repeat(2, 250px);
-    gap: 48px 8px;
+    gap: 24px 48px;
     justify-content: center;
+    align-content: start;
     overflow-y: auto;
+    overflow-x: hidden;
     flex: 1;
     min-height: 0;
     width: 100%;
+}
+
+/* グリッド列幅548px、コンテナ760px → 両端106pxずつネガティブマージンで全幅に */
+#app.portrait-mode .dungeon-stage-title {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 16px 12px 12px;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.8) center / cover;
+    margin-left: -100px;
+    width: 748px;
+    box-sizing: border-box;
+}
+
+#app.portrait-mode .dungeon-stage-desc {
+    font-family: var(--font-pixel);
+    font-size: 32px;
+    color: rgba(180, 210, 255, 0.75);
+    letter-spacing: 0.05em;
+}
+
+#app.portrait-mode .dungeon-stage-name {
+    font-family: var(--font-pixel);
+    font-size: 42px;
+    color: #ffd700;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    letter-spacing: 0.05em;
 }
 
 #app.portrait-mode .dungeon-cell {
@@ -126,7 +158,7 @@
     height: 52px;
     width: auto;
     pointer-events: none;
-    filter: drop-shadow(0 1px 4px rgba(0,0,0,0.8));
+    filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.8));
 }
 
 #app.portrait-mode .dungeon-cell:hover:not(:disabled) {

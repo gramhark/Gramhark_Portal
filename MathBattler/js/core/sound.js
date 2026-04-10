@@ -47,33 +47,33 @@ class SoundManager {
 
         // ---- SE Howl instances ----
         // battle
-        this.sePunch           = this._se('assets/audio/SE/battle/punch.mp3');
-        this.sePunchCrit       = this._se('assets/audio/SE/battle/punch_crit.mp3');
+        this.sePunch           = this._se('assets/audio/SE/battle/punch.mp3?v=20260410');
+        this.sePunchCrit       = this._se('assets/audio/SE/battle/punch_crit.mp3?v=20260410');
         this.seSword           = this._se('assets/audio/SE/battle/sword.mp3?v=20260408');
         this.seSwordCrit       = this._se('assets/audio/SE/battle/sword_crit.mp3?v=20260409');
-        this.seHitting         = this._se('assets/audio/SE/battle/hitting.mp3');
-        this.seHittingCrit     = this._se('assets/audio/SE/battle/hitting_crit.mp3');
+        this.seHitting         = this._se('assets/audio/SE/battle/hitting.mp3?v=20260410');
+        this.seHittingCrit     = this._se('assets/audio/SE/battle/hitting_crit.mp3?v=20260410');
         this.seSlash           = this._se('assets/audio/SE/battle/slash.mp3?v=20260408');
         this.seSlashCrit       = this._se('assets/audio/SE/battle/slash_crit.mp3?v=20260409');
         this.seSlashRed        = this._se('assets/audio/SE/battle/slash_red.mp3?v=20260408');
-        this.seSlashCritRed    = this._se('assets/audio/SE/battle/slash_crit_red.mp3');
+        this.seSlashCritRed    = this._se('assets/audio/SE/battle/slash_crit_red.mp3?v=20260410');
         this.seSlashBlue       = this._se('assets/audio/SE/battle/slash_blue.mp3?v=20260408');
-        this.seSlashCritBlue   = this._se('assets/audio/SE/battle/slash_crit_blue.mp3');
+        this.seSlashCritBlue   = this._se('assets/audio/SE/battle/slash_crit_blue.mp3?v=20260410');
         this.seSlashGreen      = this._se('assets/audio/SE/battle/slash_green.mp3?v=20260408');
-        this.seSlashCritGreen  = this._se('assets/audio/SE/battle/slash_crit_green.mp3');
+        this.seSlashCritGreen  = this._se('assets/audio/SE/battle/slash_crit_green.mp3?v=20260410');
         this.seSlashYellow     = this._se('assets/audio/SE/battle/slash_yellow.mp3?v=20260408');
-        this.seSlashCritYellow = this._se('assets/audio/SE/battle/slash_crit_yellow.mp3');
+        this.seSlashCritYellow = this._se('assets/audio/SE/battle/slash_crit_yellow.mp3?v=20260410');
         this.seSlashBlack      = this._se('assets/audio/SE/battle/slash_black.mp3?v=20260408');
-        this.seSlashCritBlack  = this._se('assets/audio/SE/battle/slash_crit_black.mp3');
+        this.seSlashCritBlack  = this._se('assets/audio/SE/battle/slash_crit_black.mp3?v=20260410');
         this.seSlashWhite      = this._se('assets/audio/SE/battle/slash_white.mp3?v=20260408');
-        this.seSlashCritWhite  = this._se('assets/audio/SE/battle/slash_crit_white.mp3');
+        this.seSlashCritWhite  = this._se('assets/audio/SE/battle/slash_crit_white.mp3?v=20260410');
         this.seSpecial         = this._se('assets/audio/SE/battle/special.mp3');
         this.sePlayerHit       = this._se('assets/audio/SE/battle/player_hitX.mp3');
         this.seShieldBlock     = this._se('assets/audio/SE/battle/shield_block.mp3');
-        this.sePlayerDodge     = this._se('assets/audio/SE/battle/player_dodge.mp3');
-        this.seMonsterMiss     = this._se('assets/audio/SE/battle/monster_miss.mp3');
-        this.seGaugeUp         = this._se('assets/audio/SE/battle/gauge_up.mp3?v=20260409');
-        this.seGaugeMax        = this._se('assets/audio/SE/battle/gauge_maxX.mp3');
+        this.sePlayerDodge     = this._se('assets/audio/SE/battle/player_dodge.mp3?v=20260410');
+        this.seMonsterMiss     = this._se('assets/audio/SE/battle/monster_miss.mp3?v=20260410');
+        this.seGaugeUp         = this._se('assets/audio/SE/battle/gauge_up.mp3?v=20260410');
+        this.seGaugeMax        = this._se('assets/audio/SE/battle/gauge_maxX.mp3?v=20260410');
         this.seStandby         = this._se('assets/audio/SE/battle/gauge_standby.mp3');
         // status
         this.sePoison          = this._se('assets/audio/SE/status/poison_set.mp3');

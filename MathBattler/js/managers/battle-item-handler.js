@@ -142,13 +142,13 @@ class BattleItemHandler {
                 message = 'たいりょくが\nかいふくした！';
                 break;
             case 'attackOrb':
-                this.game.swordBonus += Math.max(1, Math.round((1 + this.game._getEquippedSwordBonus()) * 0.05));
+                this.game.swordBonus += Math.max(1, Math.round((1 + this.game._getEquippedSwordBonus()) * 0.15));
                 this.sound.playSe('atk_up');
                 this.ui.showAtkUpEffect();
                 message = 'こうげきりょくアップ！';
                 break;
             case 'defenseOrb':
-                this.game.defenseBonus += Math.max(1, Math.round(this.game._getEquippedShieldBonus() * 0.05));
+                this.game.defenseBonus += Math.max(1, Math.round(this.game._getEquippedShieldBonus() * 0.10));
                 this.sound.playSe('def_up');
                 this.ui.showDefUpEffect();
                 message = 'ぼうぎょりょくアップ！';

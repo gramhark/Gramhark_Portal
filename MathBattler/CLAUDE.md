@@ -70,7 +70,7 @@ Game logic is split across `js/` by feature. Load order in `index.html` matters 
 - **`js/data/item_list.js`** — `window.ITEM_LIST` array of consumable item definitions.
 - **`js/data/medal_list.js`** — `window.MEDAL_LIST` array of medal definitions (defense/extra_damage/malle/exp/poison/paralyze/stone types, four rarity tiers: bronze/silver/gold/diamond).
 - **`js/core/constants.js`** — `Constants`, `Difficulty`, `DIFFICULTY_TIMER`, `GameState`, `ITEM_DATA`, `FORM_CONFIG`, drop rate arrays.
-- **`js/core/sound.js`** — `SoundManager` class.
+- **`js/core/sound.js`** — `SoundManager` class (Howler.js).
 - **`js/core/math_problem.js`** — `MathProblem` class.
 - **`js/core/monster.js`** — `Monster` class + helpers (`getMonsterAssets`, `findMonsterImage`, `calculateTotalMonsters`).
 - **`js/core/storage.js`** — `StorageManager` class. All `localStorage` read/write is centralized here.
@@ -115,7 +115,7 @@ Styles are split across `css/` by feature. Load order in `index.html` matters:
 | File | Class | Responsibility |
 |---|---|---|
 | `js/core/constants.js` | constants & data | Game constants, state enum, equipment data tables |
-| `js/core/sound.js` | `SoundManager` | Wraps all `<audio>` elements. BGM fade-in/out, SE playback, iOS AudioContext unlock. |
+| `js/core/sound.js` | `SoundManager` | Uses Howler.js (`Howl` instances). BGM fade-in/out, SE playback, tab-visibility pause/resume. |
 | `js/core/math_problem.js` | `MathProblem` | Generates arithmetic problems by floor+difficulty using `FLOOR_TABLES`. 60% current-tier / 40% random lower-tier mixing (except `noLower: true` rows). |
 | `js/core/monster.js` | `Monster` + helpers | Monster stats (HP, attack, type flags). `SPECIAL_MONSTER_DATA` maps special names to in-battle quotes. `YAN_SERIES_ORDER` + `isYanMonsterUnlocked()` gate Yan-series progression. |
 | `js/core/storage.js` | `StorageManager` | All `localStorage` access. Keys: `math_battle_player_name`, `math_battle_gold`, `math_battle_bag`, `math_battle_collection_v1`, `math_battle_difficulty`, `math_battle_cleared_floors_{1/2/3}`. |
@@ -247,7 +247,7 @@ Unlocked after clearing floor 100 on any difficulty. Managed by `MonsterHouseMan
 
 ### Audio
 
-All audio is `.mp3` format. BGM tracks are under `assets/audio/BGM/` with subfolders: `battle/` (battle_01〜battle_20, 5階ごとに1曲), `boss/` (boss, boss_next), `encounter/` (heal, rare, srare, special), `result/` (clear, gameover), `ui/` (title, menu, shop). SE is under `assets/audio/SE/`. BGM tracks continue playing across monsters (battle BGM resumes from where it paused when returning from boss/rare/heal tracks). iOS autoplay is unlocked via a silent AudioContext buffer on the first user interaction.
+All audio is `.mp3` format. BGM tracks are under `assets/audio/BGM/` with subfolders: `battle/` (battle_01〜battle_10, one per 10-floor group; plus monster_angry), `boss/` (boss, boss_next, boss_angry), `encounter/` (heal, rare, srare, special), `result/` (clear, gameover), `ui/` (title, menu, dungeon, shop, monster_house). SE is under `assets/audio/SE/` with subfolders `battle/`, `status/`, `item/`, `event/`, `ui/`. BGM tracks continue playing across monsters (battle BGM resumes from where it paused when returning from boss/rare/heal tracks). SE filenames may include `?v=YYYYMMDD` cache-busting query strings in the Howl `src`.
 
 ### Screen Transition System
 
