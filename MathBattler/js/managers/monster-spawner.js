@@ -477,7 +477,11 @@ class MonsterSpawner {
 
             this.ui.showMessage("モンスターが しんのすがたを かいほうした！", false, 3000, 'text-neutral');
             this.sound.playSe('transform');
-            this.sound.playBossNextBgm();
+            if (nextInfo.name === 'しんのかみだいおうグソクナイト') {
+                this.sound.playBossGodBgm();
+            } else {
+                this.sound.playBossNextBgm();
+            }
 
             // 6. 3秒間のアニメーションを見せる
             await new Promise(resolve => setTimeout(resolve, 3000));

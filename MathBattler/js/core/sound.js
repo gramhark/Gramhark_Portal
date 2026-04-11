@@ -26,6 +26,7 @@ class SoundManager {
         this.bgmDungeon      = this._bgm('assets/audio/BGM/ui/dungeon.mp3');
         this.bgmBoss         = this._bgm('assets/audio/BGM/boss/boss.mp3');
         this.bgmBossNext     = this._bgm('assets/audio/BGM/boss/boss_next.mp3');
+        this.bgmBossGod      = this._bgm('assets/audio/BGM/boss/boss_GOD.mp3');
         this.bgmBossAngry    = this._bgm('assets/audio/BGM/boss/boss_angry.mp3');
         this.bgmMonsterAngry = this._bgm('assets/audio/BGM/battle/monster_angry.mp3');
         this.bgmSrare        = this._bgm('assets/audio/BGM/encounter/srare.mp3');
@@ -383,6 +384,14 @@ class SoundManager {
         this.fadeInBgm(this.bgmBossNext, this._getBgmVol(), 500);
     }
 
+    playBossGodBgm() {
+        if (!this.bgmEnabled) return;
+        this._pauseOrStopCurrent();
+        this.currentBgm = this.bgmBossGod;
+        this.bgmBossGod.stop();
+        this.fadeInBgm(this.bgmBossGod, this._getBgmVol(), 500);
+    }
+
     playAngryBgm(isBoss) {
         if (!this.bgmEnabled) return;
         const target = isBoss ? this.bgmBossAngry : this.bgmMonsterAngry;
@@ -396,7 +405,7 @@ class SoundManager {
         const all = [
             this.bgmTitle, this.bgmMenu, this.bgmDungeon,
             ...this.bgmBattle,
-            this.bgmBoss, this.bgmBossNext, this.bgmBossAngry, this.bgmMonsterAngry,
+            this.bgmBoss, this.bgmBossNext, this.bgmBossGod, this.bgmBossAngry, this.bgmMonsterAngry,
             this.bgmSrare, this.bgmRare, this.bgmHeal, this.bgmSpecial,
             this.bgmShop, this.bgmClear, this.bgmGameover, this.bgmMonsterHouse,
         ].filter(Boolean);
