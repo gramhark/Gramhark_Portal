@@ -59,8 +59,8 @@ function _runLoadingScreen(game) {
         'assets/image/ui/panel/main_backpack.webp',
         'assets/image/ui/panel/main_equipment.webp',
         'assets/image/ui/panel/main_setting.webp',
-        'assets/image/ui/panel/main_item.webp',
-        'assets/image/ui/panel/main_itemnote.webp',
+        'assets/image/ui/panel/main_item.webp?v20260412',
+        'assets/image/ui/panel/main_itemnote.webp?v20260412',
         'assets/image/ui/panel/main_shop.webp',
         'assets/image/ui/panel/main_monsternote.webp',
     ];

@@ -39,6 +39,7 @@
     <link rel="stylesheet" href="css/screens/setting.css">
     <link rel="stylesheet" href="css/screens/note.css">
     <link rel="stylesheet" href="css/screens/monster-house.css">
+    <link rel="stylesheet" href="css/screens/sticker.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=M+PLUS+Rounded+1c:wght@400;700&display=swap"
@@ -142,11 +143,17 @@
             </button>
             <img src="assets/image/ui/panel/main_note.webp" class="screen-title-img" alt="ノート">
             <div class="note-hub-list">
-                <button id="note-hub-monster-btn" class="primary-btn">
+                <button id="note-hub-monster-btn" class="primary-btn" style="position:relative;">
                     <img src="assets/image/ui/button/BTN_main_monsternote.webp" class="btn-bg-img" alt="モンスターノート">
+                    <span id="note-hub-monster-new-badge" class="note-hub-new-badge" style="display:none;">NEW</span>
                 </button>
-                <button id="note-hub-item-btn" class="primary-btn">
-                    <img src="assets/image/ui/button/BTN_main_itemnote.webp" class="btn-bg-img" alt="アイテムノート">
+                <button id="note-hub-item-btn" class="primary-btn" style="position:relative;">
+                    <img src="assets/image/ui/button/BTN_main_itemnote.webp?v20260412" class="btn-bg-img" alt="アイテムノート">
+                    <span id="note-hub-item-new-badge" class="note-hub-new-badge" style="display:none;">NEW</span>
+                </button>
+                <button id="note-hub-sticker-btn" class="primary-btn" style="position:relative;">
+                    <img src="assets/image/ui/button/BTN_main_sticker.webp" class="btn-bg-img" alt="がんばりシール">
+                    <span id="note-hub-sticker-new-badge" class="note-hub-new-badge" style="display:none;">NEW</span>
                 </button>
             </div>
         </div>
@@ -165,7 +172,7 @@
                     <img src="assets/image/ui/button/BTN_main_equipment.webp" class="btn-bg-img" alt="そうび">
                 </button>
                 <button id="bag-hub-item-btn" class="primary-btn">
-                    <img src="assets/image/ui/button/BTN_main_item.webp" class="btn-bg-img" alt="どうぐ">
+                    <img src="assets/image/ui/button/BTN_main_item.webp?v20260412" class="btn-bg-img" alt="どうぐ">
                 </button>
             </div>
         </div>
@@ -282,7 +289,7 @@
             <button id="close-bag-btn" class="quit-battle-btn" aria-label="トップにもどる">
                 <img src="assets/image/ui/button/ButtonBack.webp" alt="もどる">
             </button>
-            <img src="assets/image/ui/panel/main_item.webp" class="screen-title-img" alt="どうぐ">
+            <img src="assets/image/ui/panel/main_item.webp?v20260412" class="screen-title-img" alt="どうぐ">
             <div id="bag-grid" class="bag-grid">
                 <!-- Populated by JS -->
             </div>
@@ -296,7 +303,7 @@
             <button id="close-item-note-btn" class="quit-battle-btn" aria-label="トップにもどる">
                 <img src="assets/image/ui/button/ButtonBack.webp" alt="もどる">
             </button>
-            <img src="assets/image/ui/panel/main_itemnote.webp" class="screen-title-img" alt="アイテムノート">
+            <img src="assets/image/ui/panel/main_itemnote.webp?v20260412" class="screen-title-img" alt="アイテムノート">
             <!-- 進捗表示エリア -->
             <div id="item-note-progress-area" class="note-progress-area">
                 <div class="note-progress-summary">
@@ -307,8 +314,52 @@
                     <div id="item-note-progress-bar" class="note-progress-bar" style="width:0%"></div>
                 </div>
             </div>
+            <div id="item-note-tabs" class="item-note-tabs">
+                <button class="item-note-tab-btn active" data-tab="けん">けん</button>
+                <button class="item-note-tab-btn" data-tab="たて">たて</button>
+                <button class="item-note-tab-btn" data-tab="どうぐ">どうぐ</button>
+            </div>
             <div id="item-note-grid" class="note-grid" style="flex: 1; overflow-y: auto;">
                 <!-- Populated by JS -->
+            </div>
+        </div>
+
+        <!-- がんばりシール画面 -->
+        <div id="sticker-screen" class="screen">
+            <div class="top-bg-container">
+                <img src="assets/image/ui/bg/BG_note.webp" alt="背景" class="top-bg-img">
+            </div>
+            <button id="close-sticker-btn" class="quit-battle-btn" aria-label="もどる">
+                <img src="assets/image/ui/button/ButtonBack.webp" alt="もどる">
+            </button>
+            <img src="assets/image/ui/panel/main_sticker.webp" class="screen-title-img" alt="がんばりシール">
+            <!-- 進捗バー -->
+            <div class="sticker-progress-wrap">
+                <div class="sticker-progress-bar-bg">
+                    <div id="sticker-progress-bar" class="sticker-progress-bar-fill" style="width:0%"></div>
+                </div>
+                <div id="sticker-progress-text" class="sticker-progress-text">0 / 33</div>
+            </div>
+            <!-- カテゴリタブ -->
+            <div class="sticker-tabs" id="sticker-tabs">
+                <button class="sticker-tab-btn active" data-cat="all">ぜんぶ</button>
+                <button class="sticker-tab-btn" data-cat="battle">バトル</button>
+                <button class="sticker-tab-btn" data-cat="dungeon">ダンジョン</button>
+                <button class="sticker-tab-btn" data-cat="challenge">チャレンジ</button>
+            </div>
+            <!-- シールグリッド -->
+            <div id="sticker-grid" class="sticker-grid">
+                <!-- Populated by JS -->
+            </div>
+            <!-- 詳細オーバーレイ -->
+            <div id="sticker-detail-overlay">
+                <div class="sticker-detail-card">
+                    <div id="sticker-detail-badge" class="sticker-badge sticker-badge--large"></div>
+                    <div id="sticker-detail-name" class="sticker-detail-name"></div>
+                    <div id="sticker-detail-desc" class="sticker-detail-desc"></div>
+                    <div id="sticker-detail-date" class="sticker-detail-date"></div>
+                    <button id="sticker-detail-close-btn" class="sticker-detail-close-btn">とじる</button>
+                </div>
             </div>
         </div>
 
@@ -855,11 +906,21 @@
             <div class="overlay" id="mh-medal-detail-overlay">
             </div>
         </div>
+        <!-- がんばりシール取得ポップアップ -->
+        <div id="sticker-popup">
+            <div class="sticker-popup-badge"></div>
+            <div class="sticker-popup-text">
+                <div class="sticker-popup-title">シールをゲット！</div>
+                <div class="sticker-popup-name"></div>
+            </div>
+        </div>
+
         <script src="js/lib/howler.min.js"></script>
         <script src="js/data/monster_list.js"></script>
         <script src="js/data/equipment_list.js"></script>
         <script src="js/data/item_list.js"></script>
         <script src="js/data/medal_list.js"></script>
+        <script src="js/data/sticker_list.js"></script>
         <script src="js/core/constants.js"></script>
         <script src="js/core/sound.js"></script>
         <script src="js/core/math_problem.js"></script>
@@ -880,6 +941,7 @@
         <script src="js/managers/results-manager.js"></script>
         <script src="js/managers/battle-item-handler.js"></script>
         <script src="js/managers/monster-house-manager.js"></script>
+        <script src="js/managers/sticker-manager.js"></script>
         <script src="js/ui/input-handler.js"></script>
         <script src="js/ui/event-binder.js"></script>
         <script src="js/ui/particle-effect.js"></script>

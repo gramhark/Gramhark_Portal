@@ -12,6 +12,9 @@ class NoteManager {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById('note-hub-screen').classList.add('active');
         this.ui.adjustScale();
+        this._syncMonsterNewBadge();
+        this._syncItemNewBadge();
+        this._syncStickerNewBadge();
     }
 
     hideNoteHub() {
@@ -37,6 +40,7 @@ class NoteManager {
         document.getElementById('note-screen').classList.remove('active');
         document.getElementById('note-hub-screen').classList.add('active');
         this.ui.adjustScale();
+        this._syncMonsterNewBadge();
     }
 
     showItemNote() {
@@ -44,8 +48,22 @@ class NoteManager {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById('item-note-screen').classList.add('active');
         this.ui.adjustScale();
+        if (!this._itemNoteTab) this._itemNoteTab = 'けん';
+        this._updateItemNoteTabs();
         this._renderItemNoteGrid();
         this._updateItemNoteProgress();
+    }
+
+    _switchItemNoteTab(tab) {
+        this._itemNoteTab = tab;
+        this._updateItemNoteTabs();
+        this._renderItemNoteGrid();
+    }
+
+    _updateItemNoteTabs() {
+        document.querySelectorAll('#item-note-tabs .item-note-tab-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.tab === this._itemNoteTab);
+        });
     }
 
     hideItemNote() {
@@ -53,6 +71,128 @@ class NoteManager {
         document.getElementById('item-note-screen').classList.remove('active');
         document.getElementById('note-hub-screen').classList.add('active');
         this.ui.adjustScale();
+        this._syncItemNewBadge();
+    }
+
+    showSticker() {
+        this.game.state = GameState.STICKER;
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById('sticker-screen').classList.add('active');
+        this.ui.adjustScale();
+        this._renderStickerScreen();
+    }
+
+    hideSticker() {
+        this.game.state = GameState.NOTE;
+        document.getElementById('sticker-screen').classList.remove('active');
+        document.getElementById('note-hub-screen').classList.add('active');
+        this.ui.adjustScale();
+        this._syncStickerNewBadge();
+    }
+
+    _renderStickerScreen(filterCat = 'all') {
+        const stickers = this.storage.loadStickers();
+        const total  = window.STICKER_LIST.length;
+        const earned = window.STICKER_LIST.filter(s => stickers[s.id]?.earned).length;
+        const pct    = total > 0 ? Math.round(earned / total * 100) : 0;
+
+        const bar  = document.getElementById('sticker-progress-bar');
+        const text = document.getElementById('sticker-progress-text');
+        if (bar)  bar.style.width  = `${pct}%`;
+        if (text) text.textContent = `${earned} / ${total}`;
+
+        // タブのアクティブ状態
+        document.querySelectorAll('.sticker-tab-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.cat === filterCat);
+        });
+
+        // グリッド描画
+        const grid = document.getElementById('sticker-grid');
+        if (!grid) return;
+        grid.innerHTML = '';
+
+        const list = filterCat === 'all'
+            ? window.STICKER_LIST
+            : window.STICKER_LIST.filter(s => s.category === filterCat);
+
+        list.forEach(def => {
+            const record   = stickers[def.id];
+            const isEarned = !!(record?.earned);
+            const isNew    = isEarned && !record?.seen;
+
+            const cell = document.createElement('div');
+            cell.className = 'sticker-cell' + (isEarned ? '' : ' locked');
+            cell.dataset.id = def.id;
+
+            const badge = document.createElement('div');
+            badge.className = 'sticker-badge' + (isEarned ? '' : ' locked');
+            badge.style.setProperty('--sticker-light', def.color.light);
+            badge.style.setProperty('--sticker-dark',  def.color.dark);
+            badge.textContent = def.emoji;
+
+            // バッジ＋NEWバッジのラッパー（NEWバッジの基準点）
+            const wrap = document.createElement('div');
+            wrap.className = 'sticker-badge-wrap';
+            wrap.appendChild(badge);
+            if (isNew) {
+                const nb = document.createElement('span');
+                nb.className = 'sticker-cell-new-badge';
+                nb.textContent = 'NEW';
+                wrap.appendChild(nb);
+            }
+            cell.appendChild(wrap);
+            cell.addEventListener('click', () => this._showStickerDetail(def, record, isEarned));
+            grid.appendChild(cell);
+        });
+    }
+
+    _showStickerDetail(def, record, isEarned = true) {
+        const overlay = document.getElementById('sticker-detail-overlay');
+        if (!overlay) return;
+
+        const badge = document.getElementById('sticker-detail-badge');
+        badge.style.setProperty('--sticker-light', def.color.light);
+        badge.style.setProperty('--sticker-dark',  def.color.dark);
+        badge.textContent = def.emoji;
+        badge.classList.toggle('locked', !isEarned);
+
+        const nameEl = document.getElementById('sticker-detail-name');
+        nameEl.textContent = isEarned ? def.name : '???';
+        nameEl.classList.toggle('locked', !isEarned);
+
+        document.getElementById('sticker-detail-desc').textContent = def.desc;
+
+        const dateEl = document.getElementById('sticker-detail-date');
+        if (isEarned && record?.earnedAt) {
+            const d = new Date(record.earnedAt);
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            dateEl.textContent = `${y}/${m}/${day} にとれた！`;
+        } else if (!isEarned) {
+            dateEl.textContent = 'まだとれていない...';
+            dateEl.style.color = '#666';
+        } else {
+            dateEl.textContent = '';
+        }
+
+        overlay.classList.add('active');
+        this.sound.playSe('note_details');
+
+        // 取得済みシールを「見た」としてマーク → セル内NEWバッジを消す
+        if (isEarned && !record?.seen) {
+            const stickers = this.storage.loadStickers();
+            if (stickers[def.id]) {
+                stickers[def.id].seen = true;
+                this.storage.saveStickers(stickers);
+            }
+            const cell = document.querySelector(`.sticker-cell[data-id="${def.id}"]`);
+            if (cell) {
+                const nb = cell.querySelector('.sticker-cell-new-badge');
+                if (nb) nb.remove();
+            }
+            this._syncStickerNewBadge();
+        }
     }
 
     _getNoteTabDefs() {
@@ -110,6 +250,7 @@ class NoteManager {
         el.innerHTML = '';
         const assets = getMonsterAssets();
         const collection = this.storage.loadMonsterCollection();
+        const monsterNew = this.storage.loadMonsterNew();
         const tabs = this._getNoteTabDefs();
 
         if (assets._legacy) {
@@ -119,29 +260,34 @@ class NoteManager {
                 const list = all.filter(f => tab.filter(f));
                 return { ...tab, folder: '', list };
             }).filter(t => t.list.length > 0);
-            legacyTabs.forEach(tab => this._appendGenreBtn(el, tab, tab.list, collection));
+            legacyTabs.forEach(tab => this._appendGenreBtn(el, tab, tab.list, collection, monsterNew));
         } else {
             tabs.forEach(tab => {
                 const list = (assets[tab.folder] || []).filter(tab.filter);
                 if (list.length === 0) return;
-                this._appendGenreBtn(el, tab, list, collection);
+                this._appendGenreBtn(el, tab, list, collection, monsterNew);
             });
         }
     }
 
-    _appendGenreBtn(container, tab, list, collection) {
+    _appendGenreBtn(container, tab, list, collection, monsterNew = {}) {
         const defeated = list.filter(f => {
             const name = this._getMonsterName(f);
             return !!(collection[name] && collection[name].defeated);
         }).length;
         const isCompleted = list.length > 0 && defeated === list.length;
+        const hasNew = list.some(f => {
+            const name = this._getMonsterName(f);
+            return !!(collection[name] && collection[name].defeated && monsterNew[name]);
+        });
         const btn = document.createElement('button');
         btn.className = 'note-genre-btn' + (isCompleted ? ' note-genre-completed' : '');
         btn.innerHTML = `<span class="note-genre-label">${tab.label}</span>`
             + `<span class="note-genre-count-row">`
             + `<span class="note-genre-count">${defeated}/${list.length}</span>`
             + (isCompleted ? `<span class="note-genre-medal">◎</span>` : '')
-            + `</span>`;
+            + `</span>`
+            + (hasNew ? `<span class="note-genre-new-badge">NEW</span>` : '');
         btn.addEventListener('click', () => { this.sound.playSe('note_grid'); this._showNoteCategory(tab, list); });
         container.appendChild(btn);
     }
@@ -154,7 +300,8 @@ class NoteManager {
         const grid = document.getElementById('note-grid');
         grid.innerHTML = '';
         const collection = this.storage.loadMonsterCollection();
-        list.forEach(f => this._addNoteCard(grid, f, tab.folder, collection));
+        const monsterNew = this.storage.loadMonsterNew();
+        list.forEach(f => this._addNoteCard(grid, f, tab.folder, collection, monsterNew));
         requestAnimationFrame(() => this._fitNoteCardNames());
     }
 
@@ -169,10 +316,11 @@ class NoteManager {
         });
     }
 
-    _addNoteCard(grid, filename, folder, collection) {
+    _addNoteCard(grid, filename, folder, collection, monsterNew = {}) {
         const displayName = this._getMonsterName(filename);
         const record = collection[displayName];
         const isDefeated = !!(record && record.defeated);
+        const isNew = isDefeated && !!monsterNew[displayName];
         // Normal はサブフォルダ構成: "NN_name.webp" → "Normal/NN/NN_name.webp"
         let resolvedFilename = filename;
         if (folder === 'Normal') {
@@ -214,7 +362,22 @@ class NoteManager {
             nameEl.textContent = '？？？';
         } else {
             nameEl.textContent = displayName;
+            if (isNew) {
+                const nb = document.createElement('span');
+                nb.className = 'note-card-new-badge';
+                nb.textContent = 'NEW';
+                card.appendChild(nb);
+            }
             card.addEventListener('click', () => {
+                // 「見た」としてマーク
+                const newData = this.storage.loadMonsterNew();
+                if (newData[displayName]) {
+                    delete newData[displayName];
+                    this.storage.saveMonsterNew(newData);
+                    const nb = card.querySelector('.note-card-new-badge');
+                    if (nb) nb.remove();
+                    this._syncMonsterNewBadge();
+                }
                 this.sound.playSe('note_details');
                 this.ui.openImageModal(imgPath, displayName, record, false, null, (text) => {
                     this.storage.saveMonsterDiary(displayName, text);
@@ -296,6 +459,7 @@ class NoteManager {
         grid.innerHTML = '';
 
         const collection = this.storage.loadItemCollection();
+        const itemNew = this.storage.loadItemNew();
 
         const equipList = window.EQUIPMENT_LIST || [];
         const categories = [
@@ -313,17 +477,13 @@ class NoteManager {
             },
         ];
 
-        categories.forEach(cat => {
-            const defeated = cat.items.filter(item => !!collection[item.name]).length;
-            const isCompleted = cat.items.length > 0 && defeated === cat.items.length;
-            const header = document.createElement('div');
-            header.className = 'note-category-header';
-            header.innerHTML = `${cat.label} <span class="note-category-count">${defeated}/${cat.items.length}</span>`
-                + (isCompleted ? ` <span class="note-genre-medal">◎</span>` : '');
-            grid.appendChild(header);
+        const activeCat = categories.find(c => c.label === (this._itemNoteTab || 'けん')) || categories[0];
+        const activeCats = [activeCat];
 
+        activeCats.forEach(cat => {
             cat.items.forEach(item => {
                 const isRegistered = !!collection[item.name];
+                const isItemNew = isRegistered && !!itemNew[item.name];
                 const card = document.createElement('div');
                 card.className = 'note-card';
 
@@ -344,10 +504,25 @@ class NoteManager {
                 } else {
                     imgEl.classList.add('item-note-glow');
                     nameEl.textContent = item.name;
+                    if (isItemNew) {
+                        const nb = document.createElement('span');
+                        nb.className = 'note-card-new-badge';
+                        nb.textContent = 'NEW';
+                        card.appendChild(nb);
+                    }
                     const equipData = (item.attack !== undefined)
                         ? { attack: item.attack || 0, defense: item.defense || 0 }
                         : (item.desc ? { desc: item.desc } : null);
                     card.addEventListener('click', () => {
+                        // 「見た」としてマーク
+                        const newData = this.storage.loadItemNew();
+                        if (newData[item.name]) {
+                            delete newData[item.name];
+                            this.storage.saveItemNew(newData);
+                            const nb = card.querySelector('.note-card-new-badge');
+                            if (nb) nb.remove();
+                            this._syncItemNewBadge();
+                        }
                         this.sound.playSe('note_details');
                         this.ui.openImageModal(`assets/image/${item.dir}/${item.img}`, item.name, null, true, equipData);
                     });
@@ -363,7 +538,14 @@ class NoteManager {
     }
 
     _updateItemCollection(itemName) {
+        const collection = this.storage.loadItemCollection();
+        const isNewItem = !collection[itemName];
         this.storage.saveItemCollected(itemName);
+        if (isNewItem) {
+            const newData = this.storage.loadItemNew();
+            newData[itemName] = true;
+            this.storage.saveItemNew(newData);
+        }
     }
 
     _getMonsterName(filename) {
@@ -406,7 +588,37 @@ class NoteManager {
         }
 
         this.storage.saveMonsterRecord(monsterName, record);
+
+        // 初登録ならNEWフラグを立てる
+        if (isNew) {
+            const newData = this.storage.loadMonsterNew();
+            newData[monsterName] = true;
+            this.storage.saveMonsterNew(newData);
+        }
+
         return isNew;
+    }
+
+    // ── NEWバッジ同期ヘルパー ──
+
+    _syncMonsterNewBadge() {
+        const badge = document.getElementById('note-hub-monster-new-badge');
+        if (!badge) return;
+        const data = this.storage.loadMonsterNew();
+        badge.style.display = Object.keys(data).length > 0 ? '' : 'none';
+    }
+
+    _syncItemNewBadge() {
+        const badge = document.getElementById('note-hub-item-new-badge');
+        if (!badge) return;
+        const data = this.storage.loadItemNew();
+        badge.style.display = Object.keys(data).length > 0 ? '' : 'none';
+    }
+
+    _syncStickerNewBadge() {
+        const badge = document.getElementById('note-hub-sticker-new-badge');
+        if (!badge) return;
+        badge.style.display = this.storage.hasNewStickers() ? '' : 'none';
     }
 
     _showNoteRegistration(monsterName, onComplete) {

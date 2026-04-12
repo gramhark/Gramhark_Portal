@@ -207,6 +207,7 @@ class EventBinder {
         document.getElementById('close-note-hub-btn').addEventListener('click', () => { game.sound.playSe('back'); game._withSlide(() => game.hideNoteHub(), 'back'); });
         document.getElementById('note-hub-monster-btn').addEventListener('click', () => game._withSlide(() => game.showNote()));
         document.getElementById('note-hub-item-btn').addEventListener('click', () => game._withSlide(() => game.showItemNote()));
+        document.getElementById('note-hub-sticker-btn').addEventListener('click', () => game._withSlide(() => game.showSticker()));
 
         // Phase 1: Monster Note
         document.getElementById('close-note-btn').addEventListener('click', () => {
@@ -228,6 +229,29 @@ class EventBinder {
 
         // Item Note
         document.getElementById('close-item-note-btn').addEventListener('click', () => { game.sound.playSe('back'); game._withSlide(() => game.hideItemNote(), 'back'); });
+        document.querySelectorAll('#item-note-tabs .item-note-tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                game.sound.playSe('dungeon_tab');
+                game.notes._switchItemNoteTab(btn.dataset.tab);
+            });
+        });
+
+        // Sticker
+        document.getElementById('close-sticker-btn').addEventListener('click', () => { game.sound.playSe('back'); game._withSlide(() => game.hideSticker(), 'back'); });
+        document.getElementById('sticker-detail-close-btn').addEventListener('click', () => {
+            document.getElementById('sticker-detail-overlay').classList.remove('active');
+        });
+        document.getElementById('sticker-detail-overlay').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('sticker-detail-overlay')) {
+                document.getElementById('sticker-detail-overlay').classList.remove('active');
+            }
+        });
+        document.querySelectorAll('.sticker-tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                game.sound.playSe('dungeon_tab');
+                game.notes._renderStickerScreen(btn.dataset.cat);
+            });
+        });
 
         // Shop
         document.getElementById('shop-back-btn').addEventListener('click', () => { game.sound.playSe('back'); game.hideShop(); });

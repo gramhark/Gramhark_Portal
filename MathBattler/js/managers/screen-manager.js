@@ -43,6 +43,12 @@ class ScreenManager {
             document.getElementById('intro-overlay').classList.add('active');
         }
 
+        // がんばりシール: ペンディングポップアップをフラッシュ
+        if (this.game.sticker) {
+            this.game.sticker.check('mainMenu');
+            this.game.sticker._syncNewBadge();
+        }
+
         // モンスターハウス初回解放通知バブル
         if (this.storage.isMonsterHouseUnlocked() && !this.storage.isMonsterHouseNotified()) {
             this.storage.setMonsterHouseNotified();

@@ -36,6 +36,7 @@ class Game {
         this.expMultiplied = false;    // ミスターねんりん効果: 獲得経験値×1.2（ダンジョン中有効）
 
         this.prevBossDefeated = false; // 直前ダンジョンのボス撃破フラグ（げきレア出現条件）
+        this.wrongAnswerCount = 0;    // 今フロアのモンスターターン被弾数（ぜんもんせいかい判定用）
 
         this.dodgeStreak = 0;          // 連続回避カウント (0–4)
         this.specialMoveReady = false; // 必殺技ゲージMAXフラグ（4回回避で成立）
@@ -83,6 +84,7 @@ class Game {
         this.itemHandler = new BattleItemHandler(this);
         this.monsterHouse = new MonsterHouseManager(this);
         this.levelSystem = new LevelSystem(this);
+        this.sticker = new StickerManager(this);
         this.input = new InputHandler(this);
         this.events = new EventBinder(this);
 
@@ -129,6 +131,7 @@ class Game {
         this.healAppeared = false;
         this.superRareAppeared = false;
         this.dungeonRareAppeared = false;
+        this.wrongAnswerCount = 0;
         const usedNormalImages = new Set();
         const normalImageCount = new Map();
         for (let i = 1; i <= Constants.MONSTERS_PER_FLOOR; i++) {
@@ -561,6 +564,14 @@ class Game {
 
         // ボス撃破でげきレア出現フラグをON
         if (isBossForExp) this.prevBossDefeated = true;
+
+        // シール: battleCountインクリメント
+        this.sticker.incrementBattleCount();
+
+        // シール: レベルアップ
+        if (lvResult.levelUps && lvResult.levelUps.length > 0) {
+            this.sticker.check('levelUp', { level: this.playerLevel });
+        }
 
         // Save to Monster Note
         const isNewRecord = this._saveMonsterRecord(m, totalTime);
@@ -1039,6 +1050,8 @@ class Game {
     hideNote() { return this.notes.hideNote(); }
     showItemNote() { return this.notes.showItemNote(); }
     hideItemNote() { return this.notes.hideItemNote(); }
+    showSticker() { return this.notes.showSticker(); }
+    hideSticker() { return this.notes.hideSticker(); }
     _updateItemCollection(n) { return this.notes._updateItemCollection(n); }
     _saveMonsterRecord(m, t) { return this.notes._saveMonsterRecord(m, t); }
     _showNoteRegistration(n, cb) { return this.notes._showNoteRegistration(n, cb); }

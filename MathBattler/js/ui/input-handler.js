@@ -120,6 +120,12 @@ class InputHandler {
             this.game.dodgeStreak = 0;
             this.ui.setSpecialStandby(false);
             this.ui.updateAuraUI(this.game.dodgeStreak, this.game.specialMoveReady);
+            // シール: ひっさつわざカウント
+            this.game.sticker.check('specialMove');
+        }
+        // シール: クリティカルカウント
+        if (isCrit) {
+            this.game.sticker.check('critical');
         }
 
         const m = this.game.monsters[this.game.currentMonsterIdx];
@@ -300,6 +306,7 @@ class InputHandler {
 
         this.game.playerHp = Math.max(0, this.game.playerHp - damage);
         this.ui.updatePlayerHp(this.game.playerHp, this.game.playerMaxHp);
+        this.game.wrongAnswerCount++; // シール: ぜんもんせいかい用
 
         this.ui.damageScreen(); // ★ モンスターからの攻撃（被弾）アニメーション
         this.ui.shakeScreen();
@@ -532,6 +539,7 @@ class InputHandler {
         // 通常被ダメージ
         this.game.playerHp = Math.max(0, this.game.playerHp - damage);
         this.ui.updatePlayerHp(this.game.playerHp, this.game.playerMaxHp);
+        this.game.wrongAnswerCount++; // シール: ぜんもんせいかい用
 
         this.ui.damageScreen();
         this.ui.shakeScreen();

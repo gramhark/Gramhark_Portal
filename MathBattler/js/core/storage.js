@@ -199,6 +199,64 @@ class StorageManager {
         return parseInt(localStorage.getItem('math_battle_player_exp')) || 0;
     }
 
+    // --- がんばりシール ---
+
+    loadStickers() {
+        try {
+            return JSON.parse(localStorage.getItem('math_battle_stickers') || '{}');
+        } catch (e) { return {}; }
+    }
+
+    saveStickers(stickers) {
+        localStorage.setItem('math_battle_stickers', JSON.stringify(stickers));
+    }
+
+    hasNewStickers() {
+        try {
+            const stickers = JSON.parse(localStorage.getItem('math_battle_stickers') || '{}');
+            const list = (typeof window !== 'undefined' && window.STICKER_LIST) ? window.STICKER_LIST : [];
+            if (list.length === 0) return localStorage.getItem('math_battle_stickers_new') === 'true';
+            return list.some(s => stickers[s.id]?.earned && !stickers[s.id]?.seen);
+        } catch(e) { return false; }
+    }
+
+    setNewStickers() {
+        // hasNewStickers() はstickersデータを直接スキャンするため、このフラグは参照されない
+        // 既存の呼び出し元との互換性のため残す
+    }
+
+    clearNewStickers() {
+        // 同上
+    }
+
+    // --- ノート NEWバッジ ---
+
+    loadMonsterNew() {
+        try { return JSON.parse(localStorage.getItem('math_battle_monster_new') || '{}'); }
+        catch(e) { return {}; }
+    }
+
+    saveMonsterNew(data) {
+        localStorage.setItem('math_battle_monster_new', JSON.stringify(data));
+    }
+
+    loadItemNew() {
+        try { return JSON.parse(localStorage.getItem('math_battle_item_new') || '{}'); }
+        catch(e) { return {}; }
+    }
+
+    saveItemNew(data) {
+        localStorage.setItem('math_battle_item_new', JSON.stringify(data));
+    }
+
+    isStickersMigrated() {
+        return localStorage.getItem('math_battle_stickers_migrated') === 'true';
+    }
+
+    setStickersMigrated() {
+        localStorage.setItem('math_battle_stickers_migrated', 'true');
+    }
+
     // --- バックアップ ---
 
     _calcChecksum(obj) {
@@ -234,6 +292,9 @@ class StorageManager {
             lastSelectedCompanion: localStorage.getItem('math_battle_last_selected_companion'),
             medals:                localStorage.getItem('math_battle_medals'),
             companionMedals:       localStorage.getItem('math_battle_companion_medals'),
+            // がんばりシール
+            stickers:              localStorage.getItem('math_battle_stickers'),
+            stickersNew:           localStorage.getItem('math_battle_stickers_new'),
         };
         data._checksum = this._calcChecksum(data);
         return data;
@@ -271,6 +332,9 @@ class StorageManager {
         set('math_battle_last_selected_companion', rest.lastSelectedCompanion);
         set('math_battle_medals',                  rest.medals);
         set('math_battle_companion_medals',        rest.companionMedals);
+        // がんばりシール
+        set('math_battle_stickers',                rest.stickers);
+        set('math_battle_stickers_new',            rest.stickersNew);
         // 旧キー削除
         localStorage.removeItem('math_battle_cleared_floors');
         return null;

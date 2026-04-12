@@ -7,10 +7,13 @@ class MonsterHouseManager {
         this.ui = game.ui;
         this._currentTab = 'monster';
         this._monsterSortKey = 'capturedAt'; // 'capturedAt' | 'name'
+        this._monsterSortDir = 'desc'; // 'asc' | 'desc'
         this._medalSortKey = 'name'; // 'name' | 'effect'
+        this._medalSortDir = 'asc'; // 'asc' | 'desc'
         this._selectedMonsterName = null; // 詳細パネルで選択中のモンスター名
         this._farewell = false; // おわかれタブかどうか
         this._farewellSortKey = 'capturedAt'; // 'capturedAt' | 'name'
+        this._farewellSortDir = 'desc'; // 'asc' | 'desc'
     }
 
     /** コンテンツエリア要素取得 */
@@ -227,9 +230,15 @@ class MonsterHouseManager {
 
         // ソート
         if (this._monsterSortKey === 'name') {
-            list.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ja'));
+            list.sort((a, b) => {
+                const cmp = (a.name || '').localeCompare(b.name || '', 'ja');
+                return this._monsterSortDir === 'asc' ? cmp : -cmp;
+            });
         } else {
-            list.sort((a, b) => (b.capturedAt || 0) - (a.capturedAt || 0));
+            list.sort((a, b) => {
+                const cmp = (a.capturedAt || 0) - (b.capturedAt || 0);
+                return this._monsterSortDir === 'asc' ? cmp : -cmp;
+            });
         }
 
         grid.innerHTML = '';
@@ -238,12 +247,18 @@ class MonsterHouseManager {
         const sortBar = document.createElement('div');
         sortBar.className = 'mh-sort-bar';
         [['capturedAt', 'なかまじゅん'], ['name', 'なまえじゅん']].forEach(([key, label]) => {
+            const isActive = this._monsterSortKey === key;
             const btn = document.createElement('button');
-            btn.className = 'mh-sort-btn' + (this._monsterSortKey === key ? ' active' : '');
-            btn.textContent = label + (this._monsterSortKey === key ? '▼' : '');
+            btn.className = 'mh-sort-btn' + (isActive ? ' active' : '');
+            btn.textContent = label + (isActive ? (this._monsterSortDir === 'asc' ? '▲' : '▼') : '');
             btn.addEventListener('click', () => {
                 this.sound.playSe('equip_sort');
-                this._monsterSortKey = key;
+                if (this._monsterSortKey === key) {
+                    this._monsterSortDir = this._monsterSortDir === 'asc' ? 'desc' : 'asc';
+                } else {
+                    this._monsterSortKey = key;
+                    this._monsterSortDir = key === 'capturedAt' ? 'desc' : 'asc';
+                }
                 this._renderMonsterGrid();
             });
             sortBar.appendChild(btn);
@@ -483,7 +498,8 @@ class MonsterHouseManager {
             return;
         }
 
-        let sortKey = this._medalTabSortKey || 'name';
+        if (!this._medalTabSortKey) this._medalTabSortKey = 'name';
+        if (!this._medalTabSortDir) this._medalTabSortDir = 'asc';
 
         const render = () => {
             container.innerHTML = '';
@@ -491,13 +507,18 @@ class MonsterHouseManager {
             const sortBar = document.createElement('div');
             sortBar.className = 'mh-sort-bar';
             [['name', 'なまえじゅん'], ['effect', 'こうかじゅん']].forEach(([key, label]) => {
+                const isActive = this._medalTabSortKey === key;
                 const btn = document.createElement('button');
-                btn.className = 'mh-sort-btn' + (sortKey === key ? ' active' : '');
-                btn.textContent = label;
+                btn.className = 'mh-sort-btn' + (isActive ? ' active' : '');
+                btn.textContent = label + (isActive ? (this._medalTabSortDir === 'asc' ? '▲' : '▼') : '');
                 btn.addEventListener('click', () => {
                     this.sound.playSe('equip_sort');
-                    sortKey = key;
-                    this._medalTabSortKey = key;
+                    if (this._medalTabSortKey === key) {
+                        this._medalTabSortDir = this._medalTabSortDir === 'asc' ? 'desc' : 'asc';
+                    } else {
+                        this._medalTabSortKey = key;
+                        this._medalTabSortDir = key === 'effect' ? 'desc' : 'asc';
+                    }
                     render();
                 });
                 sortBar.appendChild(btn);
@@ -505,10 +526,16 @@ class MonsterHouseManager {
             container.appendChild(sortBar);
 
             const sorted = [...ownedMedals];
-            if (sortKey === 'name') {
-                sorted.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ja'));
+            if (this._medalTabSortKey === 'name') {
+                sorted.sort((a, b) => {
+                    const cmp = (a.name || '').localeCompare(b.name || '', 'ja');
+                    return this._medalTabSortDir === 'asc' ? cmp : -cmp;
+                });
             } else {
-                sorted.sort((a, b) => (b.value || 0) - (a.value || 0));
+                sorted.sort((a, b) => {
+                    const cmp = (a.value || 0) - (b.value || 0);
+                    return this._medalTabSortDir === 'asc' ? cmp : -cmp;
+                });
             }
 
             const grid = document.createElement('div');
@@ -588,21 +615,33 @@ class MonsterHouseManager {
 
         // ソート
         if (this._farewellSortKey === 'name') {
-            list.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ja'));
+            list.sort((a, b) => {
+                const cmp = (a.name || '').localeCompare(b.name || '', 'ja');
+                return this._farewellSortDir === 'asc' ? cmp : -cmp;
+            });
         } else {
-            list.sort((a, b) => (b.capturedAt || 0) - (a.capturedAt || 0));
+            list.sort((a, b) => {
+                const cmp = (a.capturedAt || 0) - (b.capturedAt || 0);
+                return this._farewellSortDir === 'asc' ? cmp : -cmp;
+            });
         }
 
         // ソートバー
         const sortBar = document.createElement('div');
         sortBar.className = 'mh-sort-bar';
         [['capturedAt', 'なかまじゅん'], ['name', 'なまえじゅん']].forEach(([key, label]) => {
+            const isActive = this._farewellSortKey === key;
             const btn = document.createElement('button');
-            btn.className = 'mh-sort-btn' + (this._farewellSortKey === key ? ' active' : '');
-            btn.textContent = label + (this._farewellSortKey === key ? '▼' : '');
+            btn.className = 'mh-sort-btn' + (isActive ? ' active' : '');
+            btn.textContent = label + (isActive ? (this._farewellSortDir === 'asc' ? '▲' : '▼') : '');
             btn.addEventListener('click', () => {
                 this.sound.playSe('equip_sort');
-                this._farewellSortKey = key;
+                if (this._farewellSortKey === key) {
+                    this._farewellSortDir = this._farewellSortDir === 'asc' ? 'desc' : 'asc';
+                } else {
+                    this._farewellSortKey = key;
+                    this._farewellSortDir = key === 'capturedAt' ? 'desc' : 'asc';
+                }
                 this._renderFarewellGrid(immediate);
             });
             sortBar.appendChild(btn);

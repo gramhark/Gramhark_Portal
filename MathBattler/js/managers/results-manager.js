@@ -28,12 +28,25 @@ class ResultsManager {
 
     _onGameClear() {
         this.game.state = GameState.RESULT;
+        // 初クリア判定（saveFloorClear より先に確認）
+        const floor = this.game.currentFloor;
+        const c1 = this.storage.loadClearedFloors(1);
+        const c2 = this.storage.loadClearedFloors(2);
+        const c3 = this.storage.loadClearedFloors(3);
+        const isFirstClear = !(c1[floor] || c2[floor] || c3[floor]);
         // ダンジョンクリアを保存
-        this.storage.saveFloorClear(this.game.currentFloor, this.game.difficulty);
+        this.storage.saveFloorClear(floor, this.game.difficulty);
         // 50階クリア時にモンスターハウスを解放
-        if (this.game.currentFloor === 50 && !this.storage.isMonsterHouseUnlocked()) {
+        if (floor === 50 && !this.storage.isMonsterHouseUnlocked()) {
             this.storage.setMonsterHouseUnlocked();
         }
+        // シールチェック
+        this.game.sticker.check('battleWin', {
+            floor,
+            difficulty:       this.game.difficulty,
+            wrongAnswerCount: this.game.wrongAnswerCount,
+            isFirstClear,
+        });
         this.sound.stopBgm();
         this.sound.playSe('clear');
 
