@@ -196,8 +196,14 @@ class UIManager {
         }
     }
 
-    /** メインメニューに戻る際にデスクトップ左右パネルの内容をリセットする */
+    /** バトル開始時にデスクトップサイドパネルを表示する */
+    showDesktopPanels() {
+        document.body.classList.add('battle-active');
+    }
+
+    /** メインメニューに戻る際にデスクトップ左右パネルを非表示にしてコンテンツをリセットする */
     clearDesktopPanels() {
+        document.body.classList.remove('battle-active');
         // 左パネル: 情報をリセット
         this._desktopMonsterData = null;
         this._desktopPlayerData = null;

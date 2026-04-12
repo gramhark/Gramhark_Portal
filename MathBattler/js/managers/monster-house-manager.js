@@ -14,6 +14,7 @@ class MonsterHouseManager {
         this._farewell = false; // おわかれタブかどうか
         this._farewellSortKey = 'capturedAt'; // 'capturedAt' | 'name'
         this._farewellSortDir = 'desc'; // 'asc' | 'desc'
+        this._clerkQuoteTimeout = null; // セリフ遅延タイマー
     }
 
     /** コンテンツエリア要素取得 */
@@ -129,6 +130,7 @@ class MonsterHouseManager {
 
     /** 退室アニメーション用セリフ */
     onLeave() {
+        if (this._clerkQuoteTimeout) { clearTimeout(this._clerkQuoteTimeout); this._clerkQuoteTimeout = null; }
         const quoteEl = document.getElementById('mh-clerk-quote');
         if (quoteEl) quoteEl.innerHTML = 'またきてね！';
 
@@ -153,7 +155,8 @@ class MonsterHouseManager {
             el.innerHTML = 'やっほー！';
             const companions = this.storage.loadCompanions();
             const count = Object.keys(companions).length;
-            setTimeout(() => {
+            this._clerkQuoteTimeout = setTimeout(() => {
+                this._clerkQuoteTimeout = null;
                 if (count === 0) {
                     el.innerHTML = 'ショップのおじさんから<br>ゆうじょうのみ★30★をかって<br>モンスターをつかまえてね！';
                 } else {

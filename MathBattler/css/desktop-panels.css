@@ -4,8 +4,8 @@
    表示条件: 幅 1100px 以上
    #app (仮想800px) の左右余白に固定配置。
    #app の実際の幅 = min(100vw, 50vh) なので、
-     - 左パネルの右端 = 50% - min(50vw, 25vh) （= #app の左端）
-     - 右パネルの左端 = 50% + min(50vw, 25vh) （= #app の右端）
+     - 左パネル: left=0 + width=calc(50%-min(50vw,25vh)) → 右端が #app 左端に一致
+     - 右パネル: left=calc(50%+min(50vw,25vh)) + right=0 → 左端が #app 右端に一致
    ============================================================ */
 
 .desktop-side-panel {
@@ -15,7 +15,7 @@
 @media (min-width: 1100px) {
 
     /* ── 共通 ── */
-    .desktop-side-panel {
+    body.battle-active .desktop-side-panel {
         display: flex;
         position: fixed;
         top: 0;
@@ -27,14 +27,14 @@
         pointer-events: none;
     }
 
-    .desktop-left-panel {
+    body.battle-active .desktop-left-panel {
         left: 0;
-        right: calc(50% + min(50vw, 25vh));
+        width: calc(50% - min(50vw, 25vh));
         padding: 20px 12px 20px 16px;
         align-items: flex-end;
     }
 
-    .desktop-right-panel {
+    body.battle-active .desktop-right-panel {
         left: calc(50% + min(50vw, 25vh));
         right: 0;
         padding: 20px 16px 20px 12px;
@@ -168,6 +168,8 @@
 
     .desktop-problem-result {
         flex-shrink: 0;
+        width: 1em;
+        text-align: center;
         font-size: 28px;
         font-weight: bold;
     }

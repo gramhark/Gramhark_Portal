@@ -225,6 +225,7 @@ class Game {
             // 画面遷移
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById('battle-screen').classList.add('active');
+            this.ui.showDesktopPanels();
             document.getElementById('stage-progress').innerHTML = '';
 
             this.state = GameState.INTERVAL;
