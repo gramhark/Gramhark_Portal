@@ -148,6 +148,72 @@
     }
 }
 
+/* ダブルアタック用ミラーアニメーション */
+@keyframes effectHitMirrored {
+    0% {
+        opacity: 0;
+        transform: scale(0.3) rotate(-15deg) scaleX(-1);
+    }
+    12% {
+        opacity: 1;
+        transform: scale(1.75) rotate(6deg) scaleX(-1);
+    }
+    35% {
+        opacity: 1;
+        transform: scale(1.38) rotate(-2deg) scaleX(-1);
+    }
+    65% {
+        opacity: 0.9;
+        transform: scale(1.2) rotate(1deg) scaleX(-1);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1.0) rotate(0deg) scaleX(-1);
+    }
+}
+
+@keyframes effectSlashMirrored {
+    0% {
+        opacity: 0;
+        transform: scale(0.3) rotate(-65deg) scaleX(-0.5);
+    }
+    10% {
+        opacity: 1;
+        transform: scale(1.95) rotate(-14deg) scaleX(-1.2);
+    }
+    30% {
+        opacity: 1;
+        transform: scale(1.6) rotate(-3deg) scaleX(-1.05);
+    }
+    62% {
+        opacity: 0.9;
+        transform: scale(1.3) rotate(5deg) scaleX(-0.97);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.9) rotate(13deg) scaleX(-0.9);
+    }
+}
+
+@keyframes effectCrescentMirrored {
+    0% {
+        opacity: 0;
+        transform: translate(-30px, -30px) scale(1.3);
+    }
+    15% {
+        opacity: 1;
+        transform: translate(-15px, -15px) scale(1.9);
+    }
+    65% {
+        opacity: 1;
+        transform: translate(15px, 15px) scale(1.3);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(30px, 30px) scale(0.95);
+    }
+}
+
 /* エフェクト */
 @keyframes blink-damage {
 
@@ -544,6 +610,17 @@
 .damage-effect {
     /* アニメーションなしで突然3割拡大 */
     animation: monster-damage 0.5s;
+}
+
+/* はんげき発動：背景を赤フラッシュ（不透明度50%から消える） */
+@keyframes revenge-bg-flash-anim {
+    0%   { opacity: 1; }
+    30%  { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+.revenge-bg-flashing {
+    animation: revenge-bg-flash-anim 0.6s ease-out forwards;
 }
 
 

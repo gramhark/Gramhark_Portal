@@ -46,8 +46,9 @@ class AnimationRenderer {
     /**
      * 攻撃エフェクト画像をモンスターの上にアニメーション表示する
      * @param {'attack'|'critical'|'attack_H'|'critical_H'|'attack_S'|'critical_S'|'attack_SP'} type
+     * @param {boolean} [mirrored=false] - ダブルアタック2回目用：画像を水平反転したアニメを使用
      */
-    showAttackEffect(type) {
+    showAttackEffect(type, mirrored = false) {
         const el = document.getElementById('attack-effect-img');
         if (!el) return;
 
@@ -64,6 +65,13 @@ class AnimationRenderer {
             animClass = 'anim-critical-hit';
         } else {
             animClass = 'anim-hit';
+        }
+
+        // ダブルアタック2回目：ミラー版アニメクラスに切り替え
+        if (mirrored) {
+            if (animClass === 'anim-hit') animClass = 'anim-hit-mirrored';
+            else if (animClass === 'anim-slash') animClass = 'anim-slash-mirrored';
+            else if (animClass === 'anim-crescent') animClass = 'anim-crescent-mirrored';
         }
 
         el.className = 'attack-effect-img';
@@ -116,6 +124,22 @@ class AnimationRenderer {
                 this._restartAnim(el);
             }
         }
+    }
+
+    flashRevengeBg() {
+        const overlay = document.getElementById('revenge-bg-overlay');
+        if (!overlay) return;
+        overlay.classList.remove('revenge-bg-flashing');
+        overlay.style.display = 'block';
+        overlay.style.animation = 'none';
+        requestAnimationFrame(() => {
+            overlay.style.animation = '';
+            overlay.classList.add('revenge-bg-flashing');
+            overlay.addEventListener('animationend', () => {
+                overlay.style.display = 'none';
+                overlay.classList.remove('revenge-bg-flashing');
+            }, { once: true });
+        });
     }
 
     shakeScreen() {

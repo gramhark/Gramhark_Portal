@@ -113,11 +113,19 @@ class InputHandler {
 
         const isCrit = elapsed <= DIFFICULTY_TIMER.CRITICAL[this.game.difficulty || Difficulty.HARD];
 
+        // はんげき判定（ダメージ計算前に確定）
+        const revengeActive = this.game.revengeReady;
+        if (revengeActive) {
+            this.game.revengeReady = false;
+            this.ui.updateRevengeGauge(0, false);
+        }
+
         // ダメージ計算（必殺技は specialStandby で発動）
-        const { damage, isSpecial } = this.game.battle.calcPlayerDamage(
+        const { damage: rawDamage, isSpecial } = this.game.battle.calcPlayerDamage(
             this.game._getEquippedSwordBonus(), this.game.swordBonus, isCrit, this.game.specialStandby,
             0
         );
+        const damage = revengeActive ? Math.floor(rawDamage * 1.5) : rawDamage;
 
         // 必殺技後の状態リセット
         if (isSpecial) {
@@ -134,16 +142,42 @@ class InputHandler {
             this.game.sticker.check('critical');
         }
 
+        // ダブルアタックゲージ更新（通常攻撃のみ対象）
+        let triggerDouble = false;
+        let doubleNormalEffectType = 'attack';
+        let doubleNormalSeName = 'punch';
+        if (!isCrit && !isSpecial) {
+            if (this.game.doubleAttackReady) {
+                // このターンはダブルアタック発動
+                triggerDouble = true;
+                this.game.doubleAttackReady = false;
+                this.game.normalAttackCount = 0;
+            } else {
+                this.game.normalAttackCount++;
+                if (this.game.normalAttackCount >= 5) {
+                    this.game.normalAttackCount = 0;
+                    this.game.doubleAttackReady = true;
+                }
+            }
+            this.ui.updateDoubleAttackGauge(this.game.normalAttackCount, this.game.doubleAttackReady);
+        }
+
         const m = this.game.monsters[this.game.currentMonsterIdx];
         m.takeDamage(damage);
         this.ui.updateMonsterHp(m.hpRatio, m.hp, m.maxHp);
+
+        // はんげき発動時：背景赤フラッシュ
+        if (revengeActive) this.ui.flashRevengeBg();
 
         // 攻撃エフェクト・SE・メッセージ（必殺技 > 剣装備 > 素手 の優先順）
         if (isSpecial) {
             this.ui.showAttackEffect('attack_SP');
             this.ui.showLightning();
             this.ui.flashScreen('sp');
-            this.ui.showMessage(`ひっさつ！\n${damage}ダメージ！`, true, 1500, 'text-player-action');
+            const spMsg = revengeActive
+                ? `${this.game.playerName}のはんげき！\n${damage}ダメージ！`
+                : `ひっさつ！\n${damage}ダメージ！`;
+            this.ui.showMessage(spMsg, true, 1500, 'text-player-action');
             this.sound.playSe('special');
         } else if (this.game.swordLevel > 0 || this.game._getEquippedSwordBonus() > 0) {
             const specialEffectId = this.game._getEquippedSwordSpecialEffectId();
@@ -156,13 +190,26 @@ class InputHandler {
             } else {
                 effectType = isCrit ? 'critical' : 'attack';
             }
+            // ダブルアタック2回目用に通常攻撃エフェクトを保存
+            if (!isCrit) {
+                doubleNormalEffectType = effectType;
+                if (specialEffectId === 'Hitting') doubleNormalSeName = 'hitting';
+                else if (specialEffectId && specialEffectId.startsWith('Slash')) {
+                    const cs = specialEffectId.includes('_') ? '_' + specialEffectId.split('_')[1] : '';
+                    doubleNormalSeName = `slash${cs}`;
+                } else doubleNormalSeName = 'sword';
+            }
             this.ui.showAttackEffect(effectType);
             this.ui.flashScreen(isCrit ? 'critical' : 'normal');
-            if (isCrit) {
-                this.ui.showMessage(`クリティカル！\n${damage}ダメージ！`, true, 1500, 'text-player-action');
+            let msg;
+            if (revengeActive) {
+                msg = `${this.game.playerName}のはんげき！\n${damage}ダメージ！`;
+            } else if (isCrit) {
+                msg = `クリティカル！\n${damage}ダメージ！`;
             } else {
-                this.ui.showMessage(`${this.game.playerName}のこうげき！\n${damage}ダメージ！`, false, 1500, 'text-player-action');
+                msg = `${this.game.playerName}のこうげき！\n${damage}ダメージ！`;
             }
+            this.ui.showMessage(msg, revengeActive || isCrit, 1500, 'text-player-action');
             if (specialEffectId === 'Hitting') {
                 this.sound.playSe(isCrit ? 'hitting_crit' : 'hitting');
             } else if (specialEffectId && specialEffectId.startsWith('Slash')) {
@@ -172,18 +219,38 @@ class InputHandler {
                 this.sound.playSe(isCrit ? 'sword_crit' : 'sword');
             }
         } else {
-            this.ui.showAttackEffect(isCrit ? 'critical' : 'attack');
-            this.ui.flashScreen(isCrit ? 'critical' : 'normal');
-            if (isCrit) {
-                this.ui.showMessage(`クリティカル！\n${damage}ダメージ！`, true, 1500, 'text-player-action');
-            } else {
-                this.ui.showMessage(`${this.game.playerName}のこうげき！\n${damage}ダメージ！`, false, 1500, 'text-player-action');
+            const effectType = isCrit ? 'critical' : 'attack';
+            if (!isCrit) {
+                doubleNormalEffectType = effectType;
+                doubleNormalSeName = 'punch';
             }
+            this.ui.showAttackEffect(effectType);
+            this.ui.flashScreen(isCrit ? 'critical' : 'normal');
+            let msg;
+            if (revengeActive) {
+                msg = `${this.game.playerName}のはんげき！\n${damage}ダメージ！`;
+            } else if (isCrit) {
+                msg = `クリティカル！\n${damage}ダメージ！`;
+            } else {
+                msg = `${this.game.playerName}のこうげき！\n${damage}ダメージ！`;
+            }
+            this.ui.showMessage(msg, revengeActive || isCrit, 1500, 'text-player-action');
             this.sound.playSe(isCrit ? 'punch_crit' : 'punch');
         }
 
         // 攻撃メッセージが終わるまで待機
         await new Promise(resolve => setTimeout(resolve, 1500));
+
+        // ダブルアタック：2回目（ミラーエフェクト）
+        if (triggerDouble) {
+            m.takeDamage(damage);
+            this.ui.updateMonsterHp(m.hpRatio, m.hp, m.maxHp);
+            this.ui.showAttackEffect(doubleNormalEffectType, true);
+            this.ui.flashScreen('normal');
+            this.ui.showMessage(`${this.game.playerName}のこうげき！\n${damage}ダメージ！`, false, 1000, 'text-player-action');
+            this.sound.playSe(doubleNormalSeName);
+            await new Promise(resolve => setTimeout(resolve, 1000));
+        }
 
         // コンパニオン名の取得（追加ダメージ・状態異常共通）
         let companionName = null;
@@ -314,6 +381,16 @@ class InputHandler {
         this.ui.updatePlayerHp(this.game.playerHp, this.game.playerMaxHp);
         this.game.wrongAnswerCount++; // シール: ぜんもんせいかい用
 
+        // はんげきゲージ充電（最低保証の1ダメージは除外）
+        if (damage > 1) {
+            this.game.revengeCount++;
+            if (this.game.revengeCount >= 3) {
+                this.game.revengeCount = 0;
+                this.game.revengeReady = true;
+            }
+            this.ui.updateRevengeGauge(this.game.revengeCount, this.game.revengeReady);
+        }
+
         this.ui.damageScreen(); // ★ モンスターからの攻撃（被弾）アニメーション
         this.ui.shakeScreen();
         this.ui.showMessage(`ミス！\n${damage}ダメージをうけた！`, false, 1500, 'text-monster-action');
@@ -427,7 +504,10 @@ class InputHandler {
         this.game.isPlayerTurn = true;
         this.game.state = GameState.TRANSITION;
         this._clearProblemDisplay(); // ★ 新しく追加：画面上の問題を消去
-        this.ui.showMessage(`${this.game.playerName}の こうげき！`, false, 1500, 'text-neutral');
+        const turnMsg = this.game.revengeReady
+            ? `はんげきの チャンスだ！`
+            : `${this.game.playerName}の こうげき！`;
+        this.ui.showMessage(turnMsg, this.game.revengeReady, 1500, 'text-neutral');
         setTimeout(() => {
             if (this.game.state !== GameState.RESULT && this.game.state !== GameState.GAMEOVER) {
                 this.game.nextProblem();
@@ -569,6 +649,16 @@ class InputHandler {
         this.game.playerHp = Math.max(0, this.game.playerHp - damage);
         this.ui.updatePlayerHp(this.game.playerHp, this.game.playerMaxHp);
         this.game.wrongAnswerCount++; // シール: ぜんもんせいかい用
+
+        // はんげきゲージ充電（最低保証の1ダメージは除外）
+        if (damage > 1) {
+            this.game.revengeCount++;
+            if (this.game.revengeCount >= 3) {
+                this.game.revengeCount = 0;
+                this.game.revengeReady = true;
+            }
+            this.ui.updateRevengeGauge(this.game.revengeCount, this.game.revengeReady);
+        }
 
         this.ui.damageScreen();
         this.ui.shakeScreen();

@@ -142,6 +142,15 @@
     opacity: 0.7;
 }
 
+/* はんげき発動中：背景への赤オーバーレイ */
+#app.portrait-mode .revenge-bg-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(200, 0, 0, 0.5);
+    z-index: 0;
+    pointer-events: none;
+}
+
 /* ── モンスター領域 ── */
 #app.portrait-mode .monster-container {
     width: 100%;
@@ -295,30 +304,13 @@
     flex-shrink: 0;
 }
 
-#app.portrait-mode .exp-bar-container {
-    width: 100%;
-    height: 10px;
-    background: #111;
-    border-radius: 5px;
-    overflow: hidden;
-    border: 1px solid rgba(120, 80, 200, 0.5);
-    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.7);
-}
-
-#app.portrait-mode .exp-bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #7744cc 0%, #bb88ff 100%);
-    transition: width 0.4s ease-out;
-    box-shadow: 0 0 6px rgba(180, 100, 255, 0.6);
-}
-
 /* 必殺技ゲージ */
 #app.portrait-mode .special-gauge-row {
     display: flex;
     flex-direction: row;
     gap: 4px;
     width: 100%;
-    margin-top: 4px;
+    margin-top: 8px;
 }
 
 #app.portrait-mode .special-gauge {
@@ -333,6 +325,52 @@
 #app.portrait-mode .special-gauge.active {
     background-color: #ffd700;
     box-shadow: 0 0 6px rgba(255, 215, 0, 0.85);
+}
+
+/* ダブルアタックゲージ */
+#app.portrait-mode .double-attack-gauge-row {
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+    width: 100%;
+    margin-top: 8px;
+}
+
+#app.portrait-mode .double-gauge {
+    flex: 1;
+    height: 7px;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 3px;
+    border: 1px solid rgba(255, 255, 255, 0.20);
+    transition: background-color 0.15s, box-shadow 0.15s;
+}
+
+#app.portrait-mode .double-gauge.active {
+    background-color: #00ccff;
+    box-shadow: 0 0 5px rgba(0, 200, 255, 0.85);
+}
+
+/* はんげきゲージ */
+#app.portrait-mode .revenge-gauge-row {
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+    width: 100%;
+    margin-top: 8px;
+}
+
+#app.portrait-mode .revenge-gauge {
+    flex: 1;
+    height: 7px;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 3px;
+    border: 1px solid rgba(255, 255, 255, 0.20);
+    transition: background-color 0.15s, box-shadow 0.15s;
+}
+
+#app.portrait-mode .revenge-gauge.active {
+    background-color: #ff6666;
+    box-shadow: 0 0 5px rgba(255, 80, 80, 0.85);
 }
 
 /* 必殺技待機: 激しいオーラ放射 (Blazing Flare) */
@@ -369,13 +407,6 @@
     font-size: 26px;
     font-weight: bold;
     color: #b0e0ff;
-}
-
-#app.portrait-mode #player-level-text {
-    font-size: 26px;
-    font-weight: bold;
-    color: #9999dd;
-    font-family: var(--font-pixel);
 }
 
 /* ── 問題表示 ── */

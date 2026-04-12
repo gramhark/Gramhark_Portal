@@ -108,13 +108,13 @@ class MonsterHouseManager {
     }
 
     /** リアクションメッセージ表示（shop-msg-overlay と同じ仕組み） */
-    showMhMsg(msg) {
+    showMhMsg(msg, duration = 1000) {
         const ov = document.getElementById('mh-msg-overlay');
         if (!ov) return;
-        document.getElementById('mh-msg-text').textContent = msg;
+        document.getElementById('mh-msg-text').innerHTML = msg;
         ov.classList.add('active');
         if (this._mhMsgTimeout) clearTimeout(this._mhMsgTimeout);
-        this._mhMsgTimeout = setTimeout(() => ov.classList.remove('active'), 1000);
+        this._mhMsgTimeout = setTimeout(() => ov.classList.remove('active'), duration);
     }
 
     /** 退室可否チェック */
@@ -124,7 +124,7 @@ class MonsterHouseManager {
         const companionMedals = this.storage.loadCompanionMedals();
         if (companionMedals[activeCompanionName]) return true;
         // メダル未装備の場合
-        this.showMhMsg('モンスターに\nメダルがついていないよ！');
+        this.showMhMsg('モンスターに<br>メダルがついていないよ！');
         return false;
     }
 
@@ -158,13 +158,14 @@ class MonsterHouseManager {
             this._clerkQuoteTimeout = setTimeout(() => {
                 this._clerkQuoteTimeout = null;
                 if (count === 0) {
-                    el.innerHTML = 'ショップのおじさんから<br>ゆうじょうのみ★30★をかって<br>モンスターをつかまえてね！';
+                    el.innerHTML = 'ショップのおじさんから<br>ゆうじょうのみをかって<br>モンスターをつかまえてね！';
                 } else {
                     const msgs = [
                         'おきにいりの モンスターに<br>ダンジョンで てにいれた<br>メダルをつけてあげてね！',
                         'つけたメダルの しゅるいで<br>こうかが かわるよ<br>いろいろ ためしてね！',
                         '★がおおいダンジョンは<br>いいメダルがでやすいよ！<br>がんばってね！',
                         'モンスターハウスに<br>いれておけるのは<br>50ひきまでだよ！',
+                        'ゆうじょうのみは<br>いろいろな しゅるいが<br>あるんだって！'
                     ];
                     el.innerHTML = msgs[Math.floor(Math.random() * msgs.length)];
                 }
@@ -710,6 +711,8 @@ class MonsterHouseManager {
     }
 
     _doFarewell(name, activeCompanionName) {
+        this.sound.playSe('farewell');
+        this.showMhMsg(`${name}<br>さようなら！`, 2000);
         const companions = this.storage.loadCompanions();
         const companionMedals = this.storage.loadCompanionMedals();
 

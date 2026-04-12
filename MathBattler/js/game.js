@@ -41,6 +41,10 @@ class Game {
         this.dodgeStreak = 0;          // 連続回避カウント (0–4)
         this.specialMoveReady = false; // 必殺技ゲージMAXフラグ（4回回避で成立）
         this.specialStandby = false;   // 必殺技待機フラグ（剣タップで能動的に発動）
+        this.normalAttackCount = 0;    // ダブルアタックゲージ（通常攻撃カウント 0–5）
+        this.doubleAttackReady = false; // ダブルアタック準備完了フラグ
+        this.revengeCount = 0;          // はんげきゲージ（被ダメカウント 0–3）
+        this.revengeReady = false;      // はんげき準備完了フラグ
         this.timers = [];
         this.specialMonstersAppeared = []; // スペシャルモンスター出現済みリスト
         this.specialAppeared = false; // 1ダンジョン1体制限用フラグ
@@ -159,6 +163,10 @@ class Game {
         this.dodgeStreak = 0;
         this.specialMoveReady = false;
         this.specialStandby = false;
+        this.normalAttackCount = 0;
+        this.doubleAttackReady = false;
+        this.revengeCount = 0;
+        this.revengeReady = false;
         this._monsterItemUsage = { spikeOrb: 0, poisonOrb: false, paralyzeOrb: false, stoneOrb: false, attackOrb: 0, defenseOrb: 0, rainbowOrbUsed: false, friendshipBerry30: 0, friendshipBerry60: 0, friendshipBerry90: 0, friendshipBerry100: 0 };
 
         // コンパニオンボーナスを適用
@@ -199,6 +207,8 @@ class Game {
             this.ui.hideShield();
         }
         this.ui.updateAuraUI(this.dodgeStreak, this.specialMoveReady);
+        this.ui.updateDoubleAttackGauge(0, false);
+        this.ui.updateRevengeGauge(0, false);
 
         this._startWithPreload();
     }

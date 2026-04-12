@@ -103,6 +103,7 @@ class SoundManager {
         this.seClear           = this._se('assets/audio/SE/event/dungeon_clearX.mp3');
         this.seGameover        = this._se('assets/audio/SE/event/gameover.mp3');
         this.seNote            = this._se('assets/audio/SE/event/note_reg.mp3');
+        this.seFarewell        = this._se('assets/audio/SE/event/farewell.mp3');
         // ui
         this.seNumpad          = this._se('assets/audio/SE/ui/numpadX.mp3');
         this.seSlideOpen       = this._se('assets/audio/SE/ui/screen_slide_open.mp3');
@@ -184,6 +185,7 @@ class SoundManager {
             'clear':               this.seClear,
             'gameover':            this.seGameover,
             'note':                this.seNote,
+            'farewell':            this.seFarewell,
             'numpad':              this.seNumpad,
             'slide_open':          this.seSlideOpen,
             'slide_close':         this.seSlideClose,

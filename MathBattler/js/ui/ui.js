@@ -160,6 +160,53 @@ class UIManager {
     }
 
     /**
+     * ダブルアタックゲージ（5つ）の点灯状態を更新する
+     * @param {number} count - 現在のカウント（0–5）
+     * @param {boolean} ready - 準備完了フラグ（trueなら全点灯）
+     */
+    updateDoubleAttackGauge(count, ready) {
+        for (let i = 1; i <= 5; i++) {
+            const gauge = document.getElementById(`double-gauge-${i}`);
+            if (gauge) gauge.classList.toggle('active', ready || count >= i);
+        }
+        // デスクトップ左パネルをリアルタイム更新
+        if (this._desktopPlayerData) {
+            this._desktopPlayerData.normalAttackCount = count;
+            this._desktopPlayerData.doubleAttackReady = ready;
+            let text, highlight;
+            if (ready) { text = 'よういOK！'; highlight = true; }
+            else if (count > 0) { text = `${count} / 5`; }
+            else { text = 'なし'; }
+            this._updateDesktopRow('desktop-player-rows', 'ダブルアタック', text, highlight);
+        }
+    }
+
+    /**
+     * はんげきゲージ（3つ）の点灯状態を更新する
+     * @param {number} count - 現在のカウント（0–3）
+     * @param {boolean} ready - 準備完了フラグ（trueなら全点灯）
+     */
+    updateRevengeGauge(count, ready) {
+        for (let i = 1; i <= 3; i++) {
+            const gauge = document.getElementById(`revenge-gauge-${i}`);
+            if (gauge) gauge.classList.toggle('active', ready || count >= i);
+        }
+        // 背景赤オーバーレイは常に非表示（フラッシュは flashRevengeBg() で制御）
+        const overlay = document.getElementById('revenge-bg-overlay');
+        if (overlay) overlay.style.display = 'none';
+        // デスクトップ左パネルをリアルタイム更新
+        if (this._desktopPlayerData) {
+            this._desktopPlayerData.revengeCount = count;
+            this._desktopPlayerData.revengeReady = ready;
+            let text, highlight;
+            if (ready) { text = 'よういOK！'; highlight = true; }
+            else if (count > 0) { text = `${count} / 3`; }
+            else { text = 'なし'; }
+            this._updateDesktopRow('desktop-player-rows', 'はんげきゲージ', text, highlight);
+        }
+    }
+
+    /**
      * 必殺技待機状態のテンキー赤オーバーレイ＋雷エフェクトを表示/非表示にする
      */
     setSpecialStandby(active) {
@@ -169,8 +216,9 @@ class UIManager {
     }
 
     // --- Animation delegation ---
-    showAttackEffect(type) { return this.anim.showAttackEffect(type); }
+    showAttackEffect(type, mirrored = false) { return this.anim.showAttackEffect(type, mirrored); }
     flashScreen(type = 'normal') { return this.anim.flashScreen(type); }
+    flashRevengeBg() { return this.anim.flashRevengeBg(); }
     shakeScreen() { return this.anim.shakeScreen(); }
     dodgeScreen() { return this.anim.dodgeScreen(); }
     attackScreen() { return this.anim.attackScreen(); }
@@ -344,7 +392,8 @@ class UIManager {
     showInfoOverlay(monster, playerStats) {
         const m = monster;
         const { hp, maxHp, atk, def, hasShield, dodgeStreak, specialMoveReady,
-                level, exp, expNeeded, isMaxLevel } = playerStats;
+                level, exp, expNeeded, isMaxLevel,
+                normalAttackCount, doubleAttackReady, revengeCount, revengeReady } = playerStats;
 
         // 必殺技ゲージテキスト
         let auraText, auraHighlight;
@@ -355,6 +404,28 @@ class UIManager {
             auraText = `${dodgeStreak} / 4`;
         } else {
             auraText = 'なし';
+        }
+
+        // ダブルアタックゲージテキスト
+        let doubleText, doubleHighlight;
+        if (doubleAttackReady) {
+            doubleText = 'よういOK！';
+            doubleHighlight = true;
+        } else if (normalAttackCount > 0) {
+            doubleText = `${normalAttackCount} / 5`;
+        } else {
+            doubleText = 'なし';
+        }
+
+        // はんげきゲージテキスト
+        let revengeText, revengeHighlight;
+        if (revengeReady) {
+            revengeText = 'よういOK！';
+            revengeHighlight = true;
+        } else if (revengeCount > 0) {
+            revengeText = `${revengeCount} / 3`;
+        } else {
+            revengeText = 'なし';
         }
 
         const enemyRows = [
@@ -369,6 +440,8 @@ class UIManager {
             { label: 'こうげきりょく', value: String(atk) },
             { label: 'ぼうぎょりょく', value: hasShield ? String(def) : 'なし' },
             { label: 'オーラレベル', value: auraText, highlight: auraHighlight },
+            { label: 'ダブルアタック', value: doubleText, highlight: doubleHighlight },
+            { label: 'はんげきゲージ', value: revengeText, highlight: revengeHighlight },
             { label: `Lv${level} けいけんち`, value: expValue },
         ];
 
@@ -450,12 +523,32 @@ class UIManager {
             } else {
                 auraText = 'なし';
             }
+            let doubleText2, doubleHighlight2;
+            if (p.doubleAttackReady) {
+                doubleText2 = 'よういOK！';
+                doubleHighlight2 = true;
+            } else if (p.normalAttackCount > 0) {
+                doubleText2 = `${p.normalAttackCount} / 5`;
+            } else {
+                doubleText2 = 'なし';
+            }
+            let revengeText2, revengeHighlight2;
+            if (p.revengeReady) {
+                revengeText2 = 'よういOK！';
+                revengeHighlight2 = true;
+            } else if (p.revengeCount > 0) {
+                revengeText2 = `${p.revengeCount} / 3`;
+            } else {
+                revengeText2 = 'なし';
+            }
             const expValue = p.isMaxLevel ? 'MAX' : `${p.exp} / ${p.expNeeded}`;
             renderRows(playerEl, [
                 { label: 'たいりょく', value: `${p.hp} / ${p.maxHp}` },
                 { label: 'こうげきりょく', value: String(p.atk) },
                 { label: 'ぼうぎょりょく', value: p.hasShield ? String(p.def) : 'なし' },
                 { label: 'オーラレベル', value: auraText, highlight: auraHighlight },
+                { label: 'ダブルアタック', value: doubleText2, highlight: doubleHighlight2 },
+                { label: 'はんげきゲージ', value: revengeText2, highlight: revengeHighlight2 },
                 { label: `Lv${p.level} けいけんち`, value: expValue },
             ]);
         }

@@ -86,6 +86,19 @@
     animation: effectSpAttack 0.85s ease-out forwards;
 }
 
+/* ダブルアタック用ミラー版 */
+.attack-effect-img.anim-hit-mirrored {
+    animation: effectHitMirrored 0.55s ease-out forwards;
+}
+
+.attack-effect-img.anim-slash-mirrored {
+    animation: effectSlashMirrored 0.55s ease-out forwards;
+}
+
+.attack-effect-img.anim-crescent-mirrored {
+    animation: effectCrescentMirrored 0.65s ease-out forwards;
+}
+
 /* モンスター画像共通設定 */
 #monster-img {
     filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.9))

@@ -473,6 +473,7 @@
         <div id="battle-screen" class="screen">
             <div class="battle-view">
                 <img id="battle-bg-img" class="battle-bg-img" src="" alt="" aria-hidden="true">
+                <div id="revenge-bg-overlay" class="revenge-bg-overlay" style="display:none;" aria-hidden="true"></div>
                 <img id="item-use-img" class="item-use-img" src="" alt="" style="display:none;" aria-hidden="true">
 
                 <button id="quit-battle-btn" class="quit-battle-btn" aria-label="トップにもどる">
@@ -536,10 +537,18 @@
                                 <div id="special-gauge-3" class="special-gauge"></div>
                                 <div id="special-gauge-4" class="special-gauge"></div>
                             </div>
-                        </div>
-                        <span id="player-level-text">Lv1</span>
-                        <div class="exp-bar-container">
-                            <div id="player-exp-bar" class="exp-bar-fill" style="width: 0%;"></div>
+                            <div class="double-attack-gauge-row">
+                                <div id="double-gauge-1" class="double-gauge"></div>
+                                <div id="double-gauge-2" class="double-gauge"></div>
+                                <div id="double-gauge-3" class="double-gauge"></div>
+                                <div id="double-gauge-4" class="double-gauge"></div>
+                                <div id="double-gauge-5" class="double-gauge"></div>
+                            </div>
+                            <div class="revenge-gauge-row">
+                                <div id="revenge-gauge-1" class="revenge-gauge"></div>
+                                <div id="revenge-gauge-2" class="revenge-gauge"></div>
+                                <div id="revenge-gauge-3" class="revenge-gauge"></div>
+                            </div>
                         </div>
                     </div>
                 </div>

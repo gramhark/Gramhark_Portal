@@ -22,9 +22,9 @@ class ShopManager {
         window.ITEM_LIST.forEach((item, idx) => {
             // requiresUnlock チェック
             if (item.requiresUnlock === 'monster_house' && !this._storage.isMonsterHouseUnlocked()) return;
-            if (item.requiresUnlock === 'berry30'  && !this._storage.isBerryNotified(30))  return;
-            if (item.requiresUnlock === 'berry60'  && !this._storage.isBerryNotified(60))  return;
-            if (item.requiresUnlock === 'berry90'  && !this._storage.isBerryNotified(90))  return;
+            if (item.requiresUnlock === 'berry30' && !this._storage.isBerryNotified(30)) return;
+            if (item.requiresUnlock === 'berry60' && !this._storage.isBerryNotified(60)) return;
+            if (item.requiresUnlock === 'berry90' && !this._storage.isBerryNotified(90)) return;
             if (item.requiresUnlock === 'berry100' && !this._storage.isBerryNotified(100)) return;
             const buyPrice = this._getItemBuyPrice(item);
             const btn = document.createElement('button');
@@ -112,7 +112,9 @@ class ShopManager {
         } else if (mode === 'waiting') {
             const quotes = [
                 'バトルちゅうに<br>リュックアイコンを さわれば<br>どうぐが つかえるぞ',
-                'けんと たては<br>メニューの リュックから<br>そうびするんじゃぞ'
+                'けんと たては<br>メニューの リュックから<br>そうびするんじゃぞ',
+                'たてを もつと<br>ひっさつゲージが<br>まもれるんじゃ',
+                'ボスの こうげきは<br>たてを もっていても<br>ゲージが へるぞ'
             ];
             const rand = Math.floor(Math.random() * quotes.length);
             el.innerHTML = quotes[rand];
