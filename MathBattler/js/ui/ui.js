@@ -6,6 +6,9 @@ class UIManager {
         this._activeStatusVisual = null;
         this.anim = new AnimationRenderer();
         this.msg = new MessageSystem();
+        // PCワイド画面 左パネル用キャッシュ
+        this._desktopMonsterData = null;
+        this._desktopPlayerData = null;
     }
 
     adjustScale() {
@@ -60,6 +63,12 @@ class UIManager {
         else if (ratio > 0.3) bar.style.backgroundColor = 'var(--accent-color)';
         else bar.style.backgroundColor = 'var(--danger-color)';
         text.textContent = `HP ${current}/${max}`;
+        // デスクトップ左パネルの HP テキストをリアルタイム更新
+        if (this._desktopPlayerData) {
+            this._desktopPlayerData.hp = current;
+            this._desktopPlayerData.maxHp = max;
+            this._updateDesktopRow('desktop-player-rows', 'たいりょく', `${current} / ${max}`);
+        }
     }
 
     updatePlayerLevel(level, exp, expNeeded, isMax) {
@@ -72,14 +81,28 @@ class UIManager {
             const ratio = isMax ? 1 : (expNeeded > 0 ? Math.min(1, exp / expNeeded) : 1);
             expBar.style.width = `${ratio * 100}%`;
         }
+        // デスクトップ左パネルの Lv / EXP を更新（ラベルが変わるので全再描画）
+        if (this._desktopPlayerData) {
+            this._desktopPlayerData.level = level;
+            this._desktopPlayerData.exp = exp;
+            this._desktopPlayerData.expNeeded = expNeeded;
+            this._desktopPlayerData.isMaxLevel = isMax;
+            this._redrawDesktopPanel();
+        }
     }
 
-    updateMonsterHp(hpRatio) {
+    updateMonsterHp(hpRatio, current, max) {
         const bar = document.getElementById('monster-hp-bar');
         bar.style.width = `${hpRatio * 100}%`;
         if (hpRatio > 0.75) bar.style.backgroundColor = 'var(--success-color)';
         else if (hpRatio > 0.3) bar.style.backgroundColor = 'var(--accent-color)';
         else bar.style.backgroundColor = 'var(--danger-color)';
+        // デスクトップ左パネルの HP テキストをリアルタイム更新
+        if (this._desktopMonsterData && current !== undefined) {
+            this._desktopMonsterData.hp = current;
+            this._desktopMonsterData.maxHp = max;
+            this._updateDesktopRow('desktop-enemy-rows', 'たいりょく', `${current} / ${max}`);
+        }
     }
 
     updateTimerBar(ratio) {
@@ -108,6 +131,22 @@ class UIManager {
         }
 
         this.updateSpecialGauges(dodgeStreak);
+
+        // デスクトップ左パネルのオーラレベルをリアルタイム更新
+        if (this._desktopPlayerData) {
+            this._desktopPlayerData.dodgeStreak = dodgeStreak;
+            this._desktopPlayerData.specialMoveReady = specialMoveReady;
+            let auraText, auraHighlight;
+            if (specialMoveReady) {
+                auraText = 'ひっさつ よういOK！';
+                auraHighlight = true;
+            } else if (dodgeStreak > 0) {
+                auraText = `${dodgeStreak} / 4`;
+            } else {
+                auraText = 'なし';
+            }
+            this._updateDesktopRow('desktop-player-rows', 'オーラレベル', auraText, auraHighlight);
+        }
     }
 
     /**
@@ -145,7 +184,59 @@ class UIManager {
 
     // --- Message delegation ---
     showMessage(text, isCrit = false, duration = 1500, extraClass = null) { return this.msg.showMessage(text, isCrit, duration, extraClass); }
-    clearMessageLog() { return this.msg.clearMessageLog(); }
+    clearMessageLog() {
+        this.msg.clearMessageLog();
+        // デスクトップ問題ログに区切り線を追加（モンスター切り替え時）
+        const log = document.getElementById('desktop-problem-log');
+        if (log && log.children.length > 0) {
+            const sep = document.createElement('div');
+            sep.className = 'desktop-log-separator';
+            log.appendChild(sep);
+            if (log.parentElement) log.parentElement.scrollTop = log.parentElement.scrollHeight;
+        }
+    }
+
+    /** メインメニューに戻る際にデスクトップ左右パネルの内容をリセットする */
+    clearDesktopPanels() {
+        // 左パネル: 情報をリセット
+        this._desktopMonsterData = null;
+        this._desktopPlayerData = null;
+        const enemyEl = document.getElementById('desktop-enemy-rows');
+        const playerEl = document.getElementById('desktop-player-rows');
+        if (enemyEl) enemyEl.innerHTML = '';
+        if (playerEl) playerEl.innerHTML = '';
+
+        // 右パネル: 問題ログをクリア
+        const log = document.getElementById('desktop-problem-log');
+        if (log) log.innerHTML = '';
+    }
+
+    /**
+     * デスクトップ右パネルの問題一覧に1エントリー追加する。
+     * @param {string} problemText - 完成した問題文（解答が埋め込まれた状態）
+     * @param {boolean} isCorrect  - 正解なら true（○）、不正解なら false（×）
+     */
+    addDesktopProblemLog(problemText, isCorrect) {
+        const log = document.getElementById('desktop-problem-log');
+        if (!log) return;
+        // 上限 300 エントリー
+        while (log.children.length >= 300) log.removeChild(log.firstChild);
+
+        const entry = document.createElement('div');
+        entry.className = 'desktop-problem-entry';
+        const textSpan = document.createElement('span');
+        textSpan.className = 'desktop-problem-text';
+        textSpan.textContent = problemText;
+        const resultSpan = document.createElement('span');
+        resultSpan.className = `desktop-problem-result ${isCorrect ? 'correct' : 'wrong'}`;
+        resultSpan.textContent = isCorrect ? '○' : '×';
+        entry.appendChild(textSpan);
+        entry.appendChild(resultSpan);
+        log.appendChild(entry);
+
+        // 常に最下段へスクロール
+        if (log.parentElement) log.parentElement.scrollTop = log.parentElement.scrollHeight;
+    }
 
     /**
      * ミス・時間切れ時に解答欄を正解の赤字に切り替える
@@ -289,6 +380,97 @@ class UIManager {
         document.getElementById('info-overlay').classList.add('active');
         // 表示後にはみ出しチェック → フォント縮小
         requestAnimationFrame(() => this.fitInfoRows());
+
+        // デスクトップ左パネルにも同じデータを反映
+        this.updateDesktopInfoPanel(monster, playerStats);
+    }
+
+    /* ============================================================
+       PCワイド画面 左パネル（デスクトップじょうほうパネル）
+       ============================================================ */
+
+    /**
+     * デスクトップ左パネルのデータを設定して再描画する。
+     * @param {object|null} monster - Monster インスタンス（または同形状のオブジェクト）
+     * @param {object|null} playerStats - showInfoOverlay と同じ playerStats オブジェクト
+     */
+    updateDesktopInfoPanel(monster, playerStats) {
+        if (monster) {
+            this._desktopMonsterData = {
+                name: monster.name,
+                hp: monster.hp,
+                maxHp: monster.maxHp,
+                attackPower: monster.attackPower
+            };
+        }
+        if (playerStats) {
+            this._desktopPlayerData = { ...playerStats };
+        }
+        this._redrawDesktopPanel();
+    }
+
+    /** デスクトップ左パネルをキャッシュデータから全再描画する */
+    _redrawDesktopPanel() {
+        const enemyEl = document.getElementById('desktop-enemy-rows');
+        const playerEl = document.getElementById('desktop-player-rows');
+        if (!enemyEl || !playerEl) return;
+
+        const renderRows = (el, rows) => {
+            el.innerHTML = rows.map(r =>
+                `<div class="info-row" data-key="${r.label}">` +
+                `<span class="info-label">${r.label}</span>` +
+                `<span class="info-value${r.highlight ? ' sp-ready' : ''}">${r.value}</span>` +
+                `</div>`
+            ).join('');
+        };
+
+        if (this._desktopMonsterData) {
+            const m = this._desktopMonsterData;
+            renderRows(enemyEl, [
+                { label: 'なまえ', value: m.name },
+                { label: 'たいりょく', value: `${m.hp} / ${m.maxHp}` },
+                { label: 'こうげきりょく', value: String(m.attackPower) },
+            ]);
+        }
+
+        if (this._desktopPlayerData) {
+            const p = this._desktopPlayerData;
+            let auraText, auraHighlight;
+            if (p.specialMoveReady) {
+                auraText = 'ひっさつ よういOK！';
+                auraHighlight = true;
+            } else if (p.dodgeStreak > 0) {
+                auraText = `${p.dodgeStreak} / 4`;
+            } else {
+                auraText = 'なし';
+            }
+            const expValue = p.isMaxLevel ? 'MAX' : `${p.exp} / ${p.expNeeded}`;
+            renderRows(playerEl, [
+                { label: 'たいりょく', value: `${p.hp} / ${p.maxHp}` },
+                { label: 'こうげきりょく', value: String(p.atk) },
+                { label: 'ぼうぎょりょく', value: p.hasShield ? String(p.def) : 'なし' },
+                { label: 'オーラレベル', value: auraText, highlight: auraHighlight },
+                { label: `Lv${p.level} けいけんち`, value: expValue },
+            ]);
+        }
+    }
+
+    /**
+     * デスクトップ左パネルの特定行の値だけを更新する（高頻度 HP 更新用）。
+     * @param {string} containerId - 'desktop-enemy-rows' | 'desktop-player-rows'
+     * @param {string} key - data-key 属性値（= info-label テキスト）
+     * @param {string} newValue - 新しい値テキスト
+     * @param {boolean} [highlight] - sp-ready クラスを付与するか
+     */
+    _updateDesktopRow(containerId, key, newValue, highlight = false) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        const row = container.querySelector(`[data-key="${key}"]`);
+        if (!row) return;
+        const valueEl = row.querySelector('.info-value');
+        if (!valueEl) return;
+        valueEl.textContent = newValue;
+        valueEl.classList.toggle('sp-ready', highlight);
     }
 
     _openImageModal(src, name, record = null, isItem = false, equipData = null, onDiarySave = null) {

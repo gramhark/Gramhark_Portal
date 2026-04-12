@@ -25,6 +25,8 @@ class ScreenManager {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById('main-screen').classList.add('active');
         this.ui.adjustScale();
+        // メインメニューに戻る際にデスクトップサイドパネルをクリア
+        this.ui.clearDesktopPanels();
         if (bgmDelay > 0) {
             setTimeout(() => this.game.sound.playMenuBgm(), bgmDelay);
         } else {

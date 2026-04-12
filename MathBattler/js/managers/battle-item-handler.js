@@ -156,7 +156,7 @@ class BattleItemHandler {
             case 'spikeOrb': {
                 const thornDamage = this.game.battle.calcThornDamage();
                 m.hp = Math.max(0, m.hp - thornDamage);
-                this.ui.updateMonsterHp(m.hpRatio);
+                this.ui.updateMonsterHp(m.hpRatio, m.hp, m.maxHp);
                 this.ui.flashScreen('normal');
                 this.sound.playSe('throw');
                 message = `モンスターに\n${thornDamage}ダメージ！`;
@@ -233,7 +233,7 @@ class BattleItemHandler {
         if (m.isStoned) {
             if (Math.random() < this.game.battle.calcStoneProcChance()) {
                 m.hp = 0;
-                this.ui.updateMonsterHp(m.hpRatio);
+                this.ui.updateMonsterHp(m.hpRatio, m.hp, m.maxHp);
                 this.ui.applyMonsterStatusMask('stone');
                 this.sound.playSe('stone_proc');
                 this.ui.showMessage(`${m.name}は\nいしになった！`, false, 2000, 'text-neutral');
@@ -249,7 +249,7 @@ class BattleItemHandler {
         if (m.isPoisoned) {
             const poisonDamage = this.game.battle.calcPoisonDamage(m);
             m.hp = Math.max(0, m.hp - poisonDamage);
-            this.ui.updateMonsterHp(m.hpRatio);
+            this.ui.updateMonsterHp(m.hpRatio, m.hp, m.maxHp);
             this.ui.showAttackEffect('attack');
             this.ui.flashScreen('normal');
             this.ui.showMessage('どくのダメージを\nうけた！', false, 1500, 'text-neutral');

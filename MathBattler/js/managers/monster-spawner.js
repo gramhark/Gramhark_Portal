@@ -117,7 +117,7 @@ class MonsterSpawner {
         });
         iImg.src = m.imageSrc;
 
-        this.ui.updateMonsterHp(m.hpRatio);
+        this.ui.updateMonsterHp(m.hpRatio, m.hp, m.maxHp);
         const monsterNameEl = document.getElementById('monster-name');
         // isMissingBoss（ボスがいない）のときは名前を非表示にする
         if (m.isMissingBoss) {
@@ -130,6 +130,10 @@ class MonsterSpawner {
             monsterNameEl.style.setProperty('--monster-name-scale', nameScale);
         }
         this.ui.updateStageProgress(this.game.monsters, this.game.currentMonsterIdx, Constants.MONSTERS_PER_FLOOR);
+
+        // デスクトップ左パネルを更新（PCワイド画面用）
+        const _info = this._buildInfoData();
+        this.ui.updateDesktopInfoPanel(_info.monster, _info.playerStats);
 
         // ボスの場合はカットインを表示（interval-overlay は使わない）
         if (this._isBoss(m.battleNumber)) {
@@ -214,7 +218,8 @@ class MonsterSpawner {
         this.game.startBattle();
     }
 
-    _showInfoOverlay() {
+    /** じょうほう画面・デスクトップパネルで共用するデータを組み立てる */
+    _buildInfoData() {
         const m = this.game.monsters[this.game.currentMonsterIdx];
         // ボス欠如イベント中は名前を隠す
         const displayMonster = m.isMissingBoss ? { ...m, name: '？？？' } : m;
@@ -222,19 +227,27 @@ class MonsterSpawner {
         const playerDef = this.game._getEquippedShieldBonus() + this.game.defenseBonus;
         const isMaxLevel = this.game.playerLevel >= Constants.PLAYER_MAX_LEVEL;
         const expNeeded = isMaxLevel ? null : Constants.EXP_LEVEL_BASE + (this.game.playerLevel - 1) * Constants.EXP_LEVEL_STEP;
-        this.ui.showInfoOverlay(displayMonster, {
-            hp: this.game.playerHp,
-            maxHp: this.game.playerMaxHp,
-            atk: playerAtk,
-            def: playerDef,
-            hasShield: this.game._getEquippedShieldBonus() > 0,
-            dodgeStreak: this.game.dodgeStreak,
-            specialMoveReady: this.game.specialMoveReady,
-            level: this.game.playerLevel,
-            exp: this.game.playerExp,
-            expNeeded,
-            isMaxLevel
-        });
+        return {
+            monster: displayMonster,
+            playerStats: {
+                hp: this.game.playerHp,
+                maxHp: this.game.playerMaxHp,
+                atk: playerAtk,
+                def: playerDef,
+                hasShield: this.game._getEquippedShieldBonus() > 0,
+                dodgeStreak: this.game.dodgeStreak,
+                specialMoveReady: this.game.specialMoveReady,
+                level: this.game.playerLevel,
+                exp: this.game.playerExp,
+                expNeeded,
+                isMaxLevel
+            }
+        };
+    }
+
+    _showInfoOverlay() {
+        const { monster, playerStats } = this._buildInfoData();
+        this.ui.showInfoOverlay(monster, playerStats);
     }
 
     /**
@@ -418,7 +431,7 @@ class MonsterSpawner {
             await new Promise(resolve => setTimeout(resolve, 3000));
 
             m.hp = m.maxHp;
-            this.ui.updateMonsterHp(m.hpRatio);
+            this.ui.updateMonsterHp(m.hpRatio, m.hp, m.maxHp);
             this.ui.showMessage("たいりょくが ぜんかいふくした！", false, 1500, 'text-neutral');
             this.sound.playSe('monster_recover');
             await new Promise(resolve => setTimeout(resolve, 1500));
@@ -465,7 +478,7 @@ class MonsterSpawner {
             m.name = nextInfo.name;
             imgEl.src = m.imageSrc;
             nameEl.textContent = m.name;
-            this.ui.updateMonsterHp(m.hpRatio);
+            this.ui.updateMonsterHp(m.hpRatio, m.hp, m.maxHp);
             bgEl.src = 'assets/image/ui/battle/battlebg/BattleBG_Bossnext.webp';
             bgEl.style.opacity = '0';
 
@@ -535,7 +548,7 @@ class MonsterSpawner {
             await new Promise(resolve => setTimeout(resolve, 3000));
 
             m.hp = m.maxHp;
-            this.ui.updateMonsterHp(m.hpRatio);
+            this.ui.updateMonsterHp(m.hpRatio, m.hp, m.maxHp);
             this.ui.showMessage("たいりょくが ぜんかいふくした！", false, 1500, 'text-neutral');
             this.sound.playSe('monster_recover');
             await new Promise(resolve => setTimeout(resolve, 1500));
@@ -570,7 +583,7 @@ class MonsterSpawner {
 
             m.hp = m.maxHp;
             m.attackPower = 1;
-            this.ui.updateMonsterHp(m.hpRatio);
+            this.ui.updateMonsterHp(m.hpRatio, m.hp, m.maxHp);
             this.ui.showMessage("たいりょくが ぜんかいふくした！", false, 1500, 'text-neutral');
             this.sound.playSe('monster_recover');
             await new Promise(resolve => setTimeout(resolve, 1500));

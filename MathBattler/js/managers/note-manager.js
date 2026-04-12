@@ -293,6 +293,7 @@ class NoteManager {
     }
 
     _showNoteCategory(tab, list) {
+        this._currentCategoryList = list;
         document.getElementById('note-genre-select').style.display = 'none';
         document.getElementById('note-card-view').style.display = 'flex';
         document.getElementById('note-current-category').textContent = tab.label;
@@ -425,6 +426,27 @@ class NoteManager {
             card.appendChild(floorEl);
         }
         grid.appendChild(card);
+    }
+
+    _backToGenreSelect() {
+        // カテゴリ内の未確認NEWフラグをすべてクリアしてからジャンル選択を再描画
+        if (this._currentCategoryList) {
+            const newData = this.storage.loadMonsterNew();
+            let changed = false;
+            this._currentCategoryList.forEach(f => {
+                const name = this._getMonsterName(f);
+                if (newData[name]) {
+                    delete newData[name];
+                    changed = true;
+                }
+            });
+            if (changed) this.storage.saveMonsterNew(newData);
+            this._currentCategoryList = null;
+        }
+        document.getElementById('note-card-view').style.display = 'none';
+        document.getElementById('note-genre-select').style.display = '';
+        this._renderNoteGenreSelect();
+        this._updateNoteProgress();
     }
 
     _renderNoteGrid() {

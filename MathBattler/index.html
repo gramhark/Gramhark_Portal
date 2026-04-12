@@ -40,6 +40,7 @@
     <link rel="stylesheet" href="css/screens/note.css">
     <link rel="stylesheet" href="css/screens/monster-house.css">
     <link rel="stylesheet" href="css/screens/sticker.css">
+    <link rel="stylesheet" href="css/desktop-panels.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=M+PLUS+Rounded+1c:wght@400;700&display=swap"
@@ -47,6 +48,31 @@
 </head>
 
 <body>
+    <!-- PCワイド画面 左パネル（モンスターじょうほう） -->
+    <div id="desktop-left-panel" class="desktop-side-panel desktop-left-panel">
+        <div class="desktop-panel-inner desktop-info-panel">
+            <div class="info-section">
+                <h3 class="info-section-title enemy-title">モンスターじょうほう</h3>
+                <div class="info-rows" id="desktop-enemy-rows"></div>
+            </div>
+            <div class="desktop-info-divider"></div>
+            <div class="info-section">
+                <h3 class="info-section-title player-title">じぶんのじょうほう</h3>
+                <div class="info-rows" id="desktop-player-rows"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PCワイド画面 右パネル（問題一覧） -->
+    <div id="desktop-right-panel" class="desktop-side-panel desktop-right-panel">
+        <div class="desktop-panel-inner desktop-message-panel">
+            <div class="desktop-panel-header">もんだい いちらん</div>
+            <div class="desktop-message-scroll">
+                <div id="desktop-problem-log" class="desktop-problem-log"></div>
+            </div>
+        </div>
+    </div>
+
     <div id="app">
         <script>/* #app直後で即実行。常に縦画面モードを付与 */(function () { document.getElementById('app').classList.add('portrait-mode'); })();</script>
         <!-- ローディング画面 -->

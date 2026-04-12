@@ -64,6 +64,12 @@ class InputHandler {
             problemEl.innerHTML = `<span class="problem-part">${displayText}</span><span class="answer-part">${displayedAnswer}</span>`;
         }
 
+        // デスクトップ問題ログに記録
+        this.ui.addDesktopProblemLog(
+            this._buildProblemLogText(this.game.problem, displayedAnswer),
+            isCorrect
+        );
+
         if (isCorrect) {
             this._onCorrect(elapsed);
         } else {
@@ -130,7 +136,7 @@ class InputHandler {
 
         const m = this.game.monsters[this.game.currentMonsterIdx];
         m.takeDamage(damage);
-        this.ui.updateMonsterHp(m.hpRatio);
+        this.ui.updateMonsterHp(m.hpRatio, m.hp, m.maxHp);
 
         // 攻撃エフェクト・SE・メッセージ（必殺技 > 剣装備 > 素手 の優先順）
         if (isSpecial) {
@@ -193,7 +199,7 @@ class InputHandler {
         const extraDamage = isCrit ? Math.floor((this.game.companionExtraDamage || 0) * 1.5) : (this.game.companionExtraDamage || 0);
         if (extraDamage > 0 && companionName && m.hp > 0) {
             m.takeDamage(extraDamage);
-            this.ui.updateMonsterHp(m.hpRatio);
+            this.ui.updateMonsterHp(m.hpRatio, m.hp, m.maxHp);
             this.ui.showAttackEffect(isCrit ? 'critical_H' : 'attack_H');
             this.ui.flashScreen(isCrit ? 'critical' : 'normal');
             this.ui.showMessage(`${companionName}の こうげき！\n${extraDamage}ダメージ！`, false, 1500, 'text-player-action');
@@ -461,6 +467,22 @@ class InputHandler {
         this._startTimerLoop();
     }
 
+    /**
+     * デスクトップ問題ログ用の完成問題文を組み立てる。
+     * @param {object} problem - MathProblem インスタンス
+     * @param {string} inputAnswer - 表示する解答（入力値 or 正解の表示文字列）
+     * @returns {string}
+     */
+    _buildProblemLogText(problem, inputAnswer) {
+        const displayText = problem.displayText || '';
+        if (problem.fillInBlank && displayText.includes('□')) {
+            const blankMap = problem.blankDisplayMap;
+            const blankVal = (blankMap && blankMap[inputAnswer]) ? blankMap[inputAnswer] : inputAnswer;
+            return displayText.replace('□', blankVal);
+        }
+        return displayText + inputAnswer;
+    }
+
     _timerLoop() {
         if (this.game.state !== GameState.BATTLE) return;
 
@@ -514,6 +536,13 @@ class InputHandler {
 
         this.sound.playSe('timer_out');
         this.game.state = GameState.TRANSITION; // 入力をブロック
+
+        // デスクトップ問題ログに記録（タイマー切れ = × ／正解を表示）
+        const _correctAns = String(this.game.problem.displayAnswer ?? this.game.problem.answer);
+        this.ui.addDesktopProblemLog(
+            this._buildProblemLogText(this.game.problem, _correctAns),
+            false
+        );
 
         const m = this.game.monsters[this.game.currentMonsterIdx];
         const isBossTimer = m.battleNumber === Constants.BOSS_BATTLE_NUMBER ||

@@ -216,9 +216,7 @@ class EventBinder {
         });
         document.getElementById('note-back-btn').addEventListener('click', () => {
             game.sound.playSe('back');
-            document.getElementById('note-card-view').style.display = 'none';
-            document.getElementById('note-genre-select').style.display = '';
-            game.notes._updateNoteProgress();
+            game.notes._backToGenreSelect();
         });
 
         // Bag Screen

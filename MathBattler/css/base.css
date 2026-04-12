@@ -40,6 +40,7 @@ body {
 #app {
     background-color: var(--bg-color);
     position: absolute;
+    z-index: 10; /* デスクトップサイドパネル (z-index: 1) より前面に表示 */
     /* script.js が中央配置・スケーリングを行います */
     display: flex;
     flex-direction: column;
