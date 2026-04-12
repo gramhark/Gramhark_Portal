@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FrameArmies Prototype</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&family=Noto+Sans+JP:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Phaser 3 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
+    <!-- Howler.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Phaser Canvas Container -->
+    <div id="game-layer">
+        <div id="game-container"></div>
+    </div>
+
+    <!-- HTML UI Overlay Layer -->
+    <div id="ui-layer">
+        
+        <!-- Boot Screen -->
+        <div id="screen-boot" class="screen flex-center">
+            <h1 class="logo">Frame Armies<br><span>Loading...</span></h1>
+            <p class="blink text-sub">TAP OR CLICK ANYWHERE TO START</p>
+        </div>
+
+        <!-- Title Screen -->
+        <div id="screen-title" class="screen flex-center hidden">
+            <h1 class="logo big-logo">Frame Armies</h1>
+            <p class="blink text-sub">- PRESS ANYWHERE TO START -</p>
+        </div>
+
+        <!-- Main Menu -->
+        <div id="screen-menu" class="screen flex-center hidden">
+            <h2 class="section-title">MAIN MENU</h2>
+            <div class="menu-list">
+                <button class="btn-primary" id="btn-goto-stage">出撃 <span class="en">STAGE SELECT</span></button>
+                <button class="btn-secondary" id="btn-goto-deck">デッキ編成 <span class="en">DECK EDIT</span></button>
+            </div>
+        </div>
+
+        <!-- Stage Select -->
+        <div id="screen-stage-select" class="screen flex-center hidden">
+            <h2 class="section-title">STAGE SELECT</h2>
+            <button class="btn-back" id="btn-stage-back">← 戻る</button>
+            <div class="stage-list">
+                <button class="btn-stage" id="btn-start-stage1">
+                    <h3>STAGE 1</h3>
+                    <p>ゴブリンの森（仮）</p>
+                </button>
+            </div>
+        </div>
+
+        <!-- Deck Select -->
+        <div id="screen-deck-select" class="screen flex-center hidden">
+            <h2 class="section-title">DECK SELECT</h2>
+            <button class="btn-back" id="btn-ds-back">← 戻る</button>
+            <div class="deck-list" id="deck-list-container">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+
+        <!-- Deck Edit -->
+        <div id="screen-deck-edit" class="screen hidden">
+            <div class="deck-edit-header">
+                <button class="btn-back" id="btn-de-back">← キャンセル</button>
+                <h2 class="section-title" id="deck-edit-title">EDIT DECK X</h2>
+                <div class="deck-edit-actions">
+                    <span id="deck-edit-count" class="card-count">(0/20)</span>
+                    <button class="btn-primary small" id="btn-de-save">保存して戻る</button>
+                </div>
+            </div>
+            <div class="deck-edit-body">
+                <div class="card-pool">
+                    <h3 class="panel-title">追加可能なカード</h3>
+                    <div id="available-cards-container" class="card-grid"></div>
+                </div>
+                <div class="current-deck">
+                    <h3 class="panel-title">現在のデッキ内容 (クリックで削除)</h3>
+                    <div id="current-deck-container" class="card-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Battle HUD -->
+        <div id="hud-battle" class="screen hidden pointer-events-none">
+            <div class="hud-right pointer-events-auto glass-panel">
+                <div class="status-box">
+                    <p id="hud-turn" class="status-num">Turn: 1</p>
+                    <p id="hud-cost" class="status-num">Cost: 0 / 15</p>
+                    <p id="hud-deck" class="status-num">Deck: 20</p>
+                </div>
+                
+                <div class="hand-box">
+                    <p class="section-sub">手札</p>
+                    <div id="hud-hand-container" class="hand-grid"></div>
+                </div>
+
+                <div class="action-box">
+                    <button class="btn-secondary small toggle" id="btn-remove-mode">パネル撤去: OFF</button>
+                    <button class="btn-primary large" id="btn-go">アクション開始 (Go)</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="screen-gameover" class="screen flex-center hidden">
+            <h1 class="logo" id="gameover-text">VICTORY</h1>
+            <button class="btn-primary mt-20" id="btn-go-title">タイトルへ戻る</button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/ui_controller.js"></script>
+    <script src="js/grid_system.js"></script>
+    <script src="js/entity_manager.js"></script>
+    <script src="js/deck_system.js"></script>
+    <script src="js/combat_system.js"></script>
+    <script src="js/scene_battle.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
